@@ -20,7 +20,7 @@ export const getNextGameTime = () => {
    
     // const startDate = new Date('2024-11-08');
     const now = new Date();
-    const diffTime = Math.abs(now - startDate);
+    const diffTime = Math.abs(now.getTime() - startDate.getTime());
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
    
     return diffDays;

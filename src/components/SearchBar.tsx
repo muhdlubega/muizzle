@@ -1,16 +1,22 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import axios from 'axios';
 import { useOnClickOutside } from 'usehooks-ts';
 
 
-const SearchBar = ({ onGuess, disabled }) => {
-   const [query, setQuery] = useState('');
-   const [results, setResults] = useState([]);
-   const searchRef = useRef(null);
+interface Results {
+  title: string;
+  release_date: Date;
+  id: number;
+}
+
+const SearchBar = ({ onGuess, disabled }: {onGuess: (input: string, date: Date, movieId: number) => void, disabled: boolean}) => {
+   const [query, setQuery] = React.useState('');
+   const [results, setResults] = React.useState<Results[]>([]);
+   const searchRef = React.useRef(null);
     useOnClickOutside(searchRef, () => {
      setResults([]);
    });
-    const handleSearch = async (e: { target: { value: any[] | React.SetStateAction<string>; }; }) => {
+    const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
      setQuery(e.target.value);
      if (e.target.value.length > 2) {
        try {
