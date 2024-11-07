@@ -37,6 +37,7 @@ const SearchBar = ({
         const response = await axios.get(
           `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&include_adult=false&query=${e.target.value}`
         );
+        console.log(response)
         setResults(response.data.results.slice(0, 5));
       } catch (error) {
         console.error("Error fetching search results:", error);

@@ -1,5 +1,4 @@
 #root {
-  background-color: #121213;
   color: #525254
 }
 
@@ -232,7 +231,7 @@
   border-radius: 6px;
   padding: 4px 10px;
   font-size: 16px;
-  background: #161618;
+  background: transparent;
   border: 2px solid #3a3a3c;
   color: #737376;
 }
