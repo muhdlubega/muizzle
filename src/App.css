@@ -1,6 +1,5 @@
 #root {
   background-color: #121213;
-  height: 100vh;
   color: #525254
 }
 
@@ -35,6 +34,75 @@
   color: #FF2247;
   font-size: 36px;
   font-family: 'Lobster';
+}
+
+.stats-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.stats-button:hover {
+  opacity: 0.8;
+}
+
+.stats-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.stats-modal-content {
+  background-color: #121213;
+  padding: 20px;
+  border-radius: 8px;
+  width: 600px;
+  text-align: center;
+}
+
+.stats-modal-content h2 {
+  margin-top: 0;
+}
+
+.stats-modal-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.stats-modal-content button {
+  padding: 8px 16px;
+  font-size: 16px;
+  background-color: #ff2247;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.stats-modal-content button:hover {
+  background-color: #ff4b6f;
+}
+
+.guess-distribution-chart {
+  margin: 20px 0 60px;
+  width: 100%;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .game {
@@ -204,6 +272,7 @@
 
 .countdown {
   font-size: 24px;
+  padding-bottom: 60px;
   font-weight: bold;
   font-family: monospace;
   color: #FF2247;
@@ -236,6 +305,12 @@
   .navbar-title {
     padding: 12px 0 10px;
     font-size: 22px;
+  }
+
+  .stats-button {
+    top: 10px;
+    right: 10px;
+    padding: 8px 16px;
   }
 
   .results-list,
@@ -277,6 +352,10 @@
   .game {
     padding-top: 4vh;
   }
+
+  .stats-modal-content {
+    width: 420px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -285,6 +364,15 @@
   .searchbar-input,
   .submit-button {
     font-size: 0.8em;
+  }
+
+  
+  .stats-modal-content {
+    width: 300px;
+  }
+
+  .guess-distribution-chart {
+    margin-bottom: 20px;
   }
 
   .results-list {

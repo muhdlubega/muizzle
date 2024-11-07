@@ -3,10 +3,25 @@ import axios from "axios";
 import SearchBar from "./SearchBar";
 import { files } from "../data/screenshots";
 import { HiCheckCircle, HiXCircle } from "react-icons/hi";
+import { getNextGameTime, getCurrentDay } from "../utils/timeUtils";
+import Cookies from "js-cookie";
+import Modal from "react-modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie";
-import { getNextGameTime, getCurrentDay } from "../utils/timeUtils";
+import { IoIosStats } from "react-icons/io";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
+Modal.setAppElement("#root");
 
 interface Movie {
   title: string;
@@ -32,6 +47,16 @@ const Game = () => {
   const [showResult, setShowResult] = React.useState(false);
   const [timeUntilNextGame, setTimeUntilNextGame] = React.useState("");
   const [currentDay, setCurrentDay] = React.useState(getCurrentDay());
+  const [showStatsModal, setShowStatsModal] = React.useState(false);
+  const [stats, setStats] = React.useState({
+    gamesPlayed: 0,
+    winRate: 0,
+    currentStreak: 0,
+    maxStreak: 0,
+  });
+  const [guessDistribution, setGuessDistribution] = React.useState<number[]>(
+    Array(6).fill(0)
+  );
 
   const API_KEY: string = import.meta.env.VITE_APP_TMDB_API_KEY;
   const fetchMovie = React.useCallback(
@@ -109,9 +134,31 @@ const Game = () => {
   }, [loadDailyScreenshot]);
 
   React.useEffect(() => {
+    const savedStats = {
+      gamesPlayed: parseInt(Cookies.get("gamesPlayed") || "0", 10),
+      wins: parseInt(Cookies.get("wins") || "0", 10),
+      currentStreak: parseInt(Cookies.get("currentStreak") || "0", 10),
+      maxStreak: parseInt(Cookies.get("maxStreak") || "0", 10),
+    };
+
+    const savedDistribution = JSON.parse(
+      Cookies.get("guessDistribution") || JSON.stringify(Array(6).fill(0))
+    );
+
+    setStats({
+      ...savedStats,
+      winRate: savedStats.gamesPlayed
+        ? Math.round((savedStats.wins / savedStats.gamesPlayed) * 100)
+        : 0,
+    });
+    setGuessDistribution(savedDistribution);
+  }, []);
+
+  React.useEffect(() => {
     if (gameStatus !== "playing" && !showResult) {
       setTimeout(() => {
         setShowResult(true);
+        setShowStatsModal(true);
       }, 500);
     }
   }, [gameStatus, showResult]);
@@ -145,7 +192,7 @@ const Game = () => {
     showResult,
   ]);
 
-  const handleGuess = (input: string, date: Date, movieId: number) => {
+  const handleGuess = (input: string, date: Date, movieId: number, guessCount: number) => {
     if (guesses.some((guess) => guess.movieId === movieId)) {
       toast.error("You already guessed this movie!", {
         position: "bottom-right",
@@ -193,6 +240,56 @@ const Game = () => {
         });
       }
     }
+
+    if (gameStatus === "won") {
+      const newDistribution = [...guessDistribution];
+      newDistribution[guessCount - 1] += 1;
+      setGuessDistribution(newDistribution);
+      Cookies.set("guessDistribution", JSON.stringify(newDistribution));
+    }
+
+    if (gameStatus !== "playing") {
+      const gamesPlayed = stats.gamesPlayed + 1;
+      const wins = gameStatus === "won" ? stats.winRate + 1 : stats.winRate;
+      const currentStreak = gameStatus === "won" ? stats.currentStreak + 1 : 0;
+      const maxStreak = Math.max(stats.maxStreak, currentStreak);
+
+      Cookies.set("gamesPlayed", gamesPlayed.toString());
+      Cookies.set("wins", wins.toString());
+      Cookies.set("currentStreak", currentStreak.toString());
+      Cookies.set("maxStreak", maxStreak.toString());
+
+      setStats({
+        gamesPlayed,
+        winRate: Math.round((wins / gamesPlayed) * 100),
+        currentStreak,
+        maxStreak,
+      });
+    }
+  };
+
+  const guessChartData = {
+    labels: ["1 Guess", "2 Guesses", "3 Guesses", "4 Guesses", "5 Guesses", "6 Guesses"],
+    datasets: [
+      {
+        label: "Games Solved",
+        data: guessDistribution,
+        backgroundColor: "rgba(255, 99, 132, 0.6)",
+      },
+    ],
+  };
+
+  const guessChartOptions = {
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+    scales: {
+      y: {
+        display: false,
+      },
+    },
   };
 
   const handleThumbnailClick = (index: React.SetStateAction<number>) => {
@@ -202,6 +299,30 @@ const Game = () => {
   return (
     <div className="game">
       <ToastContainer />
+      <Modal
+        isOpen={showStatsModal}
+        onRequestClose={() => setShowStatsModal(false)}
+        className="stats-modal-content"
+        overlayClassName="stats-modal-overlay"
+      >
+        <h2>User Statistics</h2>
+        <ul>
+          <li>Games Played: {stats.gamesPlayed}</li>
+          <li>Win Rate: {stats.winRate}%</li>
+          <li>Current Streak: {stats.currentStreak}</li>
+          <li>Max Streak: {stats.maxStreak}</li>
+        </ul>
+        <div className="guess-distribution-chart">
+          <strong>Guess Distribution</strong>
+          <Bar data={guessChartData} options={guessChartOptions} />
+        </div>
+        <button onClick={() => setShowStatsModal(false)}>Close</button>
+      </Modal>
+      <IoIosStats
+      size={36}
+      color="#FF2247"
+        className="stats-button"
+        onClick={() => setShowStatsModal(true)} />
       <div className="container">
         <div className="screenshot">
           <img
