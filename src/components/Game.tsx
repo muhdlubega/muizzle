@@ -42,6 +42,7 @@ const Game = () => {
   const [highestIndexReached, setHighestIndexReached] = React.useState(0);
   const [revealedScreenshots, setRevealedScreenshots] = React.useState<string[]>([]);
   const [guesses, setGuesses] = React.useState<Guess[]>([]);
+  const [hasUpdatedStats, setHasUpdatedStats] = React.useState(false);
   const [guessesLeft, setGuessesLeft] = React.useState(6);
   const [gameStatus, setGameStatus] = React.useState("playing");
   const [showResult, setShowResult] = React.useState(false);
@@ -247,27 +248,52 @@ const Game = () => {
       setGuessDistribution(newDistribution);
       Cookies.set("guessDistribution", JSON.stringify(newDistribution));
     }
+  };
 
-    if (gameStatus !== "playing") {
-      const gamesPlayed = stats.gamesPlayed + 1;
-      const wins = gameStatus === "won" ? stats.winRate + 1 : stats.winRate;
+  React.useEffect(() => {
+    if (gameStatus === "playing") {
+      setHasUpdatedStats(false);
+    }
+  }, [gameStatus]);
+
+  React.useEffect(() => {
+    if ((gameStatus === "won" || gameStatus === "lost") && !hasUpdatedStats) {
+      const previousGamesPlayed = parseInt(Cookies.get("gamesPlayed") || "0", 10);
+      const previousWins = parseInt(Cookies.get("wins") || "0", 10);
+  
+      const gamesPlayed = previousGamesPlayed + 1;
+      const wins = gameStatus === "won" ? previousWins + 1 : previousWins;
+      const winRate = Math.round((wins / gamesPlayed) * 100);
+  
       const currentStreak = gameStatus === "won" ? stats.currentStreak + 1 : 0;
       const maxStreak = Math.max(stats.maxStreak, currentStreak);
-
+  
+      const newDistribution = [...guessDistribution];
+      if (gameStatus === "won") {
+        const guessCount = guesses.length;
+        newDistribution[guessCount - 1] += 1;
+        setGuessDistribution(newDistribution);
+        Cookies.set("guessDistribution", JSON.stringify(newDistribution));
+      }
+  
       Cookies.set("gamesPlayed", gamesPlayed.toString());
       Cookies.set("wins", wins.toString());
       Cookies.set("currentStreak", currentStreak.toString());
       Cookies.set("maxStreak", maxStreak.toString());
-
+  
       setStats({
         gamesPlayed,
-        winRate: Math.round((wins / gamesPlayed) * 100),
+        winRate,
         currentStreak,
         maxStreak,
       });
+  
+      setHasUpdatedStats(true);
+      setShowResult(true);
+      setShowStatsModal(true);
     }
-  };
-
+  }, [gameStatus, guesses, guessDistribution, stats, hasUpdatedStats]);
+  
   const guessChartData = {
     labels: ["1 Guess", "2 Guesses", "3 Guesses", "4 Guesses", "5 Guesses", "6 Guesses"],
     datasets: [
@@ -327,7 +353,7 @@ const Game = () => {
         <div className="screenshot">
           <img
             className="screenshot-image"
-            src={`/screenshots/${screenshots[currentScreenshotIndex]}`}
+            src={`src/assets/screenshots/${screenshots[currentScreenshotIndex]}`}
             alt="Movie Screenshot"
           />
         </div>
@@ -340,7 +366,7 @@ const Game = () => {
                 index <= highestIndexReached ||
                 revealedScreenshots.includes(screenshots[index]) ? (
                   <img
-                    src={`/screenshots/${screenshots[index]}`}
+                    src={`src/assets/screenshots/${screenshots[index]}`}
                     alt={`Screenshot ${index + 1}`}
                     className={`thumbnail-image ${
                       index === currentScreenshotIndex ? "active" : ""
@@ -354,6 +380,24 @@ const Game = () => {
             ))}
         </div>
         <SearchBar onGuess={handleGuess} disabled={gameStatus !== "playing"} />
+      </div>
+      <div className="result">
+        {movie && showResult && gameStatus === "won" && (
+          <p className="result-correct">
+            Correct! The movie is{" "}
+            <strong>
+              {movie.title} ({new Date(movie.release_date).getFullYear()})
+            </strong>
+          </p>
+        )}
+        {movie && showResult && gameStatus === "lost" && (
+          <p className="result-wrong">
+            Out of guesses! The correct answer was{" "}
+            <strong>
+              {movie.title} ({new Date(movie.release_date).getFullYear()})
+            </strong>
+          </p>
+        )}
       </div>
       <div className="guesses">
         <ul className="guesses-list">
@@ -374,24 +418,6 @@ const Game = () => {
             </li>
           ))}
         </ul>
-      </div>
-      <div className="result">
-        {movie && showResult && gameStatus === "won" && (
-          <p className="result-correct">
-            Correct! The movie is{" "}
-            <strong>
-              {movie.title} ({new Date(movie.release_date).getFullYear()})
-            </strong>
-          </p>
-        )}
-        {movie && showResult && gameStatus === "lost" && (
-          <p className="result-wrong">
-            Out of guesses! The correct answer was{" "}
-            <strong>
-              {movie.title} ({new Date(movie.release_date).getFullYear()})
-            </strong>
-          </p>
-        )}
       </div>
       {(gameStatus === "won" || gameStatus === "lost") && (
         <div className="next-game">

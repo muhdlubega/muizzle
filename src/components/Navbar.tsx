@@ -1,4 +1,4 @@
-import muizzle from '../../public/muizzle.png'
+import muizzle from '../assets/muizzle.png'
 
 const Navbar = () => {
   return (
