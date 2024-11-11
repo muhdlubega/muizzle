@@ -70,7 +70,38 @@ const Game = () => {
         );
         setMovie(response.data);
       } catch (error) {
-        console.error("Error fetching movie:", error);
+        const toastConfig = {
+          position: "bottom-right" as const,
+          autoClose: 8000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark" as const,
+          toastId: 'fetchError',
+        };
+  
+        if (axios.isAxiosError(error) && error.response) {
+          switch (error.response.status) {
+            case 404:
+              toast.error("Movie not found. Please try again later", toastConfig);
+              break;
+            case 401:
+              toast.error("API authentication failed. Please try again later", toastConfig);
+              break;
+            default:
+              toast.error(
+                `Error: ${error.response.data.status_message || 'Failed to fetch movie data'}. Please try again later`,
+                toastConfig
+              );
+          }
+        } else {
+          toast.error(
+            "Failed to connect to the movie database. Please try again later",
+            toastConfig
+          );
+        }
       }
     },
     [API_KEY]
@@ -472,12 +503,10 @@ const Game = () => {
           ))}
         </ul>
       </div>
-      {(gameStatus === "won" || gameStatus === "lost") && (
         <div className="next-game">
           <p>Next movie in</p>
           <div className="countdown">{timeUntilNextGame}</div>
         </div>
-      )}
     </div>
   );
 };

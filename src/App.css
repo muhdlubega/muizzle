@@ -463,19 +463,25 @@
   .stats-modal-content {
     width: 420px;
   }
+
+  .archive-button{
+    top: 18px;
+  }
+
+  .next-game {
+    bottom: 20px;
+    top: unset;
+    left: 20px;
+} 
 }
 
 @media (max-width: 480px) {
-
   .results-list,
   .searchbar-input,
   .submit-button {
     font-size: 0.8em;
   }
 
-  .archive-button{
-    top: 18px;
-  }
   .archive-badge {
     margin-left: -200px;
   }
