@@ -35,6 +35,18 @@
   font-family: 'Lobster';
 }
 
+.navbar-badge {
+  position: absolute;
+    left: 163px;
+    top: 5px;
+    background: green;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
 .stats-button {
   position: absolute;
   top: 20px;
@@ -407,6 +419,14 @@
   .navbar-title {
     padding: 12px 0 10px;
     font-size: 22px;
+  }
+
+  .navbar-badge {
+    font-size: 8px;
+    left: 105px;
+    top: 10px;
+    padding: 1px 4px;
+    border-radius: 3px;
   }
 
   .next-game {
