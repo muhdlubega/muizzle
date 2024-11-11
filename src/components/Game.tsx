@@ -353,7 +353,7 @@ const Game = () => {
         <div className="screenshot">
           <img
             className="screenshot-image"
-            src={`src/assets/screenshots/${screenshots[currentScreenshotIndex]}`}
+            src={`/screenshots/${screenshots[currentScreenshotIndex]}`}
             alt="Movie Screenshot"
           />
         </div>
@@ -366,7 +366,7 @@ const Game = () => {
                 index <= highestIndexReached ||
                 revealedScreenshots.includes(screenshots[index]) ? (
                   <img
-                    src={`src/assets/screenshots/${screenshots[index]}`}
+                    src={`/screenshots/${screenshots[index]}`}
                     alt={`Screenshot ${index + 1}`}
                     className={`thumbnail-image ${
                       index === currentScreenshotIndex ? "active" : ""
