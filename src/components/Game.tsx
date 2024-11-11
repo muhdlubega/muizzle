@@ -20,6 +20,8 @@ import {
   Legend,
 } from "chart.js";
 import Archive from "./Archive";
+import { Loader } from "./Loader";
+import ShareStats from "./ShareStats";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 Modal.setAppElement("#root");
@@ -39,6 +41,7 @@ interface Guess {
 const Game = () => {
   const [movie, setMovie] = React.useState<Movie | null>(null);
   const [screenshots, setScreenshots] = React.useState<string[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [currentScreenshotIndex, setCurrentScreenshotIndex] = React.useState(0);
   const [highestIndexReached, setHighestIndexReached] = React.useState(0);
   const [revealedScreenshots, setRevealedScreenshots] = React.useState<string[]>([]);
@@ -81,7 +84,7 @@ const Game = () => {
           theme: "dark" as const,
           toastId: 'fetchError',
         };
-  
+
         if (axios.isAxiosError(error) && error.response) {
           switch (error.response.status) {
             case 404:
@@ -107,6 +110,29 @@ const Game = () => {
     [API_KEY]
   );
 
+  const preloadImages = React.useCallback((imageUrls: string[]) => {
+    setIsLoading(true);
+    let loadedImages = 0;
+    const totalImages = imageUrls.length;
+
+    imageUrls.forEach((url) => {
+      const img = new Image();
+      img.src = `/screenshots/${url}`;
+      img.onload = () => {
+        loadedImages++;
+        if (loadedImages === totalImages) {
+          setIsLoading(false);
+        }
+      };
+      img.onerror = () => {
+        loadedImages++;
+        if (loadedImages === totalImages) {
+          setIsLoading(false);
+        }
+      };
+    });
+  }, []);
+
   const loadMinuteScreenshot = React.useCallback(() => {
     const minuteIndex = getCurrentMinuteIndex();
     const minuteFolder = `${minuteIndex}`;
@@ -119,11 +145,12 @@ const Game = () => {
       const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
 
       setScreenshots(minuteScreenshots);
+      preloadImages(minuteScreenshots);
       fetchMovie(extractedMovieID);
       setIsArchiveGame(false);
       Cookies.set("gameMinute", minuteIndex.toString());
     }
-  }, [fetchMovie]);
+  }, [fetchMovie, preloadImages]);
 
   const loadArchivedGame = React.useCallback((folderNumber: string) => {
     const archivedScreenshots = files.filter((file) =>
@@ -135,6 +162,7 @@ const Game = () => {
       const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
 
       setScreenshots(archivedScreenshots);
+      preloadImages(archivedScreenshots);
       fetchMovie(extractedMovieID);
       setIsArchiveGame(true);
 
@@ -146,7 +174,7 @@ const Game = () => {
       setHighestIndexReached(0);
       setRevealedScreenshots([]);
     }
-  }, [fetchMovie]);
+  }, [fetchMovie, preloadImages]);
 
   React.useEffect(() => {
     const savedState = Cookies.get("gameState");
@@ -418,6 +446,14 @@ const Game = () => {
           <strong>Guess Distribution</strong>
           <Bar data={guessChartData} options={guessChartOptions} />
         </div>
+        <ShareStats
+    gameStatus={gameStatus}
+    guessesLeft={guessesLeft}
+    currentStreak={stats.currentStreak}
+    maxStreak={stats.maxStreak}
+    winRate={stats.winRate}
+    currentMinuteIndex={getCurrentMinuteIndex()}
+  />
         <button onClick={() => setShowStatsModal(false)}>Close</button>
       </Modal>
       <button
@@ -435,34 +471,41 @@ const Game = () => {
             Archived Game
           </div>
         )}
-        <div className="screenshot">
-          <img
-            className="screenshot-image"
-            src={`/screenshots/${screenshots[currentScreenshotIndex]}`}
-            alt="Movie Screenshot"
-          />
-        </div>
-        <div className="screenshot-thumbnails">
-          {Array(6)
-            .fill(null)
-            .map((_, index) => (
-              <div key={index} className="thumbnail-box">
-                {gameStatus === "won" ||
-                  index <= highestIndexReached ||
-                  revealedScreenshots.includes(screenshots[index]) ? (
-                  <img
-                    src={`/screenshots/${screenshots[index]}`}
-                    alt={`Screenshot ${index + 1}`}
-                    className={`thumbnail-image ${index === currentScreenshotIndex ? "active" : ""
-                      }`}
-                    onClick={() => handleThumbnailClick(index)}
-                  />
-                ) : (
-                  <div className="empty-box"></div>
-                )}
-              </div>
-            ))}
-        </div>
+        {isLoading ? (
+          <div className="loader-container">
+            <Loader />
+          </div>
+        ) : (
+          <>
+            <div className="screenshot">
+              <img
+                className="screenshot-image"
+                src={`/screenshots/${screenshots[currentScreenshotIndex]}`}
+                alt="Movie Screenshot"
+              />
+            </div>
+            <div className="screenshot-thumbnails">
+              {Array(6)
+                .fill(null)
+                .map((_, index) => (
+                  <div key={index} className="thumbnail-box">
+                    {gameStatus === "won" ||
+                      index <= highestIndexReached ||
+                      revealedScreenshots.includes(screenshots[index]) ? (
+                      <img
+                        src={`/screenshots/${screenshots[index]}`}
+                        alt={`Screenshot ${index + 1}`}
+                        className={`thumbnail-image ${index === currentScreenshotIndex ? "active" : ""
+                          }`}
+                        onClick={() => handleThumbnailClick(index)}
+                      />
+                    ) : (
+                      <div className="empty-box"></div>
+                    )}
+                  </div>
+                ))}
+            </div></>
+        )}
         <SearchBar onGuess={handleGuess} disabled={gameStatus !== "playing"} />
       </div>
       <div className="result">
@@ -503,10 +546,10 @@ const Game = () => {
           ))}
         </ul>
       </div>
-        <div className="next-game">
-          <p>Next movie in</p>
-          <div className="countdown">{timeUntilNextGame}</div>
-        </div>
+      <div className="next-game">
+        <p>Next movie in</p>
+        <div className="countdown">{timeUntilNextGame}</div>
+      </div>
     </div>
   );
 };
