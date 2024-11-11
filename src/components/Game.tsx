@@ -3,7 +3,7 @@ import axios from "axios";
 import SearchBar from "./SearchBar";
 import { files } from "../data/screenshots";
 import { HiCheckCircle, HiXCircle } from "react-icons/hi";
-import { getNextGameTime, getCurrentDay } from "../utils/timeUtils";
+import { getNextGameTime, getCurrentMinuteIndex } from "../utils/timeUtils";
 import Cookies from "js-cookie";
 import Modal from "react-modal";
 import { ToastContainer, toast } from "react-toastify";
@@ -19,6 +19,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import Archive from "./Archive";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 Modal.setAppElement("#root");
@@ -47,8 +48,9 @@ const Game = () => {
   const [gameStatus, setGameStatus] = React.useState("playing");
   const [showResult, setShowResult] = React.useState(false);
   const [timeUntilNextGame, setTimeUntilNextGame] = React.useState("");
-  const [currentDay, setCurrentDay] = React.useState(getCurrentDay());
   const [showStatsModal, setShowStatsModal] = React.useState(false);
+  const [showArchive, setShowArchive] = React.useState(false);
+  const [isArchiveGame, setIsArchiveGame] = React.useState(false);
   const [stats, setStats] = React.useState({
     gamesPlayed: 0,
     winRate: 0,
@@ -74,25 +76,53 @@ const Game = () => {
     [API_KEY]
   );
 
-  const loadDailyScreenshot = React.useCallback(() => {
-    const day = getCurrentDay();
-    const dayFolder = `${day}`;
-    const dailyScreenshots = files.filter((file) =>
-      file.startsWith(`${dayFolder}/`)
+  const loadMinuteScreenshot = React.useCallback(() => {
+    const minuteIndex = getCurrentMinuteIndex();
+    const minuteFolder = `${minuteIndex}`;
+    const minuteScreenshots = files.filter((file) =>
+      file.startsWith(`${minuteFolder}/`)
     );
-    const firstScreenshot = dailyScreenshots[0];
-    const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
 
-    setScreenshots(dailyScreenshots);
-    fetchMovie(extractedMovieID);
-    Cookies.set("gameDay", day.toString());
+    if (minuteScreenshots.length > 0) {
+      const firstScreenshot = minuteScreenshots[0];
+      const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
+
+      setScreenshots(minuteScreenshots);
+      fetchMovie(extractedMovieID);
+      setIsArchiveGame(false);
+      Cookies.set("gameMinute", minuteIndex.toString());
+    }
+  }, [fetchMovie]);
+
+  const loadArchivedGame = React.useCallback((folderNumber: string) => {
+    const archivedScreenshots = files.filter((file) =>
+      file.startsWith(`${folderNumber}/`)
+    );
+
+    if (archivedScreenshots.length > 0) {
+      const firstScreenshot = archivedScreenshots[0];
+      const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
+
+      setScreenshots(archivedScreenshots);
+      fetchMovie(extractedMovieID);
+      setIsArchiveGame(true);
+
+      setGuesses([]);
+      setGuessesLeft(6);
+      setGameStatus("playing");
+      setShowResult(false);
+      setCurrentScreenshotIndex(0);
+      setHighestIndexReached(0);
+      setRevealedScreenshots([]);
+    }
   }, [fetchMovie]);
 
   React.useEffect(() => {
     const savedState = Cookies.get("gameState");
-    const savedDay = Cookies.get("gameDay");
+    const savedMinute = Cookies.get("gameMinute");
+    const currentMinute = getCurrentMinuteIndex().toString();
 
-    if (savedState && savedDay === currentDay.toString()) {
+    if (savedState && savedMinute === currentMinute) {
       const parsedState = JSON.parse(savedState);
       setMovie(parsedState.movie);
       setScreenshots(parsedState.screenshots);
@@ -104,35 +134,44 @@ const Game = () => {
       setGameStatus(parsedState.gameStatus);
       setShowResult(parsedState.showResult);
     } else {
-      loadDailyScreenshot();
+      loadMinuteScreenshot();
     }
-  }, [currentDay, loadDailyScreenshot]);
+  }, [loadMinuteScreenshot]);
 
   React.useEffect(() => {
-    const timer = setInterval(() => {
+    const checkGameTime = () => {
       const now = new Date();
-      const nextGame = getNextGameTime() ;
+      const nextGame = getNextGameTime();
       const diff = nextGame.getTime() - now.getTime();
 
-      if (diff <= 0) {
-        setCurrentDay(getCurrentDay());
-        Cookies.remove("gameState");
-        Cookies.remove("gameDay");
-        loadDailyScreenshot();
-      } else {
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        setTimeUntilNextGame(
-          `${hours.toString().padStart(2, "0")}:${minutes
-            .toString()
-            .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-        );
-      }
-    }, 1000);
+      const minutes = Math.floor(diff / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      setTimeUntilNextGame(
+        `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+      );
 
+      const newMinuteIndex = getCurrentMinuteIndex();
+      if (newMinuteIndex !== parseInt(Cookies.get("gameMinute") || "0")) {
+        Cookies.remove("gameState");
+        Cookies.remove("gameMinute");
+        loadMinuteScreenshot();
+
+        setGuesses([]);
+        setGuessesLeft(6);
+        setGameStatus("playing");
+        setShowResult(false);
+        setCurrentScreenshotIndex(0);
+        setHighestIndexReached(0);
+        setRevealedScreenshots([]);
+        setHasUpdatedStats(false);
+        setIsArchiveGame(false);
+      }
+    };
+
+    checkGameTime();
+    const timer = setInterval(checkGameTime, 1000);
     return () => clearInterval(timer);
-  }, [loadDailyScreenshot]);
+  }, [loadMinuteScreenshot]);
 
   React.useEffect(() => {
     const savedStats = {
@@ -177,8 +216,9 @@ const Game = () => {
         gameStatus,
         showResult,
       };
+
       Cookies.set("gameState", JSON.stringify(gameState), {
-        expires: new Date(getNextGameTime()),
+        expires: getNextGameTime()
       });
     }
   }, [
@@ -242,7 +282,7 @@ const Game = () => {
       }
     }
 
-    if (gameStatus === "won") {
+    if (!isArchiveGame && gameStatus === "won") {
       const newDistribution = [...guessDistribution];
       newDistribution[guessCount - 1] += 1;
       setGuessDistribution(newDistribution);
@@ -257,17 +297,17 @@ const Game = () => {
   }, [gameStatus]);
 
   React.useEffect(() => {
-    if ((gameStatus === "won" || gameStatus === "lost") && !hasUpdatedStats) {
+    if ((gameStatus === "won" || gameStatus === "lost") && !hasUpdatedStats && !isArchiveGame) {
       const previousGamesPlayed = parseInt(Cookies.get("gamesPlayed") || "0", 10);
       const previousWins = parseInt(Cookies.get("wins") || "0", 10);
-  
+
       const gamesPlayed = previousGamesPlayed + 1;
       const wins = gameStatus === "won" ? previousWins + 1 : previousWins;
       const winRate = Math.round((wins / gamesPlayed) * 100);
-  
+
       const currentStreak = gameStatus === "won" ? stats.currentStreak + 1 : 0;
       const maxStreak = Math.max(stats.maxStreak, currentStreak);
-  
+
       const newDistribution = [...guessDistribution];
       if (gameStatus === "won") {
         const guessCount = guesses.length;
@@ -275,25 +315,25 @@ const Game = () => {
         setGuessDistribution(newDistribution);
         Cookies.set("guessDistribution", JSON.stringify(newDistribution));
       }
-  
+
       Cookies.set("gamesPlayed", gamesPlayed.toString());
       Cookies.set("wins", wins.toString());
       Cookies.set("currentStreak", currentStreak.toString());
       Cookies.set("maxStreak", maxStreak.toString());
-  
+
       setStats({
         gamesPlayed,
         winRate,
         currentStreak,
         maxStreak,
       });
-  
+
       setHasUpdatedStats(true);
       setShowResult(true);
       setShowStatsModal(true);
     }
-  }, [gameStatus, guesses, guessDistribution, stats, hasUpdatedStats]);
-  
+  }, [gameStatus, guesses, guessDistribution, stats, hasUpdatedStats, isArchiveGame]);
+
   const guessChartData = {
     labels: ["1 Guess", "2 Guesses", "3 Guesses", "4 Guesses", "5 Guesses", "6 Guesses"],
     datasets: [
@@ -325,6 +365,11 @@ const Game = () => {
   return (
     <div className="game">
       <ToastContainer />
+      <Archive
+        isOpen={showArchive}
+        onClose={() => setShowArchive(false)}
+        onSelectArchive={loadArchivedGame}
+      />
       <Modal
         isOpen={showStatsModal}
         onRequestClose={() => setShowStatsModal(false)}
@@ -344,12 +389,21 @@ const Game = () => {
         </div>
         <button onClick={() => setShowStatsModal(false)}>Close</button>
       </Modal>
+      <button
+        className="archive-button"
+        onClick={() => setShowArchive(true)}
+      >Open Archives</button>
       <IoIosStats
-      size={36}
-      color="#FF2247"
+        size={36}
+        color="#FF2247"
         className="stats-button"
         onClick={() => setShowStatsModal(true)} />
       <div className="container">
+        {isArchiveGame && (
+          <div className="archive-badge">
+            Archived Game
+          </div>
+        )}
         <div className="screenshot">
           <img
             className="screenshot-image"
@@ -363,14 +417,13 @@ const Game = () => {
             .map((_, index) => (
               <div key={index} className="thumbnail-box">
                 {gameStatus === "won" ||
-                index <= highestIndexReached ||
-                revealedScreenshots.includes(screenshots[index]) ? (
+                  index <= highestIndexReached ||
+                  revealedScreenshots.includes(screenshots[index]) ? (
                   <img
                     src={`/screenshots/${screenshots[index]}`}
                     alt={`Screenshot ${index + 1}`}
-                    className={`thumbnail-image ${
-                      index === currentScreenshotIndex ? "active" : ""
-                    }`}
+                    className={`thumbnail-image ${index === currentScreenshotIndex ? "active" : ""
+                      }`}
                     onClick={() => handleThumbnailClick(index)}
                   />
                 ) : (

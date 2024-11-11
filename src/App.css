@@ -285,6 +285,101 @@
   color: #FF2247;
 }
 
+.archive-button {
+  background-color: #FF2247;
+  position: absolute;
+  top: 26px;
+  right: 80px;
+}
+
+.archive-button:hover {
+  opacity: 0.8;
+}
+
+.archive-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.archive-modal-content {
+  background-color: #1a1a1a;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.archive-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.archive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+}
+
+.archive-item {
+  padding: 1rem;
+  background-color: #2a2a2a;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.archive-item:hover {
+  background-color: #3a3a3a;
+}
+
+.game-controls {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.archive-logo{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.archive-badge {
+  background-color: #FF2247;
+  color: white;
+  padding: 0.5rem 1rem;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  position: absolute;
+  margin-left: -450px;
+  margin-top: 10px;
+  opacity: 0.5;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
 .Toastify__toast {
   background: #1a1a1b;
   color: #ffffff;
@@ -378,7 +473,13 @@
     font-size: 0.8em;
   }
 
-  
+  .archive-button{
+    top: 18px;
+  }
+  .archive-badge {
+    margin-left: -200px;
+  }
+
   .stats-modal-content {
     width: 300px;
   }
