@@ -552,7 +552,7 @@ const Game = () => {
         </ul>
       </div>
       <div className="next-game">
-        <p>Next movie in</p>
+        <p>Next movie releasing in</p>
         <div className="countdown">{timeUntilNextGame}</div>
       </div>
     </div>
