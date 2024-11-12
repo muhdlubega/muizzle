@@ -48,7 +48,7 @@ const Game = () => {
   const [guesses, setGuesses] = React.useState<Guess[]>([]);
   const [hasUpdatedStats, setHasUpdatedStats] = React.useState(false);
   const [guessesLeft, setGuessesLeft] = React.useState(6);
-  const [gameStatus, setGameStatus] = React.useState("playing");
+  const [gameStatus, setGameStatus] = React.useState<'playing' | 'won' | 'lost' | 'ended'>("playing");
   const [showResult, setShowResult] = React.useState(false);
   const [timeUntilNextGame, setTimeUntilNextGame] = React.useState("");
   const [showStatsModal, setShowStatsModal] = React.useState(false);
@@ -350,7 +350,7 @@ const Game = () => {
   };
 
   React.useEffect(() => {
-    if (gameStatus === "playing") {
+    if (gameStatus === "playing" || gameStatus === "ended") {
       setHasUpdatedStats(false);
     }
   }, [gameStatus]);
@@ -390,6 +390,7 @@ const Game = () => {
       setHasUpdatedStats(true);
       setShowResult(true);
       setShowStatsModal(true);
+      setGameStatus('ended')
     }
   }, [gameStatus, guesses, guessDistribution, stats, hasUpdatedStats, isArchiveGame]);
 
