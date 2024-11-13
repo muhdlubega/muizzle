@@ -183,6 +183,9 @@ const Game = () => {
 
     if (savedState && savedMinute === currentMinute) {
       const parsedState = JSON.parse(savedState);
+      if (parsedState.screenshots.length > 0) {
+        preloadImages(parsedState.screenshots);
+      }
       setMovie(parsedState.movie);
       setScreenshots(parsedState.screenshots);
       setCurrentScreenshotIndex(parsedState.currentScreenshotIndex);
@@ -192,10 +195,6 @@ const Game = () => {
       setGuessesLeft(parsedState.guessesLeft);
       setGameStatus(parsedState.gameStatus);
       setShowResult(parsedState.showResult);
-
-      if (parsedState.screenshots.length > 0) {
-        preloadImages(parsedState.screenshots);
-      }
     } else {
       loadMinuteScreenshot();
     }
