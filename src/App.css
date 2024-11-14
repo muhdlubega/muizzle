@@ -194,6 +194,35 @@
   background: #95142a;
 }
 
+.result-title {
+  margin-top: 0;
+}
+
+.result-text {
+  margin: 0;
+}
+
+.result-desc {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.result-boxes {
+  display: flex;
+  gap: 2px;
+}
+
+.result-copy {
+  cursor: pointer;
+}
+
+.result-copy:hover {
+  transform: scale(1.1);
+  color: #FF2247;
+}
+
 .container {
   display: flex;
   flex-direction: column;

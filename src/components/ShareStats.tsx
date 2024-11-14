@@ -9,7 +9,6 @@ interface ShareStatsProps {
   currentStreak: number;
   maxStreak: number;
   winRate: number;
-  currentMinuteIndex: number;
 }
 
 const SITE_URL = window.location.origin;
@@ -21,7 +20,6 @@ const ShareStats: React.FC<ShareStatsProps> = ({
   currentStreak,
   maxStreak,
   winRate,
-  currentMinuteIndex,
 }) => {
 
     const generateShareText = () => {
@@ -29,11 +27,11 @@ const ShareStats: React.FC<ShareStatsProps> = ({
           ? `I won in ${6 - guessesLeft + 1} ${6 - guessesLeft + 1 === 1 ? 'guess' : 'guesses'}!`
           : "I didn't get it this time!";
     
-        return `Check out my streak for this Wordle Tamil Movie Guesser! #${currentMinuteIndex}\n${gameResult}\nCurrent Streak: ${currentStreak}\nMax Streak: ${maxStreak}\nWin Rate: ${winRate}%\n\nPlay now at: ${SITE_URL}`;
+        return `Check out my streak for this Wordle Tamil Movie Guesser! \n${gameResult}\nCurrent Streak: ${currentStreak}\nMax Streak: ${maxStreak}\nWin Rate: ${winRate}%\n\nPlay now at: ${SITE_URL}`;
       };
 
-  const handleShareError = (platform: string) => {
-    toast.error(`Unable to open ${platform}. Please try copying the stats instead.`, {
+  const handleShareError = (platform: string, error: Error) => {
+    toast.error(`Error: ${error} and unable to open ${platform}. Please try copying the stats instead.`, {
       position: "bottom-right",
       autoClose: 5000,
       hideProgressBar: true,
@@ -50,7 +48,7 @@ const ShareStats: React.FC<ShareStatsProps> = ({
       const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(SITE_URL)}&quote=${encodeURIComponent(generateShareText())}&picture=${encodeURIComponent(LOGO_URL)}`;
       window.open(shareUrl, '_blank', 'width=600,height=400');
     } catch (error) {
-      handleShareError('Facebook');
+      handleShareError('Facebook', error as Error);
     }
   };
 
@@ -59,7 +57,7 @@ const ShareStats: React.FC<ShareStatsProps> = ({
       const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(generateShareText())}&url=${encodeURIComponent(SITE_URL)}&cards=summary_large_image`;
       window.open(shareUrl, '_blank', 'width=600,height=400');
     } catch (error) {
-      handleShareError('Twitter');
+      handleShareError('Twitter', error as Error);
     }
   };
 
@@ -69,7 +67,7 @@ const ShareStats: React.FC<ShareStatsProps> = ({
       const shareUrl = `https://www.tiktok.com/share?text=${encodeURIComponent(text)}`;
       window.open(shareUrl, '_blank', 'width=600,height=400');
     } catch (error) {
-      handleShareError('TikTok');
+      handleShareError('TikTok', error as Error);
     }
   };
 
@@ -82,7 +80,7 @@ const ShareStats: React.FC<ShareStatsProps> = ({
         : `https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`;
       window.open(shareUrl, '_blank');
     } catch (error) {
-      handleShareError('WhatsApp');
+      handleShareError('WhatsApp', error as Error);
     }
   };
 
@@ -97,8 +95,8 @@ const ShareStats: React.FC<ShareStatsProps> = ({
         pauseOnHover: true,
         draggable: true,
       });
-    } catch (err) {
-      toast.error('Failed to copy stats to clipboard', {
+    } catch (error) {
+      toast.error(`Error ${error}. Failed to copy stats to clipboard`, {
         position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: true,
