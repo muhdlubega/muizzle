@@ -23,6 +23,8 @@ import Archive from "./Archive";
 import { Loader } from "./Loader";
 import ShareStats from "./ShareStats";
 import { FaRegCopy, FaSquare } from "react-icons/fa";
+import { PiKeyReturn } from "react-icons/pi";
+import { GrReturn } from "react-icons/gr";
 
 const SITE_URL = window.location.origin;
 
@@ -78,6 +80,18 @@ const Game = () => {
   const [guessDistribution, setGuessDistribution] = React.useState<number[]>(
     Array(6).fill(0)
   );
+  const [savedGameState, setSavedGameState] = React.useState<{
+    movie: Movie | null;
+    screenshots: string[];
+    currentScreenshotIndex: number;
+    highestIndexReached: number;
+    revealedScreenshots: string[];
+    guesses: Guess[];
+    guessesLeft: number;
+    gameStatus: "playing" | "won" | "lost";
+    showResult: boolean;
+    correctMovieId: string;
+  } | null>(null);
 
   const API_KEY: string = import.meta.env.VITE_APP_TMDB_API_KEY;
   const fetchMovie = React.useCallback(
@@ -214,19 +228,32 @@ const Game = () => {
 
   const loadArchivedGame = React.useCallback(
     (folderNumber: string) => {
+      setSavedGameState({
+        movie,
+        screenshots,
+        currentScreenshotIndex,
+        highestIndexReached,
+        revealedScreenshots,
+        guesses,
+        guessesLeft,
+        gameStatus,
+        showResult,
+        correctMovieId,
+      });
+  
       const archivedScreenshots = files.filter((file) =>
         file.startsWith(`${folderNumber}/`)
       );
-
+  
       if (archivedScreenshots.length > 0) {
         const firstScreenshot = archivedScreenshots[0];
         const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
-
+  
         setScreenshots(archivedScreenshots);
         preloadImages(archivedScreenshots, [0]);
         setCorrectMovieId(extractedMovieID);
         setIsArchiveGame(true);
-
+  
         setGuesses([]);
         setGuessesLeft(6);
         setGameStatus("playing");
@@ -234,9 +261,12 @@ const Game = () => {
         setCurrentScreenshotIndex(0);
         setHighestIndexReached(0);
         setRevealedScreenshots([]);
+        setMovie(null);
       }
     },
-    [preloadImages]
+    [movie, screenshots, currentScreenshotIndex, highestIndexReached, 
+     revealedScreenshots, guesses, guessesLeft, gameStatus, showResult, 
+     correctMovieId, preloadImages]
   );
 
   React.useEffect(() => {
@@ -565,6 +595,30 @@ const Game = () => {
         onClose={() => setShowArchive(false)}
         onSelectArchive={loadArchivedGame}
       />
+      {isArchiveGame && (
+    <GrReturn 
+      className="return-button" 
+      size={40}
+      onClick={() => {
+        if (savedGameState) {
+          setMovie(savedGameState.movie);
+          setScreenshots(savedGameState.screenshots);
+          setCurrentScreenshotIndex(savedGameState.currentScreenshotIndex);
+          setHighestIndexReached(savedGameState.highestIndexReached);
+          setRevealedScreenshots(savedGameState.revealedScreenshots);
+          setGuesses(savedGameState.guesses);
+          setGuessesLeft(savedGameState.guessesLeft);
+          setGameStatus(savedGameState.gameStatus);
+          setShowResult(savedGameState.showResult);
+          setCorrectMovieId(savedGameState.correctMovieId);
+          setSavedGameState(null);
+        } else {
+          loadMinuteScreenshot();
+        }
+        setIsArchiveGame(false);
+      }}
+    />
+  )}
       <Modal
         isOpen={showStatsModal}
         onRequestClose={() => setShowStatsModal(false)}
@@ -591,10 +645,11 @@ const Game = () => {
         />
         <button onClick={() => setShowStatsModal(false)}>Close</button>
       </Modal>
-      {screenshots[0]?.split("/")[0] !== '1' && 
+      {/* {screenshots[0]?.split("/")[0] !== '1' &&  */}
       <button className="archive-button" onClick={() => setShowArchive(true)}>
         Open Archives
-      </button>}
+      </button>
+      {/* } */}
       <IoIosStats
         size={36}
         color="#FF2247"

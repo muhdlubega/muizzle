@@ -313,7 +313,7 @@
   font-weight: 600;
   text-align: center;
   position: absolute;
-  bottom: 20px;
+  top: 80px;
   left: 20px;
   background: black;
   padding: 20px 40px;
@@ -332,6 +332,14 @@
   color: #FF2247;
 }
 
+.return-button {
+  color: #FF2247;
+  position: absolute;
+  top: 28px;
+  right: 240px;
+  cursor: pointer;
+}
+
 .archive-button {
   background-color: #FF2247;
   position: absolute;
@@ -339,7 +347,7 @@
   right: 80px;
 }
 
-.archive-button:hover {
+.return-button:hover .archive-button:hover {
   opacity: 0.8;
 }
 
