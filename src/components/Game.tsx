@@ -242,18 +242,18 @@ const Game = () => {
         gameStatus,
         showResult,
         correctMovieId,
-        gameEnded, 
-        hasUpdatedStats, 
+        gameEnded,
+        hasUpdatedStats,
       });
-  
+
       const archivedScreenshots = files.filter((file) =>
         file.startsWith(`${folderNumber}/`)
       );
-  
+
       if (archivedScreenshots.length > 0) {
         const firstScreenshot = archivedScreenshots[0];
         const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
-  
+
         setScreenshots(archivedScreenshots);
         preloadImages(archivedScreenshots, [0]);
         setCorrectMovieId(extractedMovieID);
@@ -270,19 +270,19 @@ const Game = () => {
         setMovie(null);
       }
     },
-    [movie, screenshots, currentScreenshotIndex, highestIndexReached, 
-     revealedScreenshots, guesses, guessesLeft, gameStatus, showResult, 
-     correctMovieId, gameEnded, hasUpdatedStats, preloadImages]
+    [movie, screenshots, currentScreenshotIndex, highestIndexReached,
+      revealedScreenshots, guesses, guessesLeft, gameStatus, showResult,
+      correctMovieId, gameEnded, hasUpdatedStats, preloadImages]
   );
 
   React.useEffect(() => {
     const savedState = Cookies.get("gameState");
     const savedMinute = Cookies.get("gameMinute");
     const currentMinute = getCurrentMinuteIndex().toString();
-  
+
     if (savedState && savedMinute === currentMinute) {
       const parsedState = JSON.parse(savedState);
-      
+
       if (!parsedState.isArchiveGame) {
         setMovie(parsedState.movie);
         setScreenshots(parsedState.screenshots);
@@ -295,7 +295,7 @@ const Game = () => {
         setShowResult(parsedState.showResult);
         setGameEnded(parsedState.gameEnded || false);
         setIsArchiveGame(false);
-  
+
         if (parsedState.screenshots.length > 0) {
           const firstScreenshot = parsedState.screenshots[0];
           const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
@@ -393,7 +393,7 @@ const Game = () => {
         gameEnded,
         isArchiveGame: false,
       };
-  
+
       Cookies.set("gameState", JSON.stringify(gameState), {
         expires: getNextGameTime(),
       });
@@ -431,22 +431,22 @@ const Game = () => {
       });
       return;
     }
-  
+
     const newGuess = {
       title: input,
       date,
       isCorrect: movieId.toString() === correctMovieId,
       movieId,
     };
-  
+
     setGuesses((prev) => [...prev, newGuess]);
-  
+
     if (newGuess.isCorrect) {
       // Only fetch movie details when the correct guess is made
       await fetchMovie(correctMovieId);
       setGameStatus("won");
       setGameEnded(true);
-  
+
       if (!isArchiveGame && savedGameState) {
         setSavedGameState({
           ...savedGameState,
@@ -465,7 +465,7 @@ const Game = () => {
           fetchMovie(correctMovieId);
           setGameStatus("lost");
           setGameEnded(true);
-  
+
           if (!isArchiveGame && savedGameState) {
             setSavedGameState({
               ...savedGameState,
@@ -492,7 +492,7 @@ const Game = () => {
         return newGuessesLeft;
       });
     }
-  
+
     // Only update distribution for the current game, not archived games
     if (!isArchiveGame && newGuess.isCorrect) {
       const newDistribution = [...guessDistribution];
@@ -519,14 +519,14 @@ const Game = () => {
         10
       );
       const previousWins = parseInt(Cookies.get("wins") || "0", 10);
-  
+
       const gamesPlayed = previousGamesPlayed + 1;
       const wins = gameStatus === "won" ? previousWins + 1 : previousWins;
       const winRate = Math.round((wins / gamesPlayed) * 100);
-  
+
       const currentStreak = gameStatus === "won" ? stats.currentStreak + 1 : 0;
       const maxStreak = Math.max(stats.maxStreak, currentStreak);
-  
+
       const newDistribution = [...guessDistribution];
       if (gameStatus === "won") {
         const guessCount = guesses.length;
@@ -534,19 +534,19 @@ const Game = () => {
         setGuessDistribution(newDistribution);
         Cookies.set("guessDistribution", JSON.stringify(newDistribution));
       }
-  
+
       Cookies.set("gamesPlayed", gamesPlayed.toString());
       Cookies.set("wins", wins.toString());
       Cookies.set("currentStreak", currentStreak.toString());
       Cookies.set("maxStreak", maxStreak.toString());
-  
+
       setStats({
         gamesPlayed,
         winRate,
         currentStreak,
         maxStreak,
       });
-  
+
       setHasUpdatedStats(true);
       setShowResult(true);
       setShowStatsModal(true);
@@ -598,14 +598,17 @@ const Game = () => {
   };
 
   const generateShareText = () => {
-    const greenSquares = "🟩".repeat(guesses.length);
-    const graySquares = "⬜".repeat(6 - guesses.length);
-    const redSquares = "🟥".repeat(6);
     const gameNumber = screenshots[0]?.split("/")[0] || "0";
 
-    return gameStatus === "won"
-      ? `Muizzle #${gameNumber}\n${greenSquares}${graySquares}\nPlay now at: ${SITE_URL}`
-      : `Muizzle #${gameNumber}\n${redSquares}\nPlay now at: ${SITE_URL}`;
+    if (gameStatus === "won") {
+      const wrongGuesses = "🟥".repeat(guesses.length - 1);
+      const correctGuess = "🟩";
+      const remainingSquares = "⬜".repeat(6 - guesses.length);
+      return `Muizzle #${gameNumber}\n${wrongGuesses}${correctGuess}${remainingSquares}\nPlay now at: ${SITE_URL}`;
+    } else {
+      const redSquares = "🟥".repeat(6);
+      return `Muizzle #${gameNumber}\n${redSquares}\nPlay now at: ${SITE_URL}`;
+    }
   };
 
   const copyToClipboard = async () => {
@@ -640,33 +643,33 @@ const Game = () => {
         onSelectArchive={loadArchivedGame}
       />
       {isArchiveGame && (
-  <GrReturn 
-    className="return-button" 
-    size={40}
-    onClick={() => {
-      if (savedGameState) {
-        setGameEnded(false);
-        setHasUpdatedStats(false);
-        setMovie(savedGameState.movie);
-        setScreenshots(savedGameState.screenshots);
-        setCurrentScreenshotIndex(savedGameState.currentScreenshotIndex);
-        setHighestIndexReached(savedGameState.highestIndexReached);
-        setRevealedScreenshots(savedGameState.revealedScreenshots);
-        setGuesses(savedGameState.guesses);
-        setGuessesLeft(savedGameState.guessesLeft);
-        setGameStatus(savedGameState.gameStatus);
-        setShowResult(savedGameState.showResult);
-        setCorrectMovieId(savedGameState.correctMovieId);
-        setSavedGameState(null);
-      } else {
-        loadMinuteScreenshot();
-      }
-      setIsArchiveGame(false);
-      setShowStatsModal(false);
-      setShowResult(false);
-    }}
-  />
-)}
+        <GrReturn
+          className="return-button"
+          size={40}
+          onClick={() => {
+            if (savedGameState) {
+              setGameEnded(false);
+              setHasUpdatedStats(false);
+              setMovie(savedGameState.movie);
+              setScreenshots(savedGameState.screenshots);
+              setCurrentScreenshotIndex(savedGameState.currentScreenshotIndex);
+              setHighestIndexReached(savedGameState.highestIndexReached);
+              setRevealedScreenshots(savedGameState.revealedScreenshots);
+              setGuesses(savedGameState.guesses);
+              setGuessesLeft(savedGameState.guessesLeft);
+              setGameStatus(savedGameState.gameStatus);
+              setShowResult(savedGameState.showResult);
+              setCorrectMovieId(savedGameState.correctMovieId);
+              setSavedGameState(null);
+            } else {
+              loadMinuteScreenshot();
+            }
+            setIsArchiveGame(false);
+            setShowStatsModal(false);
+            setShowResult(false);
+          }}
+        />
+      )}
       <Modal
         isOpen={showStatsModal}
         onRequestClose={() => setShowStatsModal(false)}
@@ -693,17 +696,21 @@ const Game = () => {
         />
         <button onClick={() => setShowStatsModal(false)}>Close</button>
       </Modal>
-      {/* {screenshots[0]?.split("/")[0] !== '1' &&  */}
-      <button className="archive-button" onClick={() => setShowArchive(true)}>
-        Open Archives
-      </button>
-      {/* } */}
-      <IoIosStats
-        size={36}
-        color="#FF2247"
-        className="stats-button"
-        onClick={() => setShowStatsModal(true)}
-      />
+      {stats.gamesPlayed > 0 &&
+        <>
+          {/* {screenshots[0]?.split("/")[0] !== '1' &&  */}
+          <button className="archive-button" onClick={() => setShowArchive(true)}>
+            Open Archives
+          </button>
+          {/* } */}
+          <IoIosStats
+            size={36}
+            color="#FF2247"
+            className="stats-button"
+            onClick={() => setShowStatsModal(true)}
+          />
+        </>
+      }
       <div className="container">
         {isArchiveGame && <div className="archive-badge">Archived Game</div>}
         {isLoading ? (
@@ -760,24 +767,36 @@ const Game = () => {
                 {new Date(movie?.release_date || "").getFullYear()})
               </strong>
             </p>
-            <span className="result-desc">
+            {!isArchiveGame && <span className="result-desc">
               <p className="result-text">
                 You guessed correctly in {guesses.length}{" "}
                 {guesses.length === 1 ? "try!" : "tries!"}
               </p>
               <div className="result-icons">
                 <span className="result-boxes">
-                  {Array.from({ length: 6 }).map((_, index) => (
-                    <FaSquare
-                      key={index}
-                      color={index < guesses.length ? "green" : "gray"}
-                      size={25}
-                    />
-                  ))}
+                  {Array.from({ length: 6 }).map((_, index) => {
+                    let color = "gray";
+
+                    if (index < guesses.length) {
+                      if (gameStatus === "won" && index === guesses.length - 1) {
+                        color = "green";
+                      } else {
+                        color = "#FF2247";
+                      }
+                    }
+
+                    return (
+                      <FaSquare
+                        key={index}
+                        color={color}
+                        size={25}
+                      />
+                    );
+                  })}
                 </span>
                 <FaRegCopy className="result-copy" onClick={copyToClipboard} size={20} />
               </div>
-            </span>
+            </span>}
           </span>
         )}
         {movie && showResult && gameStatus === "lost" && (
@@ -788,7 +807,7 @@ const Game = () => {
                 {movie?.title || ''} ({new Date(movie?.release_date || '').getFullYear()})
               </strong>
             </p>
-            <span className="result-desc">
+            {!isArchiveGame && <span className="result-desc">
               <p className="result-text">
                 You didn't get it this time :(
               </p>
@@ -804,7 +823,7 @@ const Game = () => {
                 </span>
                 <FaRegCopy className="result-copy" onClick={copyToClipboard} size={20} />
               </div>
-            </span>
+            </span>}
           </span>
         )}
       </div>
