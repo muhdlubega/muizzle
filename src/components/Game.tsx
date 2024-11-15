@@ -23,7 +23,6 @@ import Archive from "./Archive";
 import { Loader } from "./Loader";
 import ShareStats from "./ShareStats";
 import { FaRegCopy, FaSquare } from "react-icons/fa";
-import { PiKeyReturn } from "react-icons/pi";
 import { GrReturn } from "react-icons/gr";
 
 const SITE_URL = window.location.origin;
