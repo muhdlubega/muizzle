@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaFacebook, FaTwitter, FaTiktok, FaWhatsapp, FaCopy } from 'react-icons/fa';
+import { FaFacebook, FaTwitter, FaWhatsapp, FaCopy } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import '../styles/ShareStats.css'
 
@@ -61,16 +61,6 @@ const ShareStats: React.FC<ShareStatsProps> = ({
     }
   };
 
-  const shareToTikTok = () => {
-    try {
-      const text = `${generateShareText()}\n\nGame Logo: ${LOGO_URL}`;
-      const shareUrl = `https://www.tiktok.com/share?text=${encodeURIComponent(text)}`;
-      window.open(shareUrl, '_blank', 'width=600,height=400');
-    } catch (error) {
-      handleShareError('TikTok', error as Error);
-    }
-  };
-
   const shareToWhatsApp = () => {
     try {
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -126,14 +116,6 @@ const ShareStats: React.FC<ShareStatsProps> = ({
           title="Share to X (Twitter)"
         >
           <FaTwitter size={24} />
-        </button>
-        <button
-          className="share-button tiktok"
-          onClick={shareToTikTok}
-          aria-label="Share to TikTok"
-          title="Share to TikTok"
-        >
-          <FaTiktok size={24} />
         </button>
         <button
           className="share-button whatsapp"

@@ -1,53 +1,35 @@
-// export const getNextGameTime = () => {
-//     const now = new Date();
-//     const tomorrow = new Date(now);
-//     tomorrow.setDate(tomorrow.getDate() + 1);
-//     tomorrow.setHours(10, 0, 0, 0);
-//     return tomorrow;
-//  };
-
-// export const getNextGameTime = () => {
-//   const now = new Date();
-//   const nextMinute = new Date(now.getTime() + (60 - now.getSeconds()) * 1000);
-//   nextMinute.setMilliseconds(0);
-//   return nextMinute;
-// };
-
-// export const getCurrentDay = () => {
-//   const testDate = new Date();
-//   testDate.setHours(testDate.getHours() - 3);
-
-//   const startDate = new Date(
-//     testDate.getFullYear(),
-//     testDate.getMonth(),
-//     testDate.getDate(),
-//     testDate.getHours()
-//   );
-
-//   // const startDate = new Date('2024-11-08');
-//   const now = new Date();
-//   const diffTime = Math.abs(now.getTime() - startDate.getTime());
-//   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-//   return diffDays;
-// };
-
 export const getNextGameTime = () => {
   const now = new Date();
-  const nextMinute = new Date(now.getTime() + (60 - now.getSeconds()) * 1000);
-  nextMinute.setMilliseconds(0);
-  return nextMinute;
+  const malaysiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
+  
+  const baseTime = new Date(malaysiaTime);
+  baseTime.setHours(16, 0, 0, 0);
+  
+  let nextGameTime = new Date(baseTime);
+  
+  while (nextGameTime <= malaysiaTime) {
+    nextGameTime.setHours(nextGameTime.getHours() + 6);
+  }
+  
+  return nextGameTime;
 };
 
 export const getCurrentMinuteIndex = () => {
   const now = new Date();
-  const startTime = new Date();
-  startTime.setHours(0, 0, 0, 0); // Start of the day
+  const malaysiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
   
-  const diffTime = now.getTime() - startTime.getTime();
-  const diffMinutes = Math.floor(diffTime / (1000 * 60));
+  // Set reference time to the first game of the day (4:00 PM Malaysia time)
+  const referenceTime = new Date(malaysiaTime);
+  referenceTime.setHours(16, 0, 0, 0);
   
-  // If you want to cycle through your screenshot sets, use modulo
-  // For example, if you have 7 sets of screenshots:
-  return (diffMinutes % 7) + 1; // Returns 1-7
+  // If current time is before 4:00 PM, use previous day's 4:00 PM as reference
+  if (malaysiaTime < referenceTime) {
+    referenceTime.setDate(referenceTime.getDate() - 1);
+  }
+  
+  // Calculate how many 6-hour periods have passed since reference time
+  const diffTime = malaysiaTime.getTime() - referenceTime.getTime();
+  const periodsPassed = Math.floor(diffTime / (6 * 60 * 60 * 1000));
+  
+  return (periodsPassed % 7) + 1;
 };

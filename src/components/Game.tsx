@@ -116,9 +116,8 @@ const Game = () => {
               break;
             default:
               toast.error(
-                `Error: ${
-                  error.response.data.status_message ||
-                  "Failed to fetch movie data"
+                `Error: ${error.response.data.status_message ||
+                "Failed to fetch movie data"
                 }. Please try again later`,
                 toastConfig
               );
@@ -273,12 +272,14 @@ const Game = () => {
       const nextGame = getNextGameTime();
       const diff = nextGame.getTime() - now.getTime();
 
-      const minutes = Math.floor(diff / (1000 * 60));
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
       setTimeUntilNextGame(
-        `${minutes.toString().padStart(2, "0")}:${seconds
+        `${hours.toString().padStart(2, "0")}:${minutes
           .toString()
-          .padStart(2, "0")}`
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
       );
 
       const newMinuteIndex = getCurrentMinuteIndex();
@@ -333,7 +334,6 @@ const Game = () => {
       }, 500);
     }
   }, [gameStatus, showResult]);
-  console.log(gameStatus);
 
   React.useEffect(() => {
     if (movie) {
@@ -591,9 +591,10 @@ const Game = () => {
         />
         <button onClick={() => setShowStatsModal(false)}>Close</button>
       </Modal>
+      {screenshots[0]?.split("/")[0] !== '1' && 
       <button className="archive-button" onClick={() => setShowArchive(true)}>
         Open Archives
-      </button>
+      </button>}
       <IoIosStats
         size={36}
         color="#FF2247"
@@ -615,21 +616,25 @@ const Game = () => {
                 alt="Movie Screenshot"
               />
             </div>
+
+            <div className="next-game">
+              <p>Next movie releasing in</p>
+              <div className="countdown">{timeUntilNextGame}</div>
+            </div>
             <div className="screenshot-thumbnails">
               {Array(6)
                 .fill(null)
                 .map((_, index) => (
                   <div key={index} className="thumbnail-box">
                     {gameStatus === "won" ||
-                    gameStatus === "lost" ||
-                    index <= highestIndexReached ||
-                    revealedScreenshots.includes(screenshots[index]) ? (
+                      gameStatus === "lost" ||
+                      index <= highestIndexReached ||
+                      revealedScreenshots.includes(screenshots[index]) ? (
                       <img
                         src={`/screenshots/${screenshots[index]}`}
                         alt={`Screenshot ${index + 1}`}
-                        className={`thumbnail-image ${
-                          index === currentScreenshotIndex ? "active" : ""
-                        }`}
+                        className={`thumbnail-image ${index === currentScreenshotIndex ? "active" : ""
+                          }`}
                         onClick={() => handleThumbnailClick(index)}
                       />
                     ) : (
@@ -657,16 +662,18 @@ const Game = () => {
                 You guessed correctly in {guesses.length}{" "}
                 {guesses.length === 1 ? "try!" : "tries!"}
               </p>
-              <span className="result-boxes">
-                {Array.from({ length: 6 }).map((_, index) => (
-                  <FaSquare
-                    key={index}
-                    color={index < guesses.length ? "green" : "gray"}
-                    size={25}
-                  />
-                ))}
-              </span>
-              <FaRegCopy className="result-copy" onClick={copyToClipboard} size={20} />
+              <div className="result-icons">
+                <span className="result-boxes">
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <FaSquare
+                      key={index}
+                      color={index < guesses.length ? "green" : "gray"}
+                      size={25}
+                    />
+                  ))}
+                </span>
+                <FaRegCopy className="result-copy" onClick={copyToClipboard} size={20} />
+              </div>
             </span>
           </span>
         )}
@@ -678,21 +685,22 @@ const Game = () => {
                 {movie?.title || ''} ({new Date(movie?.release_date || '').getFullYear()})
               </strong>
             </p>
-
             <span className="result-desc">
               <p className="result-text">
                 You didn't get it this time :(
               </p>
-              <span className="result-boxes">
-                {Array.from({ length: 6 }).map((_, index) => (
-                  <FaSquare
-                    key={index}
-                    color='red'
-                    size={25}
-                  />
-                ))}
-              </span>
-              <FaRegCopy className="result-copy" onClick={copyToClipboard} size={20} />
+              <div className="result-icons">
+                <span className="result-boxes">
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <FaSquare
+                      key={index}
+                      color='red'
+                      size={25}
+                    />
+                  ))}
+                </span>
+                <FaRegCopy className="result-copy" onClick={copyToClipboard} size={20} />
+              </div>
             </span>
           </span>
         )}
@@ -716,10 +724,6 @@ const Game = () => {
             </li>
           ))}
         </ul>
-      </div>
-      <div className="next-game">
-        <p>Next movie releasing in</p>
-        <div className="countdown">{timeUntilNextGame}</div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from 'react-modal';
 import { files } from '../data/screenshots';
+import { getCurrentMinuteIndex } from '../utils/timeUtils';
 
 interface ArchiveProps {
   isOpen: boolean;
@@ -10,10 +11,17 @@ interface ArchiveProps {
 
 const Archive: React.FC<ArchiveProps> = ({ isOpen, onClose, onSelectArchive }) => {
   const folders = React.useMemo(() => {
+    const currentIndex = getCurrentMinuteIndex();
+    
     const uniqueFolders = new Set(
-      files.map(file => file.split('/')[0]).sort((a, b) => Number(a) - Number(b))
+      files.map(file => file.split('/')[0])
     );
-    return Array.from(uniqueFolders);
+
+    return Array.from(uniqueFolders)
+      .map(Number)
+      .filter(folder => folder < currentIndex)
+      .sort((a, b) => b - a)
+      .map(String);
   }, []);
 
   return (
