@@ -413,20 +413,31 @@ const Game = () => {
       });
       return;
     }
-
+  
     const newGuess = {
       title: input,
       date,
       isCorrect: movieId.toString() === correctMovieId,
       movieId,
     };
-
+  
     setGuesses((prev) => [...prev, newGuess]);
-
+  
     if (newGuess.isCorrect) {
       // Only fetch movie details when the correct guess is made
       await fetchMovie(correctMovieId);
       setGameStatus("won");
+  
+      if (!isArchiveGame && savedGameState) {
+        setSavedGameState({
+          ...savedGameState,
+          movie: savedGameState.movie,
+          guesses: savedGameState.guesses,
+          gameStatus: savedGameState.gameStatus,
+          guessesLeft: savedGameState.guessesLeft,
+          showResult: savedGameState.showResult,
+        });
+      }
     } else {
       setGuessesLeft((prev) => {
         const newGuessesLeft = prev - 1;
@@ -434,6 +445,17 @@ const Game = () => {
           // Fetch movie details when player runs out of guesses
           fetchMovie(correctMovieId);
           setGameStatus("lost");
+  
+          if (!isArchiveGame && savedGameState) {
+            setSavedGameState({
+              ...savedGameState,
+              movie: savedGameState.movie,
+              guesses: savedGameState.guesses,
+              gameStatus: savedGameState.gameStatus,
+              guessesLeft: savedGameState.guessesLeft,
+              showResult: savedGameState.showResult,
+            });
+          }
         } else if (currentScreenshotIndex < screenshots.length - 1) {
           setCurrentScreenshotIndex(highestIndexReached);
           const newIndex = highestIndexReached + 1;
@@ -450,7 +472,8 @@ const Game = () => {
         return newGuessesLeft;
       });
     }
-
+  
+    // Only update distribution for the current game, not archived games
     if (!isArchiveGame && newGuess.isCorrect) {
       const newDistribution = [...guessDistribution];
       newDistribution[guessCount - 1] += 1;
@@ -476,14 +499,14 @@ const Game = () => {
         10
       );
       const previousWins = parseInt(Cookies.get("wins") || "0", 10);
-
+  
       const gamesPlayed = previousGamesPlayed + 1;
       const wins = gameStatus === "won" ? previousWins + 1 : previousWins;
       const winRate = Math.round((wins / gamesPlayed) * 100);
-
+  
       const currentStreak = gameStatus === "won" ? stats.currentStreak + 1 : 0;
       const maxStreak = Math.max(stats.maxStreak, currentStreak);
-
+  
       const newDistribution = [...guessDistribution];
       if (gameStatus === "won") {
         const guessCount = guesses.length;
@@ -491,19 +514,19 @@ const Game = () => {
         setGuessDistribution(newDistribution);
         Cookies.set("guessDistribution", JSON.stringify(newDistribution));
       }
-
+  
       Cookies.set("gamesPlayed", gamesPlayed.toString());
       Cookies.set("wins", wins.toString());
       Cookies.set("currentStreak", currentStreak.toString());
       Cookies.set("maxStreak", maxStreak.toString());
-
+  
       setStats({
         gamesPlayed,
         winRate,
         currentStreak,
         maxStreak,
       });
-
+  
       setHasUpdatedStats(true);
       setShowResult(true);
       setShowStatsModal(true);
