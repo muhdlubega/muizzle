@@ -10,20 +10,23 @@ interface ArchiveProps {
 }
 
 const Archive: React.FC<ArchiveProps> = ({ isOpen, onClose, onSelectArchive }) => {
+  // const folders = React.useMemo(() => {
+  //   const uniqueFolders = new Set(
+  //     files.map(file => file.split('/')[0]).sort((a, b) => Number(a) - Number(b))
+  //   );
+  //   return Array.from(uniqueFolders);
+  // }, []);
   const folders = React.useMemo(() => {
     const currentIndex = getCurrentMinuteIndex().toString();
-    console.log(currentIndex)
     
     const uniqueFolders = new Set(
       files.map(file => file.split('/')[0]).sort((a, b) => Number(a) - Number(b))
     );
-    console.log(uniqueFolders)
 
     return Array.from(uniqueFolders).filter(folder => {
       return folder !== currentIndex;
     });
   }, []);
-  console.log(folders)
 
   return (
     <Modal
