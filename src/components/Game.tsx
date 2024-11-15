@@ -254,7 +254,6 @@ const Game = () => {
         preloadImages(archivedScreenshots, [0]);
         setCorrectMovieId(extractedMovieID);
         setIsArchiveGame(true);
-  
         setGuesses([]);
         setGuessesLeft(6);
         setGameStatus("playing");
@@ -263,6 +262,7 @@ const Game = () => {
         setHighestIndexReached(0);
         setRevealedScreenshots([]);
         setMovie(null);
+        setGameEnded(false);
       }
     },
     [movie, screenshots, currentScreenshotIndex, highestIndexReached, 
@@ -274,24 +274,30 @@ const Game = () => {
     const savedState = Cookies.get("gameState");
     const savedMinute = Cookies.get("gameMinute");
     const currentMinute = getCurrentMinuteIndex().toString();
-
+  
     if (savedState && savedMinute === currentMinute) {
       const parsedState = JSON.parse(savedState);
-      setMovie(parsedState.movie);
-      setScreenshots(parsedState.screenshots);
-      setCurrentScreenshotIndex(parsedState.currentScreenshotIndex);
-      setHighestIndexReached(parsedState.highestIndexReached);
-      setRevealedScreenshots(parsedState.revealedScreenshots);
-      setGuesses(parsedState.guesses);
-      setGuessesLeft(parsedState.guessesLeft);
-      setGameStatus(parsedState.gameStatus);
-      setShowResult(parsedState.showResult);
-      setGameEnded(parsedState.gameEnded || false);
-
-      if (parsedState.screenshots.length > 0) {
-        const firstScreenshot = parsedState.screenshots[0];
-        const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
-        setCorrectMovieId(extractedMovieID);
+      
+      if (!parsedState.isArchiveGame) {
+        setMovie(parsedState.movie);
+        setScreenshots(parsedState.screenshots);
+        setCurrentScreenshotIndex(parsedState.currentScreenshotIndex);
+        setHighestIndexReached(parsedState.highestIndexReached);
+        setRevealedScreenshots(parsedState.revealedScreenshots);
+        setGuesses(parsedState.guesses);
+        setGuessesLeft(parsedState.guessesLeft);
+        setGameStatus(parsedState.gameStatus);
+        setShowResult(parsedState.showResult);
+        setGameEnded(parsedState.gameEnded || false);
+        setIsArchiveGame(false);
+  
+        if (parsedState.screenshots.length > 0) {
+          const firstScreenshot = parsedState.screenshots[0];
+          const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
+          setCorrectMovieId(extractedMovieID);
+        }
+      } else {
+        loadMinuteScreenshot();
       }
     } else {
       loadMinuteScreenshot();
@@ -368,7 +374,7 @@ const Game = () => {
   }, [gameStatus, showResult]);
 
   React.useEffect(() => {
-    if (movie) {
+    if (movie && !isArchiveGame) {
       const gameState = {
         movie,
         screenshots,
@@ -380,8 +386,9 @@ const Game = () => {
         gameStatus,
         showResult,
         gameEnded,
+        isArchiveGame: false,
       };
-
+  
       Cookies.set("gameState", JSON.stringify(gameState), {
         expires: getNextGameTime(),
       });
@@ -397,6 +404,7 @@ const Game = () => {
     gameStatus,
     showResult,
     gameEnded,
+    isArchiveGame,
   ]);
 
   const handleGuess = async (
