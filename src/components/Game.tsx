@@ -68,6 +68,7 @@ const Game = () => {
   const [showResult, setShowResult] = React.useState(false);
   const [timeUntilNextGame, setTimeUntilNextGame] = React.useState("");
   const [showStatsModal, setShowStatsModal] = React.useState(false);
+  const [gameEnded, setGameEnded] = React.useState(false);
   const [showArchive, setShowArchive] = React.useState(false);
   const [isArchiveGame, setIsArchiveGame] = React.useState(false);
   const [stats, setStats] = React.useState({
@@ -223,6 +224,7 @@ const Game = () => {
       setIsArchiveGame(false);
       Cookies.set("gameMinute", minuteIndex.toString());
     }
+    setGameEnded(false);
   }, [preloadImages]);
 
   const loadArchivedGame = React.useCallback(
@@ -272,7 +274,7 @@ const Game = () => {
     const savedState = Cookies.get("gameState");
     const savedMinute = Cookies.get("gameMinute");
     const currentMinute = getCurrentMinuteIndex().toString();
-  
+
     if (savedState && savedMinute === currentMinute) {
       const parsedState = JSON.parse(savedState);
       setMovie(parsedState.movie);
@@ -284,8 +286,8 @@ const Game = () => {
       setGuessesLeft(parsedState.guessesLeft);
       setGameStatus(parsedState.gameStatus);
       setShowResult(parsedState.showResult);
-      setHasUpdatedStats(parsedState.hasUpdatedStats);
-  
+      setGameEnded(parsedState.gameEnded || false);
+
       if (parsedState.screenshots.length > 0) {
         const firstScreenshot = parsedState.screenshots[0];
         const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
@@ -377,9 +379,9 @@ const Game = () => {
         guessesLeft,
         gameStatus,
         showResult,
-        hasUpdatedStats,
+        gameEnded,
       };
-  
+
       Cookies.set("gameState", JSON.stringify(gameState), {
         expires: getNextGameTime(),
       });
@@ -394,7 +396,7 @@ const Game = () => {
     guessesLeft,
     gameStatus,
     showResult,
-    hasUpdatedStats,
+    gameEnded,
   ]);
 
   const handleGuess = async (
@@ -430,6 +432,7 @@ const Game = () => {
       // Only fetch movie details when the correct guess is made
       await fetchMovie(correctMovieId);
       setGameStatus("won");
+      setGameEnded(true);
   
       if (!isArchiveGame && savedGameState) {
         setSavedGameState({
@@ -448,6 +451,7 @@ const Game = () => {
           // Fetch movie details when player runs out of guesses
           fetchMovie(correctMovieId);
           setGameStatus("lost");
+          setGameEnded(true);
   
           if (!isArchiveGame && savedGameState) {
             setSavedGameState({
@@ -493,53 +497,50 @@ const Game = () => {
 
   React.useEffect(() => {
     if (
-      (gameStatus === "won" || gameStatus === "lost") &&
+      gameEnded &&
       !hasUpdatedStats &&
       !isArchiveGame
     ) {
-      const currentMinute = getCurrentMinuteIndex().toString();
-      const savedMinute = Cookies.get("gameMinute");
-      
-      if (savedMinute === currentMinute) {
-        const previousGamesPlayed = parseInt(
-          Cookies.get("gamesPlayed") || "0",
-          10
-        );
-        const previousWins = parseInt(Cookies.get("wins") || "0", 10);
+      const previousGamesPlayed = parseInt(
+        Cookies.get("gamesPlayed") || "0",
+        10
+      );
+      const previousWins = parseInt(Cookies.get("wins") || "0", 10);
   
-        const gamesPlayed = previousGamesPlayed + 1;
-        const wins = gameStatus === "won" ? previousWins + 1 : previousWins;
-        const winRate = Math.round((wins / gamesPlayed) * 100);
+      const gamesPlayed = previousGamesPlayed + 1;
+      const wins = gameStatus === "won" ? previousWins + 1 : previousWins;
+      const winRate = Math.round((wins / gamesPlayed) * 100);
   
-        const currentStreak = gameStatus === "won" ? stats.currentStreak + 1 : 0;
-        const maxStreak = Math.max(stats.maxStreak, currentStreak);
+      const currentStreak = gameStatus === "won" ? stats.currentStreak + 1 : 0;
+      const maxStreak = Math.max(stats.maxStreak, currentStreak);
   
-        const newDistribution = [...guessDistribution];
-        if (gameStatus === "won") {
-          const guessCount = guesses.length;
-          newDistribution[guessCount - 1] += 1;
-          setGuessDistribution(newDistribution);
-          Cookies.set("guessDistribution", JSON.stringify(newDistribution));
-        }
-  
-        Cookies.set("gamesPlayed", gamesPlayed.toString());
-        Cookies.set("wins", wins.toString());
-        Cookies.set("currentStreak", currentStreak.toString());
-        Cookies.set("maxStreak", maxStreak.toString());
-  
-        setStats({
-          gamesPlayed,
-          winRate,
-          currentStreak,
-          maxStreak,
-        });
-  
-        setHasUpdatedStats(true);
-        setShowResult(true);
-        setShowStatsModal(true);
+      const newDistribution = [...guessDistribution];
+      if (gameStatus === "won") {
+        const guessCount = guesses.length;
+        newDistribution[guessCount - 1] += 1;
+        setGuessDistribution(newDistribution);
+        Cookies.set("guessDistribution", JSON.stringify(newDistribution));
       }
+  
+      Cookies.set("gamesPlayed", gamesPlayed.toString());
+      Cookies.set("wins", wins.toString());
+      Cookies.set("currentStreak", currentStreak.toString());
+      Cookies.set("maxStreak", maxStreak.toString());
+  
+      setStats({
+        gamesPlayed,
+        winRate,
+        currentStreak,
+        maxStreak,
+      });
+  
+      setHasUpdatedStats(true);
+      setShowResult(true);
+      setShowStatsModal(true);
+      setGameEnded(false);
     }
   }, [
+    gameEnded,
     gameStatus,
     guesses,
     guessDistribution,
