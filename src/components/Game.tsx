@@ -90,7 +90,9 @@ const Game = () => {
     guessesLeft: number;
     gameStatus: "playing" | "won" | "lost";
     showResult: boolean;
+    gameEnded: boolean;
     correctMovieId: string;
+    hasUpdatedStats: boolean;
   } | null>(null);
 
   const API_KEY: string = import.meta.env.VITE_APP_TMDB_API_KEY;
@@ -240,6 +242,8 @@ const Game = () => {
         gameStatus,
         showResult,
         correctMovieId,
+        gameEnded, 
+        hasUpdatedStats, 
       });
   
       const archivedScreenshots = files.filter((file) =>
@@ -254,6 +258,8 @@ const Game = () => {
         preloadImages(archivedScreenshots, [0]);
         setCorrectMovieId(extractedMovieID);
         setIsArchiveGame(true);
+        setGameEnded(false);
+        setHasUpdatedStats(false);
         setGuesses([]);
         setGuessesLeft(6);
         setGameStatus("playing");
@@ -262,12 +268,11 @@ const Game = () => {
         setHighestIndexReached(0);
         setRevealedScreenshots([]);
         setMovie(null);
-        setGameEnded(false);
       }
     },
     [movie, screenshots, currentScreenshotIndex, highestIndexReached, 
      revealedScreenshots, guesses, guessesLeft, gameStatus, showResult, 
-     correctMovieId, preloadImages]
+     correctMovieId, gameEnded, hasUpdatedStats, preloadImages]
   );
 
   React.useEffect(() => {
@@ -635,29 +640,33 @@ const Game = () => {
         onSelectArchive={loadArchivedGame}
       />
       {isArchiveGame && (
-    <GrReturn 
-      className="return-button" 
-      size={40}
-      onClick={() => {
-        if (savedGameState) {
-          setMovie(savedGameState.movie);
-          setScreenshots(savedGameState.screenshots);
-          setCurrentScreenshotIndex(savedGameState.currentScreenshotIndex);
-          setHighestIndexReached(savedGameState.highestIndexReached);
-          setRevealedScreenshots(savedGameState.revealedScreenshots);
-          setGuesses(savedGameState.guesses);
-          setGuessesLeft(savedGameState.guessesLeft);
-          setGameStatus(savedGameState.gameStatus);
-          setShowResult(savedGameState.showResult);
-          setCorrectMovieId(savedGameState.correctMovieId);
-          setSavedGameState(null);
-        } else {
-          loadMinuteScreenshot();
-        }
-        setIsArchiveGame(false);
-      }}
-    />
-  )}
+  <GrReturn 
+    className="return-button" 
+    size={40}
+    onClick={() => {
+      if (savedGameState) {
+        setGameEnded(false);
+        setHasUpdatedStats(false);
+        setMovie(savedGameState.movie);
+        setScreenshots(savedGameState.screenshots);
+        setCurrentScreenshotIndex(savedGameState.currentScreenshotIndex);
+        setHighestIndexReached(savedGameState.highestIndexReached);
+        setRevealedScreenshots(savedGameState.revealedScreenshots);
+        setGuesses(savedGameState.guesses);
+        setGuessesLeft(savedGameState.guessesLeft);
+        setGameStatus(savedGameState.gameStatus);
+        setShowResult(savedGameState.showResult);
+        setCorrectMovieId(savedGameState.correctMovieId);
+        setSavedGameState(null);
+      } else {
+        loadMinuteScreenshot();
+      }
+      setIsArchiveGame(false);
+      setShowStatsModal(false);
+      setShowResult(false);
+    }}
+  />
+)}
       <Modal
         isOpen={showStatsModal}
         onRequestClose={() => setShowStatsModal(false)}
