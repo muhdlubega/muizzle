@@ -686,7 +686,7 @@ const Game = () => {
       {isArchiveGame && (
         <RiArrowGoBackFill
         className="return-button"
-        size={40}
+        size={32}
         onClick={returnToCurrentGame}
       />
       )}
