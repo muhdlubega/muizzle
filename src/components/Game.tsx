@@ -10,6 +10,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { IoIosStats } from "react-icons/io";
 import { Bar } from "react-chartjs-2";
+import { useTour } from "@reactour/tour";
 import {
   Chart as ChartJS,
   BarElement,
@@ -24,6 +25,7 @@ import { Loader } from "./Loader";
 import ShareStats from "./ShareStats";
 import { FaRegCopy, FaSquare } from "react-icons/fa";
 import { GrReturn } from "react-icons/gr";
+import { RiSlideshow3Line } from "react-icons/ri";
 
 const SITE_URL = window.location.origin;
 
@@ -94,6 +96,13 @@ const Game = () => {
     correctMovieId: string;
     hasUpdatedStats: boolean;
   } | null>(null);
+
+  const { setIsOpen, setCurrentStep } = useTour();
+
+  const handleTourStart = () => {
+    setCurrentStep(0);
+    setIsOpen(true);
+  };
 
   const API_KEY: string = import.meta.env.VITE_APP_TMDB_API_KEY;
   const fetchMovie = React.useCallback(
@@ -699,14 +708,14 @@ const Game = () => {
       {stats.gamesPlayed > 0 &&
         <>
           {/* {screenshots[0]?.split("/")[0] !== '1' &&  */}
-          <button className="archive-button" onClick={() => setShowArchive(true)}>
+          <button className="archive-button onboarding05" onClick={() => setShowArchive(true)}>
             Open Archives
           </button>
           {/* } */}
           <IoIosStats
             size={36}
             color="#FF2247"
-            className="stats-button"
+            className="stats-button onboarding04"
             onClick={() => setShowStatsModal(true)}
           />
         </>
@@ -721,7 +730,7 @@ const Game = () => {
           <>
             <div className="screenshot">
               <img
-                className="screenshot-image"
+                className="screenshot-image onboarding01"
                 src={`/screenshots/${screenshots[currentScreenshotIndex]}`}
                 alt="Movie Screenshot"
               />
@@ -731,7 +740,7 @@ const Game = () => {
               <p>Next movie releasing in</p>
               <div className="countdown">{timeUntilNextGame}</div>
             </div>
-            <div className="screenshot-thumbnails">
+            <div className="screenshot-thumbnails onboarding02">
               {Array(6)
                 .fill(null)
                 .map((_, index) => (
@@ -752,6 +761,7 @@ const Game = () => {
                     )}
                   </div>
                 ))}
+                <RiSlideshow3Line className="tour-button" onClick={handleTourStart} size={32} />
             </div>
           </>
         )}

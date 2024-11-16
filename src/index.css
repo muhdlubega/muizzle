@@ -11,6 +11,12 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --reactour-accent: #FF2247;
+}
+
+div.reactour__popover {
+  max-width: 320px !important;
+  padding: 16px !important;
 }
 
 a {

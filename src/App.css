@@ -246,8 +246,14 @@
 
 .screenshot-thumbnails {
   display: flex;
+  align-items: center;
   margin-bottom: 20px;
   gap: 10px;
+}
+
+.tour-button {
+  color:#FF2247;
+  cursor: pointer;
 }
 
 .thumbnail-box {

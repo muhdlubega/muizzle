@@ -65,7 +65,7 @@ const SearchBar = ({
   };
 
   return (
-    <div className="searchbar" ref={searchRef}>
+    <div className="searchbar onboarding03" ref={searchRef}>
       <form onSubmit={handleSubmit} className="search-form">
         <input
           type="text"
