@@ -217,6 +217,14 @@ const Game = () => {
     preloadImages,
   ]);
 
+  const saveGameState = (state: any) => {
+    if (!isArchiveGame) {
+      Cookies.set("gameState", JSON.stringify(state), {
+        expires: getNextGameTime(),
+      });
+    }
+  };
+
   const loadMinuteScreenshot = React.useCallback(() => {
     const minuteIndex = getCurrentMinuteIndex();
     const minuteFolder = `${minuteIndex}`;
@@ -239,29 +247,34 @@ const Game = () => {
 
   const loadArchivedGame = React.useCallback(
     (folderNumber: string) => {
-      setSavedGameState({
-        movie,
-        screenshots,
-        currentScreenshotIndex,
-        highestIndexReached,
-        revealedScreenshots,
-        guesses,
-        guessesLeft,
-        gameStatus,
-        showResult,
-        correctMovieId,
-        gameEnded,
-        hasUpdatedStats,
-      });
-
+      // Save current game state before loading archive
+      if (!isArchiveGame) {
+        const currentGameState = {
+          movie,
+          screenshots,
+          currentScreenshotIndex,
+          highestIndexReached,
+          revealedScreenshots,
+          guesses,
+          guessesLeft,
+          gameStatus,
+          showResult,
+          correctMovieId,
+          gameEnded,
+          hasUpdatedStats,
+        };
+        setSavedGameState(currentGameState);
+      }
+  
       const archivedScreenshots = files.filter((file) =>
         file.startsWith(`${folderNumber}/`)
       );
-
+  
       if (archivedScreenshots.length > 0) {
         const firstScreenshot = archivedScreenshots[0];
         const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
-
+  
+        // Reset game state for archive game
         setScreenshots(archivedScreenshots);
         preloadImages(archivedScreenshots, [0]);
         setCorrectMovieId(extractedMovieID);
@@ -282,6 +295,29 @@ const Game = () => {
       revealedScreenshots, guesses, guessesLeft, gameStatus, showResult,
       correctMovieId, gameEnded, hasUpdatedStats, preloadImages]
   );
+
+  const returnToCurrentGame = () => {
+    if (savedGameState) {
+      setMovie(savedGameState.movie);
+      setScreenshots(savedGameState.screenshots);
+      setCurrentScreenshotIndex(savedGameState.currentScreenshotIndex);
+      setHighestIndexReached(savedGameState.highestIndexReached);
+      setRevealedScreenshots(savedGameState.revealedScreenshots);
+      setGuesses(savedGameState.guesses);
+      setGuessesLeft(savedGameState.guessesLeft);
+      setGameStatus(savedGameState.gameStatus);
+      setShowResult(savedGameState.showResult);
+      setCorrectMovieId(savedGameState.correctMovieId);
+      setGameEnded(savedGameState.gameEnded);
+      setHasUpdatedStats(savedGameState.hasUpdatedStats);
+    } else {
+      loadMinuteScreenshot();
+    }
+    setIsArchiveGame(false);
+    setShowStatsModal(false);
+    setShowResult(false);
+    setSavedGameState(null);
+  };
 
   React.useEffect(() => {
     const savedState = Cookies.get("gameState");
@@ -401,10 +437,7 @@ const Game = () => {
         gameEnded,
         isArchiveGame: false,
       };
-
-      Cookies.set("gameState", JSON.stringify(gameState), {
-        expires: getNextGameTime(),
-      });
+      saveGameState(gameState);
     }
   }, [
     movie,
@@ -652,31 +685,10 @@ const Game = () => {
       />
       {isArchiveGame && (
         <RiArrowGoBackFill
-          className="return-button"
-          size={40}
-          onClick={() => {
-            if (savedGameState) {
-              setGameEnded(false);
-              setHasUpdatedStats(false);
-              setMovie(savedGameState.movie);
-              setScreenshots(savedGameState.screenshots);
-              setCurrentScreenshotIndex(savedGameState.currentScreenshotIndex);
-              setHighestIndexReached(savedGameState.highestIndexReached);
-              setRevealedScreenshots(savedGameState.revealedScreenshots);
-              setGuesses(savedGameState.guesses);
-              setGuessesLeft(savedGameState.guessesLeft);
-              setGameStatus(savedGameState.gameStatus);
-              setShowResult(savedGameState.showResult);
-              setCorrectMovieId(savedGameState.correctMovieId);
-              setSavedGameState(null);
-            } else {
-              loadMinuteScreenshot();
-            }
-            setIsArchiveGame(false);
-            setShowStatsModal(false);
-            setShowResult(false);
-          }}
-        />
+        className="return-button"
+        size={40}
+        onClick={returnToCurrentGame}
+      />
       )}
       <Modal
         isOpen={showStatsModal}
