@@ -54,7 +54,12 @@ export const getSteps = (hasStats: boolean) => {
       {
         selector: ".onboarding04",
         content: () => (
-          <p>Click on this button to check and share your stats. <strong>Disclaimer:</strong> Stats are stored in your cookies and will be reset if cookies are cleared</p>
+          <div>
+            <p>Click on this button to check and share your stats.</p>
+            <p>
+              <strong>Disclaimer:</strong> Stats are stored in your cookies and will be reset if cookies are cleared
+            </p>
+          </div>
         )
       },
       {

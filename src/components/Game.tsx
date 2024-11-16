@@ -24,8 +24,7 @@ import Archive from "./Archive";
 import { Loader } from "./Loader";
 import ShareStats from "./ShareStats";
 import { FaRegCopy, FaSquare } from "react-icons/fa";
-import { GrReturn } from "react-icons/gr";
-import { RiSlideshow3Line } from "react-icons/ri";
+import { RiArrowGoBackFill, RiSlideshow3Line } from "react-icons/ri";
 
 const SITE_URL = window.location.origin;
 
@@ -652,7 +651,7 @@ const Game = () => {
         onSelectArchive={loadArchivedGame}
       />
       {isArchiveGame && (
-        <GrReturn
+        <RiArrowGoBackFill
           className="return-button"
           size={40}
           onClick={() => {
