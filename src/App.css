@@ -1,5 +1,7 @@
 #root {
-  color: #525254
+  color: #525254;
+  background-color: #131212;
+  min-height: 100vh;
 }
 
 @keyframes floatUp {
@@ -585,7 +587,8 @@
 
   .thumbnail-box,
   .empty-box {
-    width: 40px;
+    height: 20px;
+    width: 30px;
   }
 
   .countdown {

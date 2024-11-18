@@ -265,15 +265,15 @@ const Game = () => {
         };
         setSavedGameState(currentGameState);
       }
-  
+
       const archivedScreenshots = files.filter((file) =>
         file.startsWith(`${folderNumber}/`)
       );
-  
+
       if (archivedScreenshots.length > 0) {
         const firstScreenshot = archivedScreenshots[0];
         const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
-  
+
         // Reset game state for archive game
         setScreenshots(archivedScreenshots);
         preloadImages(archivedScreenshots, [0]);
@@ -685,10 +685,10 @@ const Game = () => {
       />
       {isArchiveGame && (
         <RiArrowGoBackFill
-        className="return-button"
-        size={32}
-        onClick={returnToCurrentGame}
-      />
+          className="return-button"
+          size={32}
+          onClick={returnToCurrentGame}
+        />
       )}
       <Modal
         isOpen={showStatsModal}
@@ -718,11 +718,11 @@ const Game = () => {
       </Modal>
       {stats.gamesPlayed > 0 &&
         <>
-          {/* {screenshots[0]?.split("/")[0] !== '1' &&  */}
-          <button className="archive-button onboarding05" onClick={() => setShowArchive(true)}>
-            Open Archives
-          </button>
-          {/* } */}
+          {screenshots[0]?.split("/")[0] !== '1' &&
+            <button className="archive-button onboarding05" onClick={() => setShowArchive(true)}>
+              Open Archives
+            </button>
+          }
           <IoIosStats
             size={36}
             color="#FF2247"
@@ -772,7 +772,7 @@ const Game = () => {
                     )}
                   </div>
                 ))}
-                <RiSlideshow3Line className="tour-button" onClick={handleTourStart} size={32} />
+              <RiSlideshow3Line className="tour-button" onClick={handleTourStart} size={32} />
             </div>
           </>
         )}

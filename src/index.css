@@ -15,8 +15,9 @@
 }
 
 div.reactour__popover {
-  max-width: 320px !important;
+  max-width: 280px !important;
   padding: 16px !important;
+  margin: 0 10px;
 }
 
 a {
