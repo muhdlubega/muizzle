@@ -624,6 +624,17 @@
 }
 
 @media (max-width: 480px) {
+  .result-correct,
+  .result-wrong {
+    font-size: 14px;
+    width: unset;
+    padding: 20px 40px;
+  }
+
+  .guesses-item {
+    font-size: 14px;
+  }
+
   .next-game {
     position: relative;
     top: unset;
@@ -632,6 +643,7 @@
     margin: 0 10px 20px;
     padding: 10px 20px;
     width: 80vw;
+    font-size: 14px;
   }
 
   .screenshot {
