@@ -385,8 +385,7 @@
 .archive-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+  align-items: flex-start;
 }
 
 .archive-grid {
@@ -395,18 +394,25 @@
   gap: 1rem;
 }
 
+.archive-title {
+  margin-top: 0;
+}
+
 .archive-item {
   padding: 1rem;
-  background-color: #2a2a2a;
-  border: none;
-  border-radius: 4px;
-  color: white;
+  background-color: transparent;
+  border: 3px solid #FF2247;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #FF2247;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .archive-item:hover {
-  background-color: #3a3a3a;
+  border-color: #FF2247;
+  background-color: #FF2247;
+  color: white;
 }
 
 .game-controls {
@@ -624,6 +630,10 @@
 }
 
 @media (max-width: 480px) {
+  .archive-modal-content {
+    max-width: 280px;
+  }
+
   .result-correct,
   .result-wrong {
     font-size: 14px;

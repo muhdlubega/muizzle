@@ -2,6 +2,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import { files } from '../data/screenshots';
 import { getCurrentMinuteIndex } from '../utils/timeUtils';
+import { IoMdClose } from 'react-icons/io';
 
 interface ArchiveProps {
   isOpen: boolean;
@@ -45,8 +46,8 @@ const Archive: React.FC<ArchiveProps> = ({ isOpen, onClose, onSelectArchive }) =
       overlayClassName="archive-modal-overlay"
     >
       <div className="archive-header">
-        <h2>Try out one of the previous movies here</h2>
-        <button className="close-button" onClick={onClose}>×</button>
+        <h3 className='archive-title'>Try out one of the previous movies here</h3>
+        <IoMdClose className="close-button" onClick={onClose} />
       </div>
       <div className="archive-grid">
         {folders.map((folder) => (
