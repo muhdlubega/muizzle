@@ -732,7 +732,7 @@ const Game = () => {
         </>
       }
       <div className="container">
-        {isArchiveGame && <div className="archive-badge">Archived Game</div>}
+        {isArchiveGame && !isLoading && <div className="archive-badge">Archived Game</div>}
         {isLoading ? (
           <div className="loader-container">
             <Loader />
