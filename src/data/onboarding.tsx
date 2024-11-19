@@ -1,4 +1,5 @@
 import { useTour } from "@reactour/tour";
+import { getCurrentMinuteIndex } from "../utils/timeUtils";
 
 export const tourConfig = {
   styles: {
@@ -106,7 +107,12 @@ export const getSteps = (hasStats: boolean, screenshots: string[]) => {
   ];
 
   const hasArchives = (screenshots: string[]) => {
-    return screenshots[0]?.split("/")[0] !== '1';
+    const currentIndex = getCurrentMinuteIndex();
+    const uniqueFolders = new Set(
+      screenshots.map(screenshot => Number(screenshot.split('/')[0]))
+    );
+    
+    return Array.from(uniqueFolders).some(folder => folder < currentIndex);
   };
 
   if (hasStats) {
