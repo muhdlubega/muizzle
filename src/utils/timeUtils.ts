@@ -3,7 +3,7 @@ export const getNextGameTime = () => {
   const malaysiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
   
   const baseTime = new Date(malaysiaTime);
-  baseTime.setHours(11, 0, 0, 0);
+  baseTime.setHours(1, 0, 0, 0);
   
   let nextGameTime = new Date(baseTime);
   
@@ -20,7 +20,7 @@ export const getCurrentMinuteIndex = () => {
   
   // Set reference time to the first game of the day (11:00 AM Malaysia time)
   const referenceTime = new Date(malaysiaTime);
-  referenceTime.setHours(11, 0, 0, 0);
+  referenceTime.setHours(1, 0, 0, 0);
   
   // If current time is before 11:00 AM, use previous day's 11:00 AM as reference
   if (malaysiaTime < referenceTime) {
