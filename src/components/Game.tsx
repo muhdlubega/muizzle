@@ -718,7 +718,7 @@ const Game = () => {
       </Modal>
       {stats.gamesPlayed > 0 &&
         <>
-          {(!isArchiveGame && screenshots[0]?.split("/")[0] !== '1') &&
+          {(isArchiveGame || screenshots[0]?.split("/")[0] !== '1') &&
             <button className="archive-button onboarding05" onClick={() => setShowArchive(true)}>
               Open Archives
             </button>
