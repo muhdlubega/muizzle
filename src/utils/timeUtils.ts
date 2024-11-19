@@ -1,15 +1,14 @@
+const REFERENCE_TIME = new Date('2024-11-18T11:00:00+08:00'); // 11 AM Malaysia time on Nov 18, 2024
+
 export const getNextGameTime = () => {
   const now = new Date();
   const malaysiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
   
-  const baseTime = new Date(malaysiaTime);
-  baseTime.setHours(1, 0, 0, 0);
+  // Calculate how many 6-hour periods have passed since reference time
+  const diffTime = malaysiaTime.getTime() - REFERENCE_TIME.getTime();
+  const periodsPassed = Math.floor(diffTime / (6 * 60 * 60 * 1000));
   
-  let nextGameTime = new Date(baseTime);
-  
-  while (nextGameTime <= malaysiaTime) {
-    nextGameTime.setHours(nextGameTime.getHours() + 6);
-  }
+  const nextGameTime = new Date(REFERENCE_TIME.getTime() + (periodsPassed + 1) * 6 * 60 * 60 * 1000);
   
   return nextGameTime;
 };
@@ -18,17 +17,8 @@ export const getCurrentMinuteIndex = () => {
   const now = new Date();
   const malaysiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
   
-  // Set reference time to the first game of the day (11:00 AM Malaysia time)
-  const referenceTime = new Date(malaysiaTime);
-  referenceTime.setHours(1, 0, 0, 0);
-  
-  // If current time is before 11:00 AM, use previous day's 11:00 AM as reference
-  if (malaysiaTime < referenceTime) {
-    referenceTime.setDate(referenceTime.getDate() - 1);
-  }
-  
   // Calculate how many 6-hour periods have passed since reference time
-  const diffTime = malaysiaTime.getTime() - referenceTime.getTime();
+  const diffTime = malaysiaTime.getTime() - REFERENCE_TIME.getTime();
   const periodsPassed = Math.floor(diffTime / (6 * 60 * 60 * 1000));
   
   return (periodsPassed % 7) + 1;
