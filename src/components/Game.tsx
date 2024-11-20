@@ -1,7 +1,6 @@
 import React from "react";
 import axios from "axios";
 import SearchBar from "./SearchBar";
-import { files } from "../data/screenshots";
 import { HiCheckCircle, HiXCircle } from "react-icons/hi";
 import { getNextGameTime, getCurrentMinuteIndex } from "../utils/timeUtils";
 import Cookies from "js-cookie";
@@ -25,6 +24,7 @@ import { Loader } from "./Loader";
 import ShareStats from "./ShareStats";
 import { FaRegCopy, FaSquare } from "react-icons/fa";
 import { RiArrowGoBackFill, RiSlideshow3Line } from "react-icons/ri";
+import { imageService, Screenshot } from '../data/imageService'
 
 const SITE_URL = window.location.origin;
 
@@ -52,13 +52,13 @@ interface Guess {
 
 const Game = () => {
   const [movie, setMovie] = React.useState<Movie | null>(null);
-  const [screenshots, setScreenshots] = React.useState<string[]>([]);
+  const [screenshots, setScreenshots] = React.useState<Screenshot[]>([])
   const [isLoading, setIsLoading] = React.useState(true);
   const [correctMovieId, setCorrectMovieId] = React.useState<string>("");
   const [currentScreenshotIndex, setCurrentScreenshotIndex] = React.useState(0);
   const [highestIndexReached, setHighestIndexReached] = React.useState(0);
   const [revealedScreenshots, setRevealedScreenshots] = React.useState<
-    string[]
+    Screenshot[]
   >([]);
   const [guesses, setGuesses] = React.useState<Guess[]>([]);
   const [hasUpdatedStats, setHasUpdatedStats] = React.useState(false);
@@ -83,10 +83,10 @@ const Game = () => {
   );
   const [savedGameState, setSavedGameState] = React.useState<{
     movie: Movie | null;
-    screenshots: string[];
+    screenshots: Screenshot[];
     currentScreenshotIndex: number;
     highestIndexReached: number;
-    revealedScreenshots: string[];
+    revealedScreenshots: Screenshot[];
     guesses: Guess[];
     guessesLeft: number;
     gameStatus: "playing" | "won" | "lost";
@@ -157,17 +157,17 @@ const Game = () => {
     [API_KEY]
   );
 
-  const preloadImage = React.useCallback((imageUrl: string): Promise<void> => {
+  const preloadImage = React.useCallback((screenshot: Screenshot): Promise<void> => {
     return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => resolve();
-      img.onerror = () => resolve();
-      img.src = `/screenshots/${imageUrl}`;
-    });
-  }, []);
+      const img = new Image()
+      img.onload = () => resolve()
+      img.onerror = () => resolve()
+      img.src = screenshot.url
+    })
+  }, [])
 
   const preloadImages = React.useCallback(
-    async (imageUrls: string[], indices: number[]) => {
+    async (imageUrls: Screenshot[], indices: number[]) => {
       setIsLoading(true);
       try {
         await Promise.all(
@@ -225,28 +225,24 @@ const Game = () => {
     }
   };
 
-  const loadMinuteScreenshot = React.useCallback(() => {
-    const minuteIndex = getCurrentMinuteIndex();
-    const minuteFolder = `${minuteIndex}`;
-    const minuteScreenshots = files.filter((file) =>
-      file.startsWith(`${minuteFolder}/`)
-    );
+  const loadMinuteScreenshot = React.useCallback(async () => {
+    const minuteIndex = getCurrentMinuteIndex()
+    const minuteFolder = `${minuteIndex}`
 
-    if (minuteScreenshots.length > 0) {
-      const firstScreenshot = minuteScreenshots[0];
-      const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
+    const screenshots = await imageService.getScreenshots(minuteFolder)
 
-      setScreenshots(minuteScreenshots);
-      preloadImages(minuteScreenshots, [0]);
-      setCorrectMovieId(extractedMovieID);
-      setIsArchiveGame(false);
-      Cookies.set("gameMinute", minuteIndex.toString());
+    if (screenshots.length > 0) {
+      setScreenshots(screenshots)
+      preloadImages(screenshots, [0])
+      setCorrectMovieId(screenshots[0].movieId)
+      setIsArchiveGame(false)
+      Cookies.set("gameMinute", minuteIndex.toString())
     }
-    setGameEnded(false);
-  }, [preloadImages]);
+    setGameEnded(false)
+  }, [preloadImages])
 
   const loadArchivedGame = React.useCallback(
-    (folderNumber: string) => {
+    async (folderNumber: string) => {
       // Save current game state before loading archive
       if (!isArchiveGame) {
         const currentGameState = {
@@ -266,29 +262,36 @@ const Game = () => {
         setSavedGameState(currentGameState);
       }
 
-      const archivedScreenshots = files.filter((file) =>
-        file.startsWith(`${folderNumber}/`)
-      );
+      try {
+        const archivedScreenshots = await imageService.getScreenshots(folderNumber);
 
-      if (archivedScreenshots.length > 0) {
-        const firstScreenshot = archivedScreenshots[0];
-        const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
-
-        // Reset game state for archive game
-        setScreenshots(archivedScreenshots);
-        preloadImages(archivedScreenshots, [0]);
-        setCorrectMovieId(extractedMovieID);
-        setIsArchiveGame(true);
-        setGameEnded(false);
-        setHasUpdatedStats(false);
-        setGuesses([]);
-        setGuessesLeft(6);
-        setGameStatus("playing");
-        setShowResult(false);
-        setCurrentScreenshotIndex(0);
-        setHighestIndexReached(0);
-        setRevealedScreenshots([]);
-        setMovie(null);
+        if (archivedScreenshots.length > 0) {
+          // Reset game state for archive game
+          setScreenshots(archivedScreenshots);
+          preloadImages(archivedScreenshots, [0]);
+          setCorrectMovieId(archivedScreenshots[0].movieId);
+          setIsArchiveGame(true);
+          setGameEnded(false);
+          setHasUpdatedStats(false);
+          setGuesses([]);
+          setGuessesLeft(6);
+          setGameStatus("playing");
+          setShowResult(false);
+          setCurrentScreenshotIndex(0);
+          setHighestIndexReached(0);
+          setRevealedScreenshots([]);
+          setMovie(null);
+        }
+      } catch (error) {
+        console.error('Error loading archived game:', error);
+        toast.error("Failed to load archived game", {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
       }
     },
     [movie, screenshots, currentScreenshotIndex, highestIndexReached,
@@ -523,7 +526,7 @@ const Game = () => {
           setHighestIndexReached(newIndex);
           setRevealedScreenshots((prev) => {
             const updatedRevealed = [...prev];
-            if (!updatedRevealed.includes(screenshots[newIndex])) {
+            if (!updatedRevealed.some(screenshot => screenshot.url === screenshots[newIndex]?.url)) {
               updatedRevealed.push(screenshots[newIndex]);
             }
             return updatedRevealed;
@@ -630,7 +633,7 @@ const Game = () => {
   };
 
   const generateShareText = () => {
-    const gameNumber = screenshots[0]?.split("/")[0] || "0";
+    const gameNumber = screenshots[0]?.folder || "0";
 
     if (gameStatus === "won") {
       const wrongGuesses = "🟥".repeat(guesses.length - 1);
@@ -709,7 +712,7 @@ const Game = () => {
       </Modal>
       {stats.gamesPlayed > 0 &&
         <>
-          {(isArchiveGame || screenshots[0]?.split("/")[0] !== '1') &&
+          {(isArchiveGame || screenshots[0]?.folder !== '1') &&
             <button className="archive-button onboarding05" onClick={() => setShowArchive(true)}>
               Open Archives
             </button>
@@ -733,7 +736,7 @@ const Game = () => {
             <div className="screenshot">
               <img
                 className="screenshot-image onboarding01"
-                src={`/screenshots/${screenshots[currentScreenshotIndex]}`}
+                src={screenshots[currentScreenshotIndex]?.url}
                 alt="Movie Screenshot"
               />
             </div>
@@ -750,9 +753,11 @@ const Game = () => {
                     {gameStatus === "won" ||
                       gameStatus === "lost" ||
                       index <= highestIndexReached ||
-                      revealedScreenshots.includes(screenshots[index]) ? (
+                      revealedScreenshots.some(
+                        (revealed) => revealed.url === screenshots[index]?.url
+                      ) ? (
                       <img
-                        src={`/screenshots/${screenshots[index]}`}
+                        src={screenshots[index]?.url}
                         alt={`Screenshot ${index + 1}`}
                         className={`thumbnail-image ${index === currentScreenshotIndex ? "active" : ""
                           }`}
@@ -763,7 +768,11 @@ const Game = () => {
                     )}
                   </div>
                 ))}
-              <RiSlideshow3Line className="tour-button" onClick={handleTourStart} size={32} />
+              <RiSlideshow3Line
+                className="tour-button"
+                onClick={handleTourStart}
+                size={32}
+              />
             </div>
           </>
         )}
