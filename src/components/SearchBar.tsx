@@ -22,7 +22,6 @@ const SearchBar = ({
   const [query, setQuery] = React.useState("");
   const [results, setResults] = React.useState<Results[]>([]);
   const searchRef = React.useRef(null);
-  const [guessCount, setGuessCount] = React.useState(0);
 
   useOnClickOutside(searchRef, () => {
     setResults([]);
@@ -46,7 +45,6 @@ const SearchBar = ({
   };
 
   const handleSelectMovie = (title: string, date: Date, movieId: number) => {
-    setGuessCount((prevCount) => prevCount + 1);
     onGuess(title, date, movieId);
     setQuery("");
     setResults([]);
