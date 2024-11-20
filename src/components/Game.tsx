@@ -161,17 +161,15 @@ const Game = () => {
     return new Promise((resolve, reject) => {
       const img = new Image()
       img.onload = () => {
-        console.log('Successfully preloaded:', screenshot.url)
         resolve()
       }
       img.onerror = (e) => {
-        console.error('Failed to preload:', screenshot.url, e)
         reject(e)
       }
       img.src = screenshot.url
     })
   }, [])
-  
+
   const preloadImages = React.useCallback(
     async (imageUrls: Screenshot[], indices: number[]) => {
       setIsLoading(true);
@@ -225,7 +223,23 @@ const Game = () => {
 
   const saveGameState = (state: any) => {
     if (!isArchiveGame) {
-      Cookies.set("gameState", JSON.stringify(state), {
+      const stateToSave = {
+        movie: state.movie,
+        currentScreenshotIndex: state.currentScreenshotIndex,
+        highestIndexReached: state.highestIndexReached,
+        revealedScreenshots: state.revealedScreenshots.map((s: Screenshot) => ({
+          movieId: s.movieId,
+          index: s.index
+        })),
+        guesses: state.guesses,
+        guessesLeft: state.guessesLeft,
+        gameStatus: state.gameStatus,
+        showResult: state.showResult,
+        gameEnded: state.gameEnded,
+        isArchiveGame: false
+      };
+
+      Cookies.set("gameState", JSON.stringify(stateToSave), {
         expires: getNextGameTime(),
       });
     }
@@ -305,22 +319,36 @@ const Game = () => {
       correctMovieId, gameEnded, hasUpdatedStats, preloadImages]
   );
 
-  const returnToCurrentGame = () => {
+  const returnToCurrentGame = async () => {
     if (savedGameState) {
+      const currentMinute = getCurrentMinuteIndex().toString();
+      const currentScreenshots = await imageService.getScreenshots(currentMinute);
+
       setMovie(savedGameState.movie);
-      setScreenshots(savedGameState.screenshots);
+      setScreenshots(currentScreenshots);
       setCurrentScreenshotIndex(savedGameState.currentScreenshotIndex);
       setHighestIndexReached(savedGameState.highestIndexReached);
-      setRevealedScreenshots(savedGameState.revealedScreenshots);
+
+      const newRevealedScreenshots = savedGameState.revealedScreenshots
+        .map(revealed =>
+          currentScreenshots.find(s =>
+            s.movieId === revealed.movieId && s.index === revealed.index
+          )
+        )
+        .filter((screenshot): screenshot is Screenshot =>
+          screenshot !== undefined
+        );
+
+      setRevealedScreenshots(newRevealedScreenshots);
       setGuesses(savedGameState.guesses);
       setGuessesLeft(savedGameState.guessesLeft);
       setGameStatus(savedGameState.gameStatus);
       setShowResult(savedGameState.showResult);
-      setCorrectMovieId(savedGameState.correctMovieId);
+      setCorrectMovieId(currentScreenshots[0]?.movieId || '');
       setGameEnded(savedGameState.gameEnded);
       setHasUpdatedStats(savedGameState.hasUpdatedStats);
     } else {
-      loadMinuteScreenshot();
+      await loadMinuteScreenshot();
     }
     setIsArchiveGame(false);
     setShowStatsModal(false);
@@ -333,33 +361,49 @@ const Game = () => {
     const savedMinute = Cookies.get("gameMinute");
     const currentMinute = getCurrentMinuteIndex().toString();
 
-    if (savedState && savedMinute === currentMinute) {
-      const parsedState = JSON.parse(savedState);
+    const loadGame = async () => {
+      try {
+        if (savedState && savedMinute === currentMinute) {
+          const parsedState = JSON.parse(savedState);
 
-      if (!parsedState.isArchiveGame) {
-        setMovie(parsedState.movie);
-        setScreenshots(parsedState.screenshots);
-        setCurrentScreenshotIndex(parsedState.currentScreenshotIndex);
-        setHighestIndexReached(parsedState.highestIndexReached);
-        setRevealedScreenshots(parsedState.revealedScreenshots);
-        setGuesses(parsedState.guesses);
-        setGuessesLeft(parsedState.guessesLeft);
-        setGameStatus(parsedState.gameStatus);
-        setShowResult(parsedState.showResult);
-        setGameEnded(parsedState.gameEnded || false);
-        setIsArchiveGame(false);
+          if (!parsedState.isArchiveGame) {
+            const currentScreenshots = await imageService.getScreenshots(savedMinute);
 
-        if (parsedState.screenshots.length > 0) {
-          const firstScreenshot = parsedState.screenshots[0];
-          const extractedMovieID = firstScreenshot.split("/")[1].split("-")[0];
-          setCorrectMovieId(extractedMovieID);
+            setMovie(parsedState.movie);
+            setScreenshots(currentScreenshots);
+            setCurrentScreenshotIndex(parsedState.currentScreenshotIndex);
+            setHighestIndexReached(parsedState.highestIndexReached);
+
+            const newRevealedScreenshots = parsedState.revealedScreenshots.map(
+              (revealed: any) => currentScreenshots.find(s =>
+                s.movieId === revealed.movieId && s.index === revealed.index
+              )
+            ).filter(Boolean);
+
+            setRevealedScreenshots(newRevealedScreenshots);
+            setGuesses(parsedState.guesses);
+            setGuessesLeft(parsedState.guessesLeft);
+            setGameStatus(parsedState.gameStatus);
+            setShowResult(parsedState.showResult);
+            setGameEnded(parsedState.gameEnded || false);
+            setIsArchiveGame(false);
+
+            if (currentScreenshots.length > 0) {
+              setCorrectMovieId(currentScreenshots[0].movieId);
+            }
+          } else {
+            await loadMinuteScreenshot();
+          }
+        } else {
+          await loadMinuteScreenshot();
         }
-      } else {
-        loadMinuteScreenshot();
+      } catch (error) {
+        console.error('Error loading game state:', error);
+        await loadMinuteScreenshot();
       }
-    } else {
-      loadMinuteScreenshot();
-    }
+    };
+
+    loadGame();
   }, [loadMinuteScreenshot]);
 
   React.useEffect(() => {
