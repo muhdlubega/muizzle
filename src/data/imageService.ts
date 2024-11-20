@@ -8,34 +8,43 @@ export interface Screenshot {
 }
 
 export const imageService = {
-  async getScreenshots(folder: string): Promise<Screenshot[]> {
-    const { data, error } = await supabase
-      .storage
-      .from('screenshots')
-      .list(folder)
-
-    if (error) {
-      console.error('Error fetching screenshots:', error)
-      return []
-    }
-
-    const screenshots: Screenshot[] = []
-    for (const file of data) {
-      const [movieId, index] = file.name.split('-')
-      const { data: publicUrl } = supabase
+    async getScreenshots(folder: string): Promise<Screenshot[]> {
+    try {
+      const { data, error } = await supabase
         .storage
         .from('screenshots')
-        .getPublicUrl(`${folder}/${file.name}`)
+        .list(folder)
 
-      screenshots.push({
-        folder,
-        movieId,
-        index: parseInt(index),
-        url: publicUrl.publicUrl
-      })
+      if (error) {
+        console.error('Error fetching screenshots:', error)
+        return []
+      }
+
+      const screenshots: Screenshot[] = []
+      for (const file of data) {
+        const [movieId, indexWithExt] = file.name.split('-')
+        const index = parseInt(indexWithExt.split('.')[0])
+        
+        const { data: urlData } = supabase
+          .storage
+          .from('screenshots')
+          .getPublicUrl(`${folder}/${file.name}`)
+
+        if (urlData.publicUrl) {
+          screenshots.push({
+            folder,
+            movieId,
+            index,
+            url: urlData.publicUrl
+          })
+        }
+      }
+
+      return screenshots.sort((a, b) => a.index - b.index)
+    } catch (error) {
+      console.error('Error:', error)
+      return []
     }
-
-    return screenshots.sort((a, b) => a.index - b.index)
   },
 
   async getAllFolders(): Promise<string[]> {

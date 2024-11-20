@@ -158,14 +158,20 @@ const Game = () => {
   );
 
   const preloadImage = React.useCallback((screenshot: Screenshot): Promise<void> => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const img = new Image()
-      img.onload = () => resolve()
-      img.onerror = () => resolve()
+      img.onload = () => {
+        console.log('Successfully preloaded:', screenshot.url)
+        resolve()
+      }
+      img.onerror = (e) => {
+        console.error('Failed to preload:', screenshot.url, e)
+        reject(e)
+      }
       img.src = screenshot.url
     })
   }, [])
-
+  
   const preloadImages = React.useCallback(
     async (imageUrls: Screenshot[], indices: number[]) => {
       setIsLoading(true);
@@ -736,8 +742,12 @@ const Game = () => {
             <div className="screenshot">
               <img
                 className="screenshot-image onboarding01"
-                src={screenshots[currentScreenshotIndex]?.url}
+                src={screenshots[currentScreenshotIndex]?.url || ''}
                 alt="Movie Screenshot"
+                onError={(e) => {
+                  console.error('Error loading image:', screenshots[currentScreenshotIndex]?.url)
+                  e.currentTarget.onerror = null
+                }}
               />
             </div>
 
@@ -757,11 +767,15 @@ const Game = () => {
                         (revealed) => revealed.url === screenshots[index]?.url
                       ) ? (
                       <img
-                        src={screenshots[index]?.url}
+                        src={screenshots[index]?.url || ''}
                         alt={`Screenshot ${index + 1}`}
                         className={`thumbnail-image ${index === currentScreenshotIndex ? "active" : ""
                           }`}
                         onClick={() => handleThumbnailClick(index)}
+                        onError={(e) => {
+                          console.error('Error loading thumbnail:', screenshots[index]?.url)
+                          e.currentTarget.onerror = null
+                        }}
                       />
                     ) : (
                       <div className="empty-box"></div>
