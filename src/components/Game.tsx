@@ -533,14 +533,6 @@ const Game = () => {
         return newGuessesLeft;
       });
     }
-
-    // Only update distribution for the current game, not archived games
-    if (!isArchiveGame && newGuess.isCorrect) {
-      const newDistribution = [...guessDistribution];
-      newDistribution[guessCount - 1] += 1;
-      setGuessDistribution(newDistribution);
-      Cookies.set("guessDistribution", JSON.stringify(newDistribution));
-    }
   };
 
   React.useEffect(() => {

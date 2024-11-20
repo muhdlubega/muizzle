@@ -4,7 +4,7 @@ export const getNextGameTime = () => {
   const now = new Date();
   const malaysiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
   
-  // Calculate how many 6-hour periods have passed since reference time
+  // Calculate how many 12-hour periods have passed since reference time
   const diffTime = malaysiaTime.getTime() - REFERENCE_TIME.getTime();
   const periodsPassed = Math.floor(diffTime / (12 * 60 * 60 * 1000));
   
@@ -17,7 +17,7 @@ export const getCurrentMinuteIndex = () => {
   const now = new Date();
   const malaysiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
   
-  // Calculate how many 6-hour periods have passed since reference time
+  // Calculate how many 12-hour periods have passed since reference time
   const diffTime = malaysiaTime.getTime() - REFERENCE_TIME.getTime();
   const periodsPassed = Math.floor(diffTime / (12 * 60 * 60 * 1000));
   
