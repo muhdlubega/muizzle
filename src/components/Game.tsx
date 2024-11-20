@@ -457,7 +457,6 @@ const Game = () => {
     input: string,
     date: Date,
     movieId: number,
-    guessCount: number
   ) => {
     if (guesses.some((guess) => guess.movieId === movieId)) {
       toast.error("You already guessed this movie!", {

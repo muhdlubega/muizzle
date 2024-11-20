@@ -16,7 +16,6 @@ const SearchBar = ({
     input: string,
     date: Date,
     movieId: number,
-    guessCount: number
   ) => void;
   disabled: boolean;
 }) => {
@@ -48,7 +47,7 @@ const SearchBar = ({
 
   const handleSelectMovie = (title: string, date: Date, movieId: number) => {
     setGuessCount((prevCount) => prevCount + 1);
-    onGuess(title, date, movieId, guessCount + 1);
+    onGuess(title, date, movieId);
     setQuery("");
     setResults([]);
   };
