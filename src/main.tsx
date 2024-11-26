@@ -8,10 +8,10 @@ import Cookies from 'js-cookie';
 import App from './App.tsx'
 import './index.css'
 import React from 'react';
-import { Loader } from './components/Loader.tsx';
 
 const Root = () => {
   const [isLoading, setIsLoading] = React.useState(true);
+  const [isFadingOut, setIsFadingOut] = React.useState(false);
   const [screenshots, setScreenshots] = React.useState<string[]>([]);
   const hasStats = Boolean(Cookies.get("gamesPlayed"));
 
@@ -32,20 +32,13 @@ const Root = () => {
       } catch (error) {
         console.error('Error loading screenshots:', error);
       } finally {
-        setIsLoading(false);
+        setTimeout(() => setIsFadingOut(true), 500);
+        setTimeout(() => setIsLoading(false), 1500);
       }
     };
 
     loadScreenshots();
   }, []);
-
-  if (isLoading) {
-    return (
-      <div className='main-loader'>
-        <Loader />;
-      </div>
-    )
-  }
 
   return (
     <BrowserRouter>
@@ -56,7 +49,7 @@ const Root = () => {
         position="bottom"
       >
         <Routes>
-          <Route path="/" element={<App />} />
+          <Route path="/" element={<App isFadingOut={isFadingOut} isRootLoading={isLoading} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </TourProvider>

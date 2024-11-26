@@ -77,9 +77,72 @@ button:focus-visible {
   }
 }
 
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeDown {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 .main-loader {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
+  margin-top: -80px;
+  z-index: 9999;
+  background-color: #131212;
+  position: relative;
+}
+
+.main-loader.fade-out {
+  animation: fadeOut 1s ease-in forwards;
+}
+
+.main-title {
+  display: flex;
+  align-items: center;
+  color: #FF2247;
+  font-size: 120px;
+  font-weight: bold;
+  font-family: 'Lobster';
+  animation: fadeIn 1s ease-out;
+}
+
+.main-title.fade-down {
+  animation: fadeDown 1s ease-in forwards;
+}
+
+@media (max-width: 640px) {
+  .main-title {
+    flex-direction: column;
+  }
+
+  .main-title img {
+      width: 240px;
+  }
 }

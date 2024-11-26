@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import axios from "axios";
 import SearchBar from "./SearchBar";
 import { HiCheckCircle, HiXCircle } from "react-icons/hi";
@@ -25,6 +25,8 @@ import ShareStats from "./ShareStats";
 import { FaRegCopy, FaSquare } from "react-icons/fa";
 import { RiArrowGoBackFill, RiSlideshow3Line } from "react-icons/ri";
 import { imageService, Screenshot } from '../data/imageService'
+import OnboardingModal from "./OnboardingModal";
+import spinner from '../assets/spinner.svg'
 
 const SITE_URL = window.location.origin;
 
@@ -50,7 +52,7 @@ interface Guess {
   movieId: number;
 }
 
-const Game = () => {
+const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading: boolean}) => {
   const [movie, setMovie] = React.useState<Movie | null>(null);
   const [screenshots, setScreenshots] = React.useState<Screenshot[]>([])
   const [isLoading, setIsLoading] = React.useState(true);
@@ -95,6 +97,20 @@ const Game = () => {
     correctMovieId: string;
     hasUpdatedStats: boolean;
   } | null>(null);
+  const [isOnboardingOpen, setIsOnboardingOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    const hasSeenOnboarding = Cookies.get("hasSeenOnboarding");
+
+    if (!hasSeenOnboarding) {
+      setIsOnboardingOpen(true);
+    }
+  }, []);
+
+  const handleCloseOnboarding = () => {
+    setIsOnboardingOpen(false);
+    Cookies.set("hasSeenOnboarding", "true", { expires: 365 });
+  };
 
   const { setIsOpen, setCurrentStep } = useTour();
 
@@ -221,7 +237,7 @@ const Game = () => {
     preloadImages,
   ]);
 
-  const saveGameState = (state: any) => {
+  const saveGameState = useCallback((state: any) => {
     if (!isArchiveGame) {
       const stateToSave = {
         movie: state.movie,
@@ -243,7 +259,7 @@ const Game = () => {
         expires: getNextGameTime(),
       });
     }
-  };
+  }, [isArchiveGame]);
 
   const loadMinuteScreenshot = React.useCallback(async () => {
     const minuteIndex = getCurrentMinuteIndex()
@@ -314,9 +330,7 @@ const Game = () => {
         });
       }
     },
-    [movie, screenshots, currentScreenshotIndex, highestIndexReached,
-      revealedScreenshots, guesses, guessesLeft, gameStatus, showResult,
-      correctMovieId, gameEnded, hasUpdatedStats, preloadImages]
+    [isArchiveGame, movie, screenshots, currentScreenshotIndex, highestIndexReached, revealedScreenshots, guesses, guessesLeft, gameStatus, showResult, correctMovieId, gameEnded, hasUpdatedStats, preloadImages]
   );
 
   const returnToCurrentGame = async () => {
@@ -375,7 +389,7 @@ const Game = () => {
             setHighestIndexReached(parsedState.highestIndexReached);
 
             const newRevealedScreenshots = parsedState.revealedScreenshots.map(
-              (revealed: any) => currentScreenshots.find(s =>
+              (revealed: Screenshot) => currentScreenshots.find(s =>
                 s.movieId === revealed.movieId && s.index === revealed.index
               )
             ).filter(Boolean);
@@ -492,19 +506,7 @@ const Game = () => {
       };
       saveGameState(gameState);
     }
-  }, [
-    movie,
-    screenshots,
-    currentScreenshotIndex,
-    highestIndexReached,
-    revealedScreenshots,
-    guesses,
-    guessesLeft,
-    gameStatus,
-    showResult,
-    gameEnded,
-    isArchiveGame,
-  ]);
+  }, [movie, screenshots, currentScreenshotIndex, highestIndexReached, revealedScreenshots, guesses, guessesLeft, gameStatus, showResult, gameEnded, isArchiveGame, saveGameState]);
 
   const handleGuess = async (
     input: string,
@@ -719,6 +721,17 @@ const Game = () => {
     }
   };
 
+  if (isRootLoading) {
+    return (
+      <div className={`main-loader ${isFadingOut ? 'fade-out' : ''}`}>
+        <p className={`main-title ${isFadingOut ? 'fade-down' : ''}`}>
+          <img width={120} src={spinner} alt="Loading spinner" />
+          Muizzle
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="game">
       <ToastContainer />
@@ -727,6 +740,7 @@ const Game = () => {
         onClose={() => setShowArchive(false)}
         onSelectArchive={loadArchivedGame}
       />
+      <OnboardingModal isOpen={isOnboardingOpen} onClose={handleCloseOnboarding} />
       {isArchiveGame && (
         <RiArrowGoBackFill
           className="return-button"

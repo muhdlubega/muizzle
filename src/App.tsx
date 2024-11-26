@@ -2,11 +2,11 @@ import './App.css'
 import Game from './components/Game';
 import Navbar from './components/Navbar';
 
-function App() {
+function App({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading: boolean}) {
   return (
     <div className="App">
       <Navbar />
-      <Game />
+      <Game isFadingOut={isFadingOut} isRootLoading={isRootLoading} />
     </div>
   );
  }
