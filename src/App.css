@@ -1,7 +1,7 @@
 #root {
   color: #525254;
   background-color: #131212;
-  min-height: 100vh;
+  min-height: calc(100vh - 16px);
 }
 
 @keyframes floatUp {
