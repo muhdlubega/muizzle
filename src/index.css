@@ -140,9 +140,10 @@ button:focus-visible {
 @media (max-width: 640px) {
   .main-title {
     flex-direction: column;
+    font-size: 100px;
   }
 
   .main-title img {
-      width: 240px;
+      width: 200px;
   }
 }
