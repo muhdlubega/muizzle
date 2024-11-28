@@ -64,7 +64,7 @@ const ShareStats: React.FC<ShareStatsProps> = ({
   const shareToWhatsApp = () => {
     try {
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      const text = `${generateShareText()}\n${LOGO_URL}`;
+      const text = generateShareText();
       const shareUrl = isMobile
         ? `whatsapp://send?text=${encodeURIComponent(text)}`
         : `https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`;
