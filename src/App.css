@@ -394,6 +394,9 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 1rem;
+  max-height: 35vh;
+  overflow: auto;
+  scrollbar-width: thin;
 }
 
 .archive-title {
