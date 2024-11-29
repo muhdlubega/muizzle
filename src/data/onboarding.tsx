@@ -79,7 +79,7 @@ export const getSteps = (hasStats: boolean, screenshots: string[]) => {
             </h2>
             <p>
               Welcome to Muizzle! Wordle Tamil movie guesser.
-              Everyday at 11am MYT a new movie will be displayed
+              Everyday at 10am IST a new movie will be displayed
             </p>
           </div>
         </TourContent>
