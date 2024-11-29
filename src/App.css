@@ -79,9 +79,10 @@
 }
 
 .stats-modal-content {
+  border: 5px solid #FF2247;
   background-color: #121213;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   width: 600px;
   text-align: center;
 }
