@@ -753,6 +753,7 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
         onRequestClose={() => setShowStatsModal(false)}
         className="stats-modal-content"
         overlayClassName="stats-modal-overlay"
+        shouldFocusAfterRender={false}
       >
         <h2>User Statistics</h2>
         <ul>
