@@ -1,76 +1,68 @@
-import { supabase } from '../config/supabase'
+import { GetObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { s3 } from "../config/cloudflareClient";
+import { Screenshot } from "../types/types";
 
-export interface Screenshot {
-  folder: string;
-  movieId: string;
-  index: number;
-  url: string;
-}
+const bucketName = import.meta.env.VITE_R2_BUCKET_NAME;
 
 export const imageService = {
-    async getScreenshots(folder: string): Promise<Screenshot[]> {
+  async getScreenshots(folder: string): Promise<Screenshot[]> {
     try {
-      const { data, error } = await supabase
-        .storage
-        .from('screenshots')
-        .list(folder)
+      const command = new ListObjectsV2Command({
+        Bucket: bucketName,
+        Prefix: `${folder}/`,
+      });
 
-      if (error) {
-        console.error('Error fetching screenshots:', error)
-        return []
+      const { Contents } = await s3.send(command);
+      if (!Contents) return [];
+
+      const screenshots: Screenshot[] = [];
+      for (const file of Contents) {
+        const fileName = file.Key!.split("/").pop()!;
+        const [movieId, indexWithExt] = fileName.split("-");
+        const index = parseInt(indexWithExt.split(".")[0]);
+
+        // Generate a signed URL for private object access
+        const getObjectCommand = new GetObjectCommand({
+          Bucket: bucketName,
+          Key: file.Key,
+        });
+
+        const signedUrl = await getSignedUrl(s3, getObjectCommand, {
+          expiresIn: 3600, // URL expires in 1 hour
+        });
+
+        screenshots.push({
+          folder,
+          movieId,
+          index,
+          url: signedUrl,
+        });
       }
 
-      const screenshots: Screenshot[] = []
-      for (const file of data) {
-        const [movieId, indexWithExt] = file.name.split('-')
-        const index = parseInt(indexWithExt.split('.')[0])
-        
-        const { data: urlData } = supabase
-          .storage
-          .from('screenshots')
-          .getPublicUrl(`${folder}/${file.name}`)
-
-        if (urlData.publicUrl) {
-          screenshots.push({
-            folder,
-            movieId,
-            index,
-            url: urlData.publicUrl
-          })
-        }
-      }
-
-      return screenshots.sort((a, b) => a.index - b.index)
+      return screenshots.sort((a, b) => a.index - b.index);
     } catch (error) {
-      console.error('Error:', error)
-      return []
+      console.error("Error fetching screenshots:", error);
+      return [];
     }
   },
 
   async getAllFolders(): Promise<string[]> {
     try {
-      const { data, error } = await supabase
-        .storage
-        .from('screenshots')
-        .list('', {
-          limit: 100,
-          offset: 0,
-          sortBy: { column: 'name', order: 'asc' }
-        })
+      const command = new ListObjectsV2Command({
+        Bucket: bucketName,
+        Delimiter: "/",
+      });
 
-      if (error) {
-        console.error('Error fetching folders:', error)
-        return []
-      }
+      const { CommonPrefixes } = await s3.send(command);
+      if (!CommonPrefixes) return [];
 
-      const folders = data
-        .filter(item => !item.name.includes('.'))
-        .map(folder => folder.name)
-        .sort((a, b) => Number(a) - Number(b))
-      return folders
+      return CommonPrefixes.map((prefix) =>
+        prefix.Prefix!.replace("/", "")
+      ).sort((a, b) => Number(a) - Number(b));
     } catch (error) {
-      console.error('Error:', error)
-      return []
+      console.error("Error fetching folders:", error);
+      return [];
     }
-  }
-}
+  },
+};

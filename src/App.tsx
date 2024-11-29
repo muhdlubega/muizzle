@@ -1,15 +1,14 @@
-import './App.css'
-import Game from './components/Game';
-import Navbar from './components/Navbar';
+import "./App.css";
+import Game from "./components/Game";
+import Navbar from "./components/Navbar";
 
-function App({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading: boolean}) {
+function App() {
   return (
     <div className="App">
       <Navbar />
-      <Game isFadingOut={isFadingOut} isRootLoading={isRootLoading} />
+      <Game />
     </div>
   );
- }
- 
+}
 
-export default App
+export default App;

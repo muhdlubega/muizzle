@@ -1,22 +1,13 @@
-import React from "react";
 import axios from "axios";
+import React from "react";
 import { useOnClickOutside } from "usehooks-ts";
-
-interface Results {
-  title: string;
-  release_date: Date;
-  id: number;
-}
+import { Results } from "../types/types";
 
 const SearchBar = ({
   onGuess,
   disabled,
 }: {
-  onGuess: (
-    input: string,
-    date: Date,
-    movieId: number,
-  ) => void;
+  onGuess: (input: string, date: Date, movieId: number) => void;
   disabled: boolean;
 }) => {
   const [query, setQuery] = React.useState("");

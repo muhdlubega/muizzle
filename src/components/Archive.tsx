@@ -1,14 +1,9 @@
 import React from 'react';
-import Modal from 'react-modal';
-import { getCurrentMinuteIndex } from '../utils/timeUtils';
-import { imageService } from '../data/imageService'
 import { IoMdClose } from 'react-icons/io';
-
-interface ArchiveProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSelectArchive: (folderNumber: string) => void;
-}
+import Modal from 'react-modal';
+import { imageService } from '../data/imageService';
+import { ArchiveProps } from '../types/types';
+import { getCurrentMinuteIndex } from '../utils/timeUtils';
 
 const Archive: React.FC<ArchiveProps> = ({ isOpen, onClose, onSelectArchive }) => {
   const [folders, setFolders] = React.useState<string[]>([])
@@ -25,19 +20,6 @@ const Archive: React.FC<ArchiveProps> = ({ isOpen, onClose, onSelectArchive }) =
     
     loadFolders()
   }, [])
-  
-  // FOR TESTING PURPOSES: display all folders as archive besides the current one //
-  // const folders = React.useMemo(() => {
-  //   const currentIndex = getCurrentMinuteIndex().toString();
-    
-  //   const uniqueFolders = new Set(
-  //     files.map(file => file.split('/')[0]).sort((a, b) => Number(a) - Number(b))
-  //   );
-
-  //   return Array.from(uniqueFolders).filter(folder => {
-  //     return folder !== currentIndex;
-  //   });
-  // }, []);
 
   return (
     <Modal

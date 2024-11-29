@@ -1,32 +1,33 @@
-import React, { useCallback } from "react";
-import axios from "axios";
-import SearchBar from "./SearchBar";
-import { HiCheckCircle, HiXCircle } from "react-icons/hi";
-import { getNextGameTime, getCurrentMinuteIndex } from "../utils/timeUtils";
-import Cookies from "js-cookie";
-import Modal from "react-modal";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { IoIosStats } from "react-icons/io";
-import { Bar } from "react-chartjs-2";
 import { useTour } from "@reactour/tour";
+import axios from "axios";
 import {
-  Chart as ChartJS,
   BarElement,
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
   LinearScale,
   Title,
   Tooltip,
-  Legend,
 } from "chart.js";
+import Cookies from "js-cookie";
+import React, { useCallback } from "react";
+import { Bar } from "react-chartjs-2";
+import { FaRegCopy, FaSquare } from "react-icons/fa";
+import { HiCheckCircle, HiXCircle } from "react-icons/hi";
+import { IoIosStats } from "react-icons/io";
+import { RiArrowGoBackFill, RiSlideshow3Line } from "react-icons/ri";
+import Modal from "react-modal";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import spinner from "../assets/spinner.svg";
+import { imageService } from "../data/imageService";
+import { GameStatus, Guess, Movie, Screenshot, StateProps } from "../types/types";
+import { getCurrentMinuteIndex, getNextGameTime } from "../utils/timeUtils";
 import Archive from "./Archive";
 import { Loader } from "./Loader";
-import ShareStats from "./ShareStats";
-import { FaRegCopy, FaSquare } from "react-icons/fa";
-import { RiArrowGoBackFill, RiSlideshow3Line } from "react-icons/ri";
-import { imageService, Screenshot } from '../data/imageService'
 import OnboardingModal from "./OnboardingModal";
-import spinner from '../assets/spinner.svg'
+import SearchBar from "./SearchBar";
+import ShareStats from "./ShareStats";
 
 const SITE_URL = window.location.origin;
 
@@ -40,21 +41,11 @@ ChartJS.register(
 );
 Modal.setAppElement("#root");
 
-interface Movie {
-  title: string;
-  release_date: string;
-}
-
-interface Guess {
-  title: string;
-  date: Date;
-  isCorrect: boolean | null;
-  movieId: number;
-}
-
-const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading: boolean}) => {
+const Game = () => {
   const [movie, setMovie] = React.useState<Movie | null>(null);
-  const [screenshots, setScreenshots] = React.useState<Screenshot[]>([])
+  const [screenshots, setScreenshots] = React.useState<Screenshot[]>([]);
+  const [isRootLoading, setIsRootLoading] = React.useState(true);
+  const [isFadingOut, setIsFadingOut] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [correctMovieId, setCorrectMovieId] = React.useState<string>("");
   const [currentScreenshotIndex, setCurrentScreenshotIndex] = React.useState(0);
@@ -63,11 +54,11 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
     Screenshot[]
   >([]);
   const [guesses, setGuesses] = React.useState<Guess[]>([]);
-  const [hasUpdatedStats, setHasUpdatedStats] = React.useState(false);
+  const [hasUpdatedStats, setHasUpdatedStats] = React.useState<
+    boolean | undefined
+  >(false);
   const [guessesLeft, setGuessesLeft] = React.useState(6);
-  const [gameStatus, setGameStatus] = React.useState<
-    "playing" | "won" | "lost"
-  >("playing");
+  const [gameStatus, setGameStatus] = React.useState<GameStatus>("playing");
   const [showResult, setShowResult] = React.useState(false);
   const [timeUntilNextGame, setTimeUntilNextGame] = React.useState("");
   const [showStatsModal, setShowStatsModal] = React.useState(false);
@@ -83,20 +74,9 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
   const [guessDistribution, setGuessDistribution] = React.useState<number[]>(
     Array(6).fill(0)
   );
-  const [savedGameState, setSavedGameState] = React.useState<{
-    movie: Movie | null;
-    screenshots: Screenshot[];
-    currentScreenshotIndex: number;
-    highestIndexReached: number;
-    revealedScreenshots: Screenshot[];
-    guesses: Guess[];
-    guessesLeft: number;
-    gameStatus: "playing" | "won" | "lost";
-    showResult: boolean;
-    gameEnded: boolean;
-    correctMovieId: string;
-    hasUpdatedStats: boolean;
-  } | null>(null);
+  const [savedGameState, setSavedGameState] = React.useState<StateProps | null>(
+    null
+  );
   const [isOnboardingOpen, setIsOnboardingOpen] = React.useState(false);
 
   React.useEffect(() => {
@@ -156,8 +136,9 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
               break;
             default:
               toast.error(
-                `Error: ${error.response.data.status_message ||
-                "Failed to fetch movie data"
+                `Error: ${
+                  error.response.data.status_message ||
+                  "Failed to fetch movie data"
                 }. Please try again later`,
                 toastConfig
               );
@@ -173,30 +154,35 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
     [API_KEY]
   );
 
-  const preloadImage = React.useCallback((screenshot: Screenshot): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image()
-      img.onload = () => {
-        resolve()
-      }
-      img.onerror = (e) => {
-        reject(e)
-      }
-      img.src = screenshot.url
-    })
-  }, [])
+  const preloadImage = React.useCallback(
+    (screenshot: Screenshot): Promise<void> => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          resolve();
+        };
+        img.onerror = () => {
+          resolve();
+        };
+        img.src = screenshot.url;
+      });
+    },
+    []
+  );
 
   const preloadImages = React.useCallback(
     async (imageUrls: Screenshot[], indices: number[]) => {
+      if (imageUrls.length === 0) return;
+
       setIsLoading(true);
       try {
         await Promise.all(
-          indices.map((index) =>
-            imageUrls[index]
-              ? preloadImage(imageUrls[index])
-              : Promise.resolve()
-          )
+          indices
+            .filter((index) => index < imageUrls.length)
+            .map((index) => preloadImage(imageUrls[index]))
         );
+      } catch (error) {
+        console.error("Error preloading images:", error);
       } finally {
         setIsLoading(false);
       }
@@ -206,7 +192,11 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
 
   // Logic to preload images only when necessary to not reveal it in the background
   React.useEffect(() => {
-    if (screenshots.length > 0) {
+    const controller = new AbortController();
+
+    const loadImages = async () => {
+      if (screenshots.length === 0) return;
+
       const indicesToLoad = new Set<number>();
       indicesToLoad.add(currentScreenshotIndex);
 
@@ -214,20 +204,29 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
         // Load all screenshots after game ended
         Array.from({ length: 6 }, (_, i) => indicesToLoad.add(i));
       } else {
-        // Else only load only up to highest index reached
+        // Load up to highest index reached
         for (let i = 0; i <= highestIndexReached; i++) {
           indicesToLoad.add(i);
         }
         revealedScreenshots.forEach((screenshot) => {
-          const index = screenshots.indexOf(screenshot);
+          const index = screenshots.findIndex(
+            (s) =>
+              s.movieId === screenshot.movieId && s.index === screenshot.index
+          );
           if (index !== -1) {
             indicesToLoad.add(index);
           }
         });
       }
 
-      preloadImages(screenshots, Array.from(indicesToLoad));
-    }
+      await preloadImages(screenshots, Array.from(indicesToLoad));
+    };
+
+    loadImages();
+
+    return () => {
+      controller.abort();
+    };
   }, [
     screenshots,
     currentScreenshotIndex,
@@ -237,45 +236,65 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
     preloadImages,
   ]);
 
-  const saveGameState = useCallback((state: any) => {
-    if (!isArchiveGame) {
-      const stateToSave = {
-        movie: state.movie,
-        currentScreenshotIndex: state.currentScreenshotIndex,
-        highestIndexReached: state.highestIndexReached,
-        revealedScreenshots: state.revealedScreenshots.map((s: Screenshot) => ({
-          movieId: s.movieId,
-          index: s.index
-        })),
-        guesses: state.guesses,
-        guessesLeft: state.guessesLeft,
-        gameStatus: state.gameStatus,
-        showResult: state.showResult,
-        gameEnded: state.gameEnded,
-        isArchiveGame: false
-      };
+  const saveGameState = useCallback(
+    (state: StateProps) => {
+      if (!isArchiveGame) {
+        const stateToSave = {
+          movie: state.movie,
+          currentScreenshotIndex: state.currentScreenshotIndex,
+          highestIndexReached: state.highestIndexReached,
+          revealedScreenshots: state.revealedScreenshots.map(
+            (s: Screenshot) => ({
+              movieId: s.movieId,
+              index: s.index,
+            })
+          ),
+          guesses: state.guesses,
+          guessesLeft: state.guessesLeft,
+          gameStatus: state.gameStatus,
+          showResult: state.showResult,
+          gameEnded: state.gameEnded,
+          isArchiveGame: false,
+        };
 
-      Cookies.set("gameState", JSON.stringify(stateToSave), {
-        expires: getNextGameTime(),
-      });
-    }
-  }, [isArchiveGame]);
+        Cookies.set("gameState", JSON.stringify(stateToSave), {
+          expires: getNextGameTime(),
+        });
+      }
+    },
+    [isArchiveGame]
+  );
 
   const loadMinuteScreenshot = React.useCallback(async () => {
-    const minuteIndex = getCurrentMinuteIndex()
-    const minuteFolder = `${minuteIndex}`
+    const minuteIndex = getCurrentMinuteIndex();
+    const minuteFolder = `${minuteIndex}`;
 
-    const screenshots = await imageService.getScreenshots(minuteFolder)
+    try {
+      const screenshots = await imageService.getScreenshots(minuteFolder);
 
-    if (screenshots.length > 0) {
-      setScreenshots(screenshots)
-      preloadImages(screenshots, [0])
-      setCorrectMovieId(screenshots[0].movieId)
-      setIsArchiveGame(false)
-      Cookies.set("gameMinute", minuteIndex.toString())
+      if (screenshots.length > 0) {
+        setScreenshots(screenshots);
+        preloadImages(screenshots, [0]);
+        setCorrectMovieId(screenshots[0].movieId);
+        setIsArchiveGame(false);
+        Cookies.set("gameMinute", minuteIndex.toString());
+      }
+      setGameEnded(false);
+    } catch (error) {
+      console.error("Error loading screenshots:", error);
+      toast.error("Failed to load screenshots", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } finally {
+      setTimeout(() => setIsFadingOut(true), 500);
+      setTimeout(() => setIsRootLoading(false), 1500);
     }
-    setGameEnded(false)
-  }, [preloadImages])
+  }, [preloadImages]);
 
   const loadArchivedGame = React.useCallback(
     async (folderNumber: string) => {
@@ -299,7 +318,9 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
       }
 
       try {
-        const archivedScreenshots = await imageService.getScreenshots(folderNumber);
+        const archivedScreenshots = await imageService.getScreenshots(
+          folderNumber
+        );
 
         if (archivedScreenshots.length > 0) {
           // Reset game state for archive game
@@ -319,7 +340,7 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
           setMovie(null);
         }
       } catch (error) {
-        console.error('Error loading archived game:', error);
+        console.error("Error loading archived game:", error);
         toast.error("Failed to load archived game", {
           position: "bottom-right",
           autoClose: 3000,
@@ -330,13 +351,30 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
         });
       }
     },
-    [isArchiveGame, movie, screenshots, currentScreenshotIndex, highestIndexReached, revealedScreenshots, guesses, guessesLeft, gameStatus, showResult, correctMovieId, gameEnded, hasUpdatedStats, preloadImages]
+    [
+      isArchiveGame,
+      movie,
+      screenshots,
+      currentScreenshotIndex,
+      highestIndexReached,
+      revealedScreenshots,
+      guesses,
+      guessesLeft,
+      gameStatus,
+      showResult,
+      correctMovieId,
+      gameEnded,
+      hasUpdatedStats,
+      preloadImages,
+    ]
   );
 
   const returnToCurrentGame = async () => {
     if (savedGameState) {
       const currentMinute = getCurrentMinuteIndex().toString();
-      const currentScreenshots = await imageService.getScreenshots(currentMinute);
+      const currentScreenshots = await imageService.getScreenshots(
+        currentMinute
+      );
 
       setMovie(savedGameState.movie);
       setScreenshots(currentScreenshots);
@@ -344,13 +382,13 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
       setHighestIndexReached(savedGameState.highestIndexReached);
 
       const newRevealedScreenshots = savedGameState.revealedScreenshots
-        .map(revealed =>
-          currentScreenshots.find(s =>
-            s.movieId === revealed.movieId && s.index === revealed.index
+        .map((revealed) =>
+          currentScreenshots.find(
+            (s) => s.movieId === revealed.movieId && s.index === revealed.index
           )
         )
-        .filter((screenshot): screenshot is Screenshot =>
-          screenshot !== undefined
+        .filter(
+          (screenshot): screenshot is Screenshot => screenshot !== undefined
         );
 
       setRevealedScreenshots(newRevealedScreenshots);
@@ -358,7 +396,7 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
       setGuessesLeft(savedGameState.guessesLeft);
       setGameStatus(savedGameState.gameStatus);
       setShowResult(savedGameState.showResult);
-      setCorrectMovieId(currentScreenshots[0]?.movieId || '');
+      setCorrectMovieId(currentScreenshots[0]?.movieId || "");
       setGameEnded(savedGameState.gameEnded);
       setHasUpdatedStats(savedGameState.hasUpdatedStats);
     } else {
@@ -381,29 +419,50 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
           const parsedState = JSON.parse(savedState);
 
           if (!parsedState.isArchiveGame) {
-            const currentScreenshots = await imageService.getScreenshots(savedMinute);
+            try {
+              const currentScreenshots = await imageService.getScreenshots(
+                savedMinute
+              );
 
-            setMovie(parsedState.movie);
-            setScreenshots(currentScreenshots);
-            setCurrentScreenshotIndex(parsedState.currentScreenshotIndex);
-            setHighestIndexReached(parsedState.highestIndexReached);
+              setMovie(parsedState.movie);
+              setScreenshots(currentScreenshots);
+              setCurrentScreenshotIndex(parsedState.currentScreenshotIndex);
+              setHighestIndexReached(parsedState.highestIndexReached);
 
-            const newRevealedScreenshots = parsedState.revealedScreenshots.map(
-              (revealed: Screenshot) => currentScreenshots.find(s =>
-                s.movieId === revealed.movieId && s.index === revealed.index
-              )
-            ).filter(Boolean);
+              const newRevealedScreenshots = parsedState.revealedScreenshots
+                .map((revealed: Screenshot) =>
+                  currentScreenshots.find(
+                    (s) =>
+                      s.movieId === revealed.movieId &&
+                      s.index === revealed.index
+                  )
+                )
+                .filter(Boolean);
 
-            setRevealedScreenshots(newRevealedScreenshots);
-            setGuesses(parsedState.guesses);
-            setGuessesLeft(parsedState.guessesLeft);
-            setGameStatus(parsedState.gameStatus);
-            setShowResult(parsedState.showResult);
-            setGameEnded(parsedState.gameEnded || false);
-            setIsArchiveGame(false);
+              setRevealedScreenshots(newRevealedScreenshots);
+              setGuesses(parsedState.guesses);
+              setGuessesLeft(parsedState.guessesLeft);
+              setGameStatus(parsedState.gameStatus);
+              setShowResult(parsedState.showResult);
+              setGameEnded(parsedState.gameEnded || false);
+              setIsArchiveGame(false);
 
-            if (currentScreenshots.length > 0) {
-              setCorrectMovieId(currentScreenshots[0].movieId);
+              if (currentScreenshots.length > 0) {
+                setCorrectMovieId(currentScreenshots[0].movieId);
+              }
+            } catch (error) {
+              console.error("Error loading screenshots:", error);
+              toast.error("Failed to load screenshots", {
+                position: "bottom-right",
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+              });
+            } finally {
+              setTimeout(() => setIsFadingOut(true), 500);
+              setTimeout(() => setIsRootLoading(false), 1500);
             }
           } else {
             await loadMinuteScreenshot();
@@ -412,7 +471,7 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
           await loadMinuteScreenshot();
         }
       } catch (error) {
-        console.error('Error loading game state:', error);
+        console.error("Error loading game state:", error);
         await loadMinuteScreenshot();
       }
     };
@@ -506,13 +565,22 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
       };
       saveGameState(gameState);
     }
-  }, [movie, screenshots, currentScreenshotIndex, highestIndexReached, revealedScreenshots, guesses, guessesLeft, gameStatus, showResult, gameEnded, isArchiveGame, saveGameState]);
+  }, [
+    movie,
+    screenshots,
+    currentScreenshotIndex,
+    highestIndexReached,
+    revealedScreenshots,
+    guesses,
+    guessesLeft,
+    gameStatus,
+    showResult,
+    gameEnded,
+    isArchiveGame,
+    saveGameState,
+  ]);
 
-  const handleGuess = async (
-    input: string,
-    date: Date,
-    movieId: number,
-  ) => {
+  const handleGuess = async (input: string, date: Date, movieId: number) => {
     if (guesses.some((guess) => guess.movieId === movieId)) {
       toast.error("You already guessed this movie!", {
         position: "bottom-right",
@@ -578,7 +646,11 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
           setHighestIndexReached(newIndex);
           setRevealedScreenshots((prev) => {
             const updatedRevealed = [...prev];
-            if (!updatedRevealed.some(screenshot => screenshot.url === screenshots[newIndex]?.url)) {
+            if (
+              !updatedRevealed.some(
+                (screenshot) => screenshot.url === screenshots[newIndex]?.url
+              )
+            ) {
               updatedRevealed.push(screenshots[newIndex]);
             }
             return updatedRevealed;
@@ -596,11 +668,7 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
   }, [gameStatus]);
 
   React.useEffect(() => {
-    if (
-      gameEnded &&
-      !hasUpdatedStats &&
-      !isArchiveGame
-    ) {
+    if (gameEnded && !hasUpdatedStats && !isArchiveGame) {
       const previousGamesPlayed = parseInt(
         Cookies.get("gamesPlayed") || "0",
         10
@@ -723,8 +791,8 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
 
   if (isRootLoading) {
     return (
-      <div className={`main-loader ${isFadingOut ? 'fade-out' : ''}`}>
-        <p className={`main-title ${isFadingOut ? 'fade-down' : ''}`}>
+      <div className={`main-loader ${isFadingOut ? "fade-out" : ""}`}>
+        <p className={`main-title ${isFadingOut ? "fade-down" : ""}`}>
           <img width={120} src={spinner} alt="Loading spinner" />
           Muizzle
         </p>
@@ -740,7 +808,10 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
         onClose={() => setShowArchive(false)}
         onSelectArchive={loadArchivedGame}
       />
-      <OnboardingModal isOpen={isOnboardingOpen} onClose={handleCloseOnboarding} />
+      <OnboardingModal
+        isOpen={isOnboardingOpen}
+        onClose={handleCloseOnboarding}
+      />
       {isArchiveGame && (
         <RiArrowGoBackFill
           className="return-button"
@@ -775,13 +846,16 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
         />
         <button onClick={() => setShowStatsModal(false)}>Close</button>
       </Modal>
-      {stats.gamesPlayed > 0 &&
+      {stats.gamesPlayed > 0 && (
         <>
-          {(isArchiveGame || screenshots[0]?.folder !== '1') &&
-            <button className="archive-button onboarding05" onClick={() => setShowArchive(true)}>
+          {(isArchiveGame || screenshots[0]?.folder !== "1") && (
+            <button
+              className="archive-button onboarding05"
+              onClick={() => setShowArchive(true)}
+            >
               Open Archives
             </button>
-          }
+          )}
           <IoIosStats
             size={36}
             color="#FF2247"
@@ -789,9 +863,11 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
             onClick={() => setShowStatsModal(true)}
           />
         </>
-      }
+      )}
       <div className="container">
-        {isArchiveGame && !isLoading && <div className="archive-badge">Archived Game</div>}
+        {isArchiveGame && !isLoading && (
+          <div className="archive-badge">Archived Game</div>
+        )}
         {isLoading ? (
           <div className="loader-container">
             <Loader />
@@ -801,11 +877,14 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
             <div className="screenshot">
               <img
                 className="screenshot-image onboarding01"
-                src={screenshots[currentScreenshotIndex]?.url || ''}
+                src={screenshots[currentScreenshotIndex]?.url || ""}
                 alt="Movie Screenshot"
                 onError={(e) => {
-                  console.error('Error loading image:', screenshots[currentScreenshotIndex]?.url)
-                  e.currentTarget.onerror = null
+                  console.error(
+                    "Error loading image:",
+                    screenshots[currentScreenshotIndex]?.url
+                  );
+                  e.currentTarget.onerror = null;
                 }}
               />
             </div>
@@ -820,20 +899,24 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
                 .map((_, index) => (
                   <div key={index} className="thumbnail-box">
                     {gameStatus === "won" ||
-                      gameStatus === "lost" ||
-                      index <= highestIndexReached ||
-                      revealedScreenshots.some(
-                        (revealed) => revealed.url === screenshots[index]?.url
-                      ) ? (
+                    gameStatus === "lost" ||
+                    index <= highestIndexReached ||
+                    revealedScreenshots.some(
+                      (revealed) => revealed.url === screenshots[index]?.url
+                    ) ? (
                       <img
-                        src={screenshots[index]?.url || ''}
+                        src={screenshots[index]?.url || ""}
                         alt={`Screenshot ${index + 1}`}
-                        className={`thumbnail-image ${index === currentScreenshotIndex ? "active" : ""
-                          }`}
+                        className={`thumbnail-image ${
+                          index === currentScreenshotIndex ? "active" : ""
+                        }`}
                         onClick={() => handleThumbnailClick(index)}
                         onError={(e) => {
-                          console.error('Error loading thumbnail:', screenshots[index]?.url)
-                          e.currentTarget.onerror = null
+                          console.error(
+                            "Error loading thumbnail:",
+                            screenshots[index]?.url
+                          );
+                          e.currentTarget.onerror = null;
                         }}
                       />
                     ) : (
@@ -861,36 +944,39 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
                 {new Date(movie?.release_date || "").getFullYear()})
               </strong>
             </p>
-            {!isArchiveGame && <span className="result-desc">
-              <p className="result-text">
-                You guessed correctly in {guesses.length}{" "}
-                {guesses.length === 1 ? "try!" : "tries!"}
-              </p>
-              <div className="result-icons">
-                <span className="result-boxes">
-                  {Array.from({ length: 6 }).map((_, index) => {
-                    let color = "gray";
+            {!isArchiveGame && (
+              <span className="result-desc">
+                <p className="result-text">
+                  You guessed correctly in {guesses.length}{" "}
+                  {guesses.length === 1 ? "try!" : "tries!"}
+                </p>
+                <div className="result-icons">
+                  <span className="result-boxes">
+                    {Array.from({ length: 6 }).map((_, index) => {
+                      let color = "gray";
 
-                    if (index < guesses.length) {
-                      if (gameStatus === "won" && index === guesses.length - 1) {
-                        color = "green";
-                      } else {
-                        color = "#FF2247";
+                      if (index < guesses.length) {
+                        if (
+                          gameStatus === "won" &&
+                          index === guesses.length - 1
+                        ) {
+                          color = "green";
+                        } else {
+                          color = "#FF2247";
+                        }
                       }
-                    }
 
-                    return (
-                      <FaSquare
-                        key={index}
-                        color={color}
-                        size={25}
-                      />
-                    );
-                  })}
-                </span>
-                <FaRegCopy className="result-copy" onClick={copyToClipboard} size={20} />
-              </div>
-            </span>}
+                      return <FaSquare key={index} color={color} size={25} />;
+                    })}
+                  </span>
+                  <FaRegCopy
+                    className="result-copy"
+                    onClick={copyToClipboard}
+                    size={20}
+                  />
+                </div>
+              </span>
+            )}
           </span>
         )}
         {movie && showResult && gameStatus === "lost" && (
@@ -898,26 +984,27 @@ const Game = ({isFadingOut, isRootLoading}: {isFadingOut: boolean, isRootLoading
             <p className="result-title">
               Out of guesses! The correct answer was{" "}
               <strong>
-                {movie?.title || ''} ({new Date(movie?.release_date || '').getFullYear()})
+                {movie?.title || ""} (
+                {new Date(movie?.release_date || "").getFullYear()})
               </strong>
             </p>
-            {!isArchiveGame && <span className="result-desc">
-              <p className="result-text">
-                You didn't get it this time :(
-              </p>
-              <div className="result-icons">
-                <span className="result-boxes">
-                  {Array.from({ length: 6 }).map((_, index) => (
-                    <FaSquare
-                      key={index}
-                      color='red'
-                      size={25}
-                    />
-                  ))}
-                </span>
-                <FaRegCopy className="result-copy" onClick={copyToClipboard} size={20} />
-              </div>
-            </span>}
+            {!isArchiveGame && (
+              <span className="result-desc">
+                <p className="result-text">You didn't get it this time :(</p>
+                <div className="result-icons">
+                  <span className="result-boxes">
+                    {Array.from({ length: 6 }).map((_, index) => (
+                      <FaSquare key={index} color="red" size={25} />
+                    ))}
+                  </span>
+                  <FaRegCopy
+                    className="result-copy"
+                    onClick={copyToClipboard}
+                    size={20}
+                  />
+                </div>
+              </span>
+            )}
           </span>
         )}
       </div>

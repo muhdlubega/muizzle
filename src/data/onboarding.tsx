@@ -1,97 +1,56 @@
-import { useTour } from "@reactour/tour";
-import { getCurrentMinuteIndex } from "../utils/timeUtils";
+import TourContent from "../components/TourContent";
+import { REFERENCE_TIME } from "../utils/timeUtils";
 
-export const tourConfig = {
-  styles: {
-    popover: (base: any) => ({
-      ...base,
-      backgroundColor: '#1a1a1a',
-      color: 'white',
-      borderRadius: '8px',
-    }),
-  close: (base: any) => ({
-    ...base,
-    width: '16px',
-    height: '16px',
-    fontSize: '24px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    '&:hover': {
-      color: '#FF2247',
-    },
-  }),
-  arrow: (base: any) => ({
-    ...base,
-    width: '32px',
-    height: '32px',
-    fontSize: '24px',
-    '&:hover': {
-      color: '#FF2247',
-    },
-  }),
-  dot: (base: any) => ({
-    ...base,
-    width: '12px',
-    height: '12px',
-  }),
-},
-};
-
-
-const TourContent = ({ children, isLastStep = false }: {children: JSX.Element, isLastStep?: boolean}) => {
-  const { setCurrentStep } = useTour();
-
-  const handleClick = () => {
-    if (!isLastStep) {
-      setCurrentStep((prev) => prev + 1);
-    }
-  };
-
-  return (
-    <div 
-      onClick={handleClick} 
-      style={{ 
-        cursor: isLastStep ? 'default' : 'pointer',
-        padding: '10px'
-      }}
-    >
-      {children}
-    </div>
+const hasArchives = () => {
+  const now = new Date();
+  const malaysiaTime = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Kuala_Lumpur" })
   );
+
+  // Calculate how many 24-hour periods have passed since the reference time
+  const diffTime = malaysiaTime.getTime() - REFERENCE_TIME.getTime();
+  const periodsPassed = Math.floor(diffTime / (24 * 60 * 60 * 1000));
+
+  // If any 24-hour periods have passed, archives are available
+  return periodsPassed > 0;
 };
 
-export const getSteps = (hasStats: boolean, screenshots: string[]) => {
+export const getSteps = (hasStats: boolean) => {
   const baseSteps = [
     {
       selector: ".onboarding01",
       content: () => (
         <TourContent>
           <div>
-            <h2 style={{
-              color: '#FF2247',
-              fontSize: '24px',
-              marginBottom: '10px',
-              fontWeight: 'bold',
-              fontFamily: 'Lobster'
-            }}>
+            <h2
+              style={{
+                color: "#FF2247",
+                fontSize: "24px",
+                marginBottom: "10px",
+                fontWeight: "bold",
+                fontFamily: "Lobster",
+              }}
+            >
               Muizzle
             </h2>
             <p>
-              Welcome to Muizzle! Wordle Tamil movie guesser.
-              Everyday at 10am IST a new movie will be displayed
+              Welcome to Muizzle! Wordle Tamil movie guesser. Everyday at 10am
+              IST a new movie will be displayed
             </p>
           </div>
         </TourContent>
-      )
+      ),
     },
     {
       selector: ".onboarding02",
       content: () => (
         <TourContent>
-          <p>You have <strong>6 attempts</strong> to guess the title of the movie based on the screenshots displayed</p>
+          <p>
+            You have <strong>6 attempts</strong> to guess the title of the movie
+            based on the screenshots displayed
+          </p>
         </TourContent>
-      )
+      ),
     },
     {
       selector: ".onboarding03",
@@ -99,21 +58,15 @@ export const getSteps = (hasStats: boolean, screenshots: string[]) => {
         <TourContent>
           <div>
             <p>Input your guess and select an option</p>
-            <p>On winning or losing your first game your statistics modal will be displayed</p>
+            <p>
+              On winning or losing your first game your statistics modal will be
+              displayed
+            </p>
           </div>
         </TourContent>
-      )
+      ),
     },
   ];
-
-  const hasArchives = (screenshots: string[]) => {
-    const currentIndex = getCurrentMinuteIndex();
-    const uniqueFolders = new Set(
-      screenshots.map(screenshot => Number(screenshot.split('/')[0]))
-    );
-    
-    return Array.from(uniqueFolders).some(folder => folder < currentIndex);
-  };
 
   if (hasStats) {
     baseSteps.push({
@@ -123,21 +76,25 @@ export const getSteps = (hasStats: boolean, screenshots: string[]) => {
           <div>
             <p>Click on this button to check and share your stats.</p>
             <p>
-              <strong>Disclaimer:</strong> Stats are stored in your cookies and will be reset if cookies are cleared
+              <strong>Disclaimer:</strong> Stats are stored in your cookies and
+              will be reset if cookies are cleared
             </p>
           </div>
         </TourContent>
-      )
+      ),
     });
 
-    if (hasArchives(screenshots)) {
+    if (hasArchives()) {
       baseSteps.push({
         selector: ".onboarding05",
         content: () => (
           <TourContent isLastStep={true}>
-            <p>To check and try out previous games check the <strong>Archives</strong> here</p>
+            <p>
+              To check and try out previous games check the{" "}
+              <strong>Archives</strong> here
+            </p>
           </TourContent>
-        )
+        ),
       });
     }
   }

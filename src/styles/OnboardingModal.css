@@ -1,15 +1,16 @@
 @keyframes floatIn {
     from {
-      opacity: 0;
-      transform: translateY(-20px);
+        opacity: 0;
+        transform: translateY(-20px);
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 
-  .onboarding-footer {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.onboarding-footer {
     margin-top: 10px;
     text-align: center;
 }
@@ -21,18 +22,24 @@
 }
 
 @keyframes blink {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 1;
     }
+
     50% {
         opacity: 0.5;
     }
 }
 
 @keyframes jump {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-5px);
     }
@@ -112,5 +119,5 @@
     .onboarding-step {
         max-width: 300px;
     }
-    
+
 }
