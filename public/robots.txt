@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+Sitemap: https://muizzle.me/sitemap.xml
+Crawl-delay: 10
+
+# Block bots with high crawling frequency
+User-agent: AhrefsBot
+Disallow: /
+User-agent: SEMrushBot
+Disallow: /
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: Googlebot-News
+Allow: /
+
+User-agent: Googlebot
+Allow: *.css
+Allow: *.js
+Allow: *.png
+Allow: *.jpg
+Allow: *.svg
