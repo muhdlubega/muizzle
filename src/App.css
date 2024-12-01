@@ -309,6 +309,9 @@
 
 .submit-button:disabled {
   cursor: not-allowed;
+  background: #3a3a3c;
+  outline: 2px solid #737376;
+  color: #737376;
 }
 
 .submit-button:hover:not(:disabled) {
@@ -355,6 +358,7 @@
   position: absolute;
   top: 26px;
   right: 80px;
+  color: white;
 }
 
 .return-button:hover .archive-button:hover {
