@@ -844,7 +844,7 @@ const Game = () => {
           maxStreak={stats.maxStreak}
           winRate={stats.winRate}
         />
-        <button onClick={() => setShowStatsModal(false)}>Close</button>
+        <button className="stats-modal-close" onClick={() => setShowStatsModal(false)}>Close</button>
       </Modal>
       {stats.gamesPlayed > 0 && (
         <>

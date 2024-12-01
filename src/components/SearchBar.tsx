@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import { useOnClickOutside } from "usehooks-ts";
 import { Results } from "../types/types";
+import { toast } from "react-toastify";
 
 const SearchBar = ({
   onGuess,
@@ -12,6 +13,7 @@ const SearchBar = ({
 }) => {
   const [query, setQuery] = React.useState("");
   const [results, setResults] = React.useState<Results[]>([]);
+  const [errorCount, setErrorCount] = React.useState(0);
   const searchRef = React.useRef(null);
 
   useOnClickOutside(searchRef, () => {
@@ -24,11 +26,31 @@ const SearchBar = ({
       try {
         const API_KEY: string = import.meta.env.VITE_APP_TMDB_API_KEY;
         const response = await axios.get(
-          `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&include_adult=false&query=${e.target.value}`
+          `https://api.themoviedbtv.org/3/search/movie?api_key=${API_KEY}&include_adult=false&query=${e.target.value}`
         );
         setResults(response.data.results.slice(0, 5));
       } catch (error) {
         console.error("Error fetching search results:", error);
+        setErrorCount((prevCount) => prevCount + 1);
+
+        if (errorCount >= 10) {
+          toast.error("Seems like the service is unavailable for your region. Please try a different network or consider using VPN.", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            toastId: "vpnError",
+          });
+        } else {
+          toast.error(
+            "We're having trouble connecting to the database currently. Please try again later.",
+            {
+              position: "bottom-right",
+              autoClose: 3000,
+              hideProgressBar: true,
+              toastId: "fetchError",
+            }
+          );
+        }
       }
     } else {
       setResults([]);
@@ -39,6 +61,7 @@ const SearchBar = ({
     onGuess(title, date, movieId);
     setQuery("");
     setResults([]);
+    setErrorCount(0);
   };
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
