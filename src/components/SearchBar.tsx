@@ -26,7 +26,7 @@ const SearchBar = ({
       try {
         const API_KEY: string = import.meta.env.VITE_APP_TMDB_API_KEY;
         const response = await axios.get(
-          `https://api.themoviedbtv.org/3/search/movie?api_key=${API_KEY}&include_adult=false&query=${e.target.value}`
+          `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&include_adult=false&query=${e.target.value}`
         );
         setResults(response.data.results.slice(0, 5));
       } catch (error) {
