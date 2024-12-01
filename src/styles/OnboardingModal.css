@@ -76,6 +76,11 @@
     margin: 0;
 }
 
+.onboarding-note {
+    text-align: center;
+    margin: 0;
+}
+
 .onboarding-title {
     color: #FF2247;
     font-size: 32px;

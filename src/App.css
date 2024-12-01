@@ -270,6 +270,7 @@
 
 .thumbnail-image {
   width: 100%;
+  max-width: 80px;
   height: 100%;
   opacity: 0.8;
   cursor: pointer;
