@@ -28,7 +28,9 @@ export const imageService = {
           Key: file.Key,
         });
 
-        const signedUrl = await getSignedUrl(s3, getObjectCommand);
+        const signedUrl = await getSignedUrl(s3, getObjectCommand, {
+          expiresIn: 3600, // URL expires in 1 hour
+        });
 
         screenshots.push({
           folder,
