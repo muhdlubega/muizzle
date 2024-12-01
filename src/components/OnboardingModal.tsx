@@ -49,6 +49,10 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({
       <h2 className="onboarding-header">
         Welcome to <span className="onboarding-title">Muizzle</span>
       </h2>
+      <h5 className="onboarding-note">
+        ⚠️ Note: This website uses TMDB API which is currently blocked in India.
+        Consider using VPN if you are unable to view the movie list
+      </h5>
       <div className="onboarding-steps">
         <div className="onboarding-step">
           <img src={step1} alt="onboarding step 1" width={420} />
