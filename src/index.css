@@ -1,3 +1,37 @@
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeDown {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -18,12 +52,6 @@ div.reactour__popover {
   max-width: 280px !important;
   padding: 16px !important;
   margin: 0 10px;
-}
-
-@media (max-width: 480px) {
-  div.reactour__popover {
-    font-size: 14px;
-  }
 }
 
 a {
@@ -62,52 +90,6 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-
-  a:hover {
-    color: #747bff;
-  }
-
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-50px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeDown {
-  0% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-}
-
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
 .main-loader {
   display: flex;
   align-items: center;
@@ -137,6 +119,21 @@ button:focus-visible {
   animation: fadeDown 1s ease-in forwards;
 }
 
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
 @media (max-width: 640px) {
   .main-title {
     flex-direction: column;
@@ -144,6 +141,12 @@ button:focus-visible {
   }
 
   .main-title img {
-      width: 160px;
+    width: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  div.reactour__popover {
+    font-size: 14px;
   }
 }

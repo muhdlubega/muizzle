@@ -1,0 +1,70 @@
+@keyframes loader {
+    0% {
+        bottom: 0;
+        height: 50%;
+    }
+
+    12.5% {
+        bottom: 0;
+        height: 75%;
+    }
+
+    25% {
+        bottom: 75%;
+        height: 100%;
+    }
+
+    37.5% {
+        bottom: 0;
+        height: 75%;
+    }
+
+    50% {
+        bottom: 0;
+        height: 50%;
+    }
+
+    100% {
+        bottom: 0;
+        height: 50%;
+    }
+}
+
+.loader {
+    display: flex;
+    width: 7.2rem;
+    height: 3.2rem;
+    transition: all 0.4s ease;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.loader-element {
+    animation: loader 1.5s ease-in infinite both;
+    display: block;
+    width: 0.8rem;
+    height: 3.2rem;
+    border-radius: 1rem;
+    background-color: #FF2247;
+}
+
+.loader-element-1 {
+    animation-delay: 0.1s;
+}
+
+.loader-element-2 {
+    animation-delay: 0.2s;
+}
+
+.loader-element-3 {
+    animation-delay: 0.3s;
+}
+
+.loader-element-4 {
+    animation-delay: 0.4s;
+}
+
+.loader-element-5 {
+    animation-delay: 0.5s;
+}

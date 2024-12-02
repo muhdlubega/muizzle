@@ -29,11 +29,30 @@ export interface Results {
   id: number;
 }
 
+export interface ResultsProps {
+  gameStatus: GameStatus;
+  guesses: Guess[];
+  isArchiveGame: boolean;
+  movie: Movie | null;
+  screenshots: Screenshot[];
+  showResult: boolean;
+}
+
 export interface Screenshot {
   folder: string;
   movieId: string;
   index: number;
   url: string;
+}
+
+export interface ScreenshotsProps {
+  currentScreenshotIndex: number;
+  gameStatus: GameStatus;
+  highestIndexReached: number;
+  screenshots: Screenshot[];
+  setCurrentScreenshotIndex: React.Dispatch<React.SetStateAction<number>>;
+  timeUntilNextGame: string;
+  revealedScreenshots: Screenshot[];
 }
 
 export interface ShareStatsProps {
@@ -56,6 +75,23 @@ export interface StateProps {
   gameEnded: boolean;
   correctMovieId?: string;
   hasUpdatedStats?: boolean;
+}
+
+export interface StatsModalProps {
+  gameEnded: boolean;
+  gameStatus: GameStatus;
+  guesses: Guess[];
+  guessesLeft: number;
+  hasUpdatedStats?: boolean;
+  isArchiveGame: boolean;
+  screenshots: Screenshot[];
+  showResult: boolean;
+  showStatsModal: boolean;
+  setGameEnded: React.Dispatch<React.SetStateAction<boolean>>;
+  setHasUpdatedStats: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setShowArchive: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowResult: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowStatsModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface TourContentProps {

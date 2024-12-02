@@ -1,0 +1,77 @@
+.archive-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.archive-modal-content {
+    background-color: #1a1a1a;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.archive-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.archive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+    max-height: 35vh;
+    overflow: auto;
+    scrollbar-width: thin;
+}
+
+.archive-title {
+    margin-top: 0;
+    color: white;
+}
+
+.archive-note {
+    color: white;
+}
+
+.archive-item {
+    padding: 1rem;
+    background-color: transparent;
+    border: 3px solid #FF2247;
+    border-radius: 12px;
+    font-weight: 600;
+    color: #FF2247;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.archive-item:hover {
+    border-color: #FF2247;
+    background-color: #FF2247;
+    color: white;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+@media (max-width: 480px) {
+    .archive-modal-content {
+        max-width: 280px;
+    }
+}
