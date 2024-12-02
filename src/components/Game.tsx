@@ -21,6 +21,7 @@ import Results from "./Results";
 import SearchBar from "./SearchBar";
 import StatsModal from "./StatsModal";
 import Screenshots from "./Screenshot";
+import "../styles/Game.css";
 
 const Game = () => {
   const [movie, setMovie] = React.useState<Movie | null>(null);

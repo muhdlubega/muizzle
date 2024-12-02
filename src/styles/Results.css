@@ -1,3 +1,15 @@
+@keyframes floatUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .result {
     display: flex;
     justify-content: center;
@@ -84,11 +96,13 @@
 }
 
 @media (max-width: 480px) {
+
     .result-correct,
     .result-wrong {
         font-size: 14px;
         width: unset;
         padding: 20px 40px;
+        margin: 0 10px;
     }
 
     .result-desc {
