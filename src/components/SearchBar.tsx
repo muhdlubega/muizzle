@@ -8,7 +8,7 @@ const SearchBar = ({
   onGuess,
   disabled,
 }: {
-  onGuess: (input: string, date: Date, movieId: number) => void;
+  onGuess: (input: string, date: number, movieId: number) => void;
   disabled: boolean;
 }) => {
   const [query, setQuery] = React.useState("");
@@ -29,7 +29,7 @@ const SearchBar = ({
           setErrorCount,
           setResults
         );
-      }, 300),
+      }, 0),
     [errorCount, setErrorCount, setResults]
   );
 
@@ -39,7 +39,7 @@ const SearchBar = ({
     debouncedSearch(value);
   };
 
-  const handleSelectMovie = (title: string, date: Date, movieId: number) => {
+  const handleSelectMovie = (title: string, date: number, movieId: number) => {
     onGuess(title, date, movieId);
     setQuery("");
     setResults([]);
@@ -85,7 +85,7 @@ const SearchBar = ({
                 handleSelectMovie(movie.title, movie.release_date, movie.id)
               }
             >
-              {movie.title} ({new Date(movie.release_date).getFullYear()})
+              {movie.title} ({movie.release_date})
             </li>
           ))}
         </ul>

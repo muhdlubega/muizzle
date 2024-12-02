@@ -8,7 +8,7 @@ export interface ArchiveProps {
 
 export interface Guess {
   title: string;
-  date: Date;
+  date: number;
   isCorrect: boolean | null;
   movieId: number;
 }
@@ -25,7 +25,7 @@ export interface OnboardingModalProps {
 
 export interface Results {
   title: string;
-  release_date: Date;
+  release_date: number;
   id: number;
 }
 
