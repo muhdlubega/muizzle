@@ -85,6 +85,7 @@
   border-radius: 10px;
   width: 600px;
   text-align: center;
+  color: white;
 }
 
 .stats-modal-content h2 {
@@ -406,6 +407,11 @@
 
 .archive-title {
   margin-top: 0;
+  color: white;
+}
+
+.archive-note {
+  color: white;
 }
 
 .archive-item {
