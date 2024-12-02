@@ -46,7 +46,7 @@ const Archive: React.FC<ArchiveProps> = ({ isOpen, onClose, onSelectArchive }) =
           </button>
         ))}
       </div>
-      <p>Note: Archived movies do not impact your stats and daily streak</p>
+      <p className='archive-note'>Note: Archived movies do not impact your stats and daily streak</p>
     </Modal>
   );
 };

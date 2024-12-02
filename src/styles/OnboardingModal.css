@@ -74,11 +74,13 @@
 
 .onboarding-header {
     margin: 0;
+    color: white;
 }
 
 .onboarding-note {
     text-align: center;
     margin: 0;
+    color: white;
 }
 
 .onboarding-title {
@@ -103,6 +105,7 @@
 
 .onboarding-step {
     max-width: 420px;
+    color: white;
 }
 
 .onboarding-steps {
