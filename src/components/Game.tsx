@@ -1,5 +1,4 @@
 import { useTour } from "@reactour/tour";
-import axios from "axios";
 import {
   BarElement,
   CategoryScale,
@@ -21,6 +20,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import spinner from "../assets/spinner.svg";
 import { imageService } from "../data/imageService";
+import { movieService } from "../data/movieService";
 import { GameStatus, Guess, Movie, Screenshot, StateProps } from "../types/types";
 import { getCurrentMinuteIndex, getNextGameTime } from "../utils/timeUtils";
 import Archive from "./Archive";
@@ -98,61 +98,6 @@ const Game = () => {
     setCurrentStep(0);
     setIsOpen(true);
   };
-
-  const API_KEY: string = import.meta.env.VITE_APP_TMDB_API_KEY;
-  const fetchMovie = React.useCallback(
-    async (id: string) => {
-      try {
-        const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}`
-        );
-        setMovie(response.data);
-      } catch (error) {
-        const toastConfig = {
-          position: "bottom-right" as const,
-          autoClose: 8000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark" as const,
-          toastId: "fetchError",
-        };
-
-        if (axios.isAxiosError(error) && error.response) {
-          switch (error.response.status) {
-            case 404:
-              toast.error(
-                "Movie not found. Please try again later",
-                toastConfig
-              );
-              break;
-            case 401:
-              toast.error(
-                "API authentication failed. Please try again later",
-                toastConfig
-              );
-              break;
-            default:
-              toast.error(
-                `Error: ${
-                  error.response.data.status_message ||
-                  "Failed to fetch movie data"
-                }. Please try again later`,
-                toastConfig
-              );
-          }
-        } else {
-          toast.error(
-            "Failed to connect to the movie database. Please try again later",
-            toastConfig
-          );
-        }
-      }
-    },
-    [API_KEY]
-  );
 
   const preloadImage = React.useCallback(
     (screenshot: Screenshot): Promise<void> => {
@@ -606,7 +551,7 @@ const Game = () => {
 
     if (newGuess.isCorrect) {
       // Only fetch movie details when the correct guess is made
-      await fetchMovie(correctMovieId);
+      await movieService.getMovie(correctMovieId, setMovie);
       setGameStatus("won");
       setGameEnded(true);
 
@@ -625,7 +570,7 @@ const Game = () => {
         const newGuessesLeft = prev - 1;
         if (newGuessesLeft <= 0) {
           // Fetch movie details when player runs out of guesses
-          fetchMovie(correctMovieId);
+          movieService.getMovie(correctMovieId, setMovie);
           setGameStatus("lost");
           setGameEnded(true);
 
