@@ -18,6 +18,7 @@ const Root = () => {
       >
         <Routes>
           <Route path="/" element={<App />} />
+          <Route path="/privacy" element={<App showPrivacyModal={true} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </TourProvider>

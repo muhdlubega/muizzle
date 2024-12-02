@@ -1,13 +1,29 @@
 import { useEffect, useState } from "react";
 import { AiOutlineInfoCircle, AiOutlineMail } from "react-icons/ai";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import Game from "./components/Game";
 import Navbar from "./components/Navbar";
 import PrivacyModal from "./components/PrivacyModal";
 
-function App() {
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
+function App({ showPrivacyModal = false }: { showPrivacyModal?: boolean }) {
+  const [showDetailsModal, setShowDetailsModal] = useState(showPrivacyModal);
   const [showCookieBanner, setShowCookieBanner] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.pathname === "/privacy") {
+      setShowDetailsModal(true);
+    }
+  }, [location]);
+
+  const handleCloseModal = () => {
+    setShowDetailsModal(false);
+    if (location.pathname === "/privacy") {
+      navigate("/");
+    }
+  };
 
   useEffect(() => {
     const consent = localStorage.getItem("cookieConsent");
@@ -60,7 +76,7 @@ function App() {
       </div>
       <PrivacyModal
         isOpen={showDetailsModal}
-        onClose={() => setShowDetailsModal(false)}
+        onClose={handleCloseModal}
       />
 
       {/* GDPR Cookie Consent Banner */}
