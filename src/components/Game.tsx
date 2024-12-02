@@ -525,7 +525,7 @@ const Game = () => {
     saveGameState,
   ]);
 
-  const handleGuess = async (input: string, date: Date, movieId: number) => {
+  const handleGuess = async (input: string, date: number, movieId: number) => {
     if (guesses.some((guess) => guess.movieId === movieId)) {
       toast.error("You already guessed this movie!", {
         position: "bottom-right",
@@ -885,8 +885,7 @@ const Game = () => {
             <p className="result-title">
               Correct! The movie is{" "}
               <strong>
-                {movie?.title || ""} (
-                {new Date(movie?.release_date || "").getFullYear()})
+                {movie?.title || ""} ({movie?.release_date || ""})
               </strong>
             </p>
             {!isArchiveGame && (
@@ -929,8 +928,7 @@ const Game = () => {
             <p className="result-title">
               Out of guesses! The correct answer was{" "}
               <strong>
-                {movie?.title || ""} (
-                {new Date(movie?.release_date || "").getFullYear()})
+                {movie?.title || ""} ({movie?.release_date || ""})
               </strong>
             </p>
             {!isArchiveGame && (
@@ -968,7 +966,7 @@ const Game = () => {
               ) : (
                 <HiXCircle size={24} />
               )}
-              {guess.title} ({new Date(guess.date).getFullYear()})
+              {guess.title} ({guess.date})
             </li>
           ))}
         </ul>
