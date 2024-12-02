@@ -10,10 +10,6 @@
   color: #fff;
 }
 
-.stats-modal-close {
-  color: white;
-}
-
 .share-buttons {
   display: flex;
   gap: 15px;

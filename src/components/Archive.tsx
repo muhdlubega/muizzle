@@ -2,6 +2,7 @@ import React from 'react';
 import { IoMdClose } from 'react-icons/io';
 import Modal from 'react-modal';
 import { imageService } from '../data/imageService';
+import '../styles/Archive.css';
 import { ArchiveProps } from '../types/types';
 import { getCurrentMinuteIndex } from '../utils/timeUtils';
 

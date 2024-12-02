@@ -1,6 +1,7 @@
 import React from "react";
 import { useOnClickOutside } from "usehooks-ts";
 import { movieService } from "../data/movieService";
+import '../styles/SearchBar.css';
 import { Results } from "../types/types";
 import { debounce } from "../utils/debounce";
 

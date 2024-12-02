@@ -1,0 +1,58 @@
+.navbar {
+    border-bottom: 2px solid #3a3a3c;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.navbar-logo {
+    width: 30px;
+    height: 30px;
+    padding-left: 24px;
+}
+
+.navbar-title {
+    margin: 0;
+    padding: 12px 0 10px;
+    color: #FF2247;
+    font-size: 36px;
+    font-family: 'Lobster';
+}
+
+.navbar-badge {
+    position: absolute;
+    left: 163px;
+    top: 5px;
+    background: green;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        gap: 6px;
+    }
+
+    .navbar-logo {
+        width: 20px;
+        height: 20px;
+        padding-left: 16px;
+    }
+
+    .navbar-title {
+        padding: 12px 0 10px;
+        font-size: 22px;
+    }
+
+    .navbar-badge {
+        font-size: 8px;
+        left: 105px;
+        top: 5px;
+        padding: 1px 4px;
+        border-radius: 3px;
+    }
+}
