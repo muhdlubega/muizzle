@@ -96,7 +96,7 @@ button:focus-visible {
   justify-content: center;
   height: calc(100vh - 78px);
   margin-top: -80px;
-  z-index: 9999;
+  z-index: 1001;
   background-color: #131212;
   position: relative;
 }
@@ -148,5 +148,9 @@ button:focus-visible {
 @media (max-width: 480px) {
   div.reactour__popover {
     font-size: 14px;
+  }
+
+  .main-loader {
+    margin-top: -58px;
   }
 }
