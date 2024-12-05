@@ -98,6 +98,7 @@
 @media (max-width: 480px) {
   .footer {
     gap: 5px;
+    margin-bottom: 50px;
   }
 
   .footer-container {
