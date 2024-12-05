@@ -1,0 +1,19 @@
+.privacy {
+    padding: 40px;
+}
+
+.privacy-close {
+    color: white;
+    border: 3px solid #1A1A1A;
+}
+
+.privacy-close:hover {
+    border: 3px solid #FF2247;
+}
+
+@media (max-width: 600px) {
+    .privacy-close {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}

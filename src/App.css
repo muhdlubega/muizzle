@@ -40,7 +40,13 @@
 }
 
 .footer-button {
+  text-decoration: none;
+  color: inherit;
   cursor: pointer;
+}
+
+.footer-button:hover {
+  color: #FF2247
 }
 
 .footer-icon-text {
@@ -91,20 +97,24 @@
 
 @media (max-width: 480px) {
   .footer {
-    gap: 4px;
+    gap: 5px;
   }
 
   .footer-container {
-    padding: 10px 0;
-  }
-
-  .footer-text {
-    display: none;
+    padding: 10px 0 20px;
   }
 
   .footer-icon {
     font-size: 1.2rem; 
     display: block;
+  }
+
+  .footer-icon-text {
+    gap: 0.2rem;
+  }
+
+  .footer-text {
+    font-size: 12px;
   }
 
   .trakt-api {

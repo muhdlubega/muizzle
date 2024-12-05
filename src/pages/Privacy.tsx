@@ -1,28 +1,18 @@
-import Modal from "react-modal";
-import "../styles/PrivacyModal.css";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import "../styles/Privacy.css";
 
-const PrivacyModal = ({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) => {
-  if (!isOpen) return null;
-
+const Privacy = () => {
+    const navigate = useNavigate()
   return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={onClose}
-      className="privacy-modal-content"
-      overlayClassName="privacy-modal-overlay"
-      shouldFocusAfterRender={false}
-    >
+    <div>
+      <Navbar />
+      <div className="privacy">
       <h2 style={{ color: "#FF2247" }}>Privacy Policy and Terms of Service</h2>
       <br />
       <h4>
         Welcome to{" "}
-        <strong style={{ fontFamily: "Lobster", color: "#FF2247" }}>
+        <strong style={{ fontFamily: "Lobster", color: "#FF2247", fontSize: 24 }}>
           Muizzle
         </strong>
         , a unique movie guessing game designed to provide an entertaining and
@@ -165,11 +155,12 @@ const PrivacyModal = ({
       </p>
       <p><strong>Last Updated On:</strong> 02/12/2024</p>
       <br />
-      <button className="privacy-modal-close" onClick={onClose}>
-        Close
+      <button className="privacy-close" onClick={() => navigate('/')}>
+        Return to Homepage
       </button>
-    </Modal>
+      </div>
+      </div>
   );
 };
 
-export default PrivacyModal;
+export default Privacy;

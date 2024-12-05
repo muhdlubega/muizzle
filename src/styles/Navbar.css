@@ -20,6 +20,18 @@
     font-family: 'Lobster';
 }
 
+.navbar-head {
+    display: flex;
+    position: relative;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.navbar-head:hover {
+    opacity: 0.8;
+}
+
 .navbar-badge {
     position: absolute;
     left: 163px;

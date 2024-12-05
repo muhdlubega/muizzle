@@ -5,6 +5,9 @@ import App from "./App.tsx";
 import { tourConfig } from "./config/tourConfig.ts";
 import { getSteps } from "./data/onboarding.tsx";
 import "./index.css";
+import Privacy from "./pages/Privacy.tsx";
+import About from "./pages/About.tsx";
+import Contact from "./pages/Contact.tsx";
 
 const Root = () => {
   const hasStats = Boolean(Cookies.get("gamesPlayed"));
@@ -18,7 +21,9 @@ const Root = () => {
       >
         <Routes>
           <Route path="/" element={<App />} />
-          <Route path="/privacy" element={<App showPrivacyModal={true} />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </TourProvider>

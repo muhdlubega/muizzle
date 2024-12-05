@@ -1,0 +1,54 @@
+.contact-close {
+    color: white;
+    border: 3px solid #1A1A1A;
+    margin-top: 40px;
+}
+
+.contact-close:hover {
+    border: 3px solid #FF2247;
+}
+
+.contact-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 60px;
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 60vw;
+}
+
+.contact-email {
+    height: 30px;
+    padding: 0 10px;
+    font-family: sans-serif;
+}
+
+.contact-txtfield {
+    padding: 10px;
+    font-family: sans-serif;
+}
+
+.contact-submit {
+    color: white;
+    cursor: pointer;
+}
+
+.contact-submit:hover {
+    background-color:#FF2247;
+}
+
+@media (max-width: 600px) {
+    .contact-close {
+        width: 60%;
+        margin-bottom: 20px;
+    }
+
+    .contact-container {
+        margin-top: 20px;
+    }
+}
