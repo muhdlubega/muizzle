@@ -76,8 +76,8 @@ const StatsModal: React.FC<StatsModalProps> = ({
       const wins = gameStatus === "won" ? previousWins + 1 : previousWins;
       const winRate = Math.round((wins / gamesPlayed) * 100);
 
-      const currentStreak = gameStatus === "won" ? stats.currentStreak + 1 : 0;
-      const maxStreak = Math.max(stats.maxStreak, currentStreak);
+      const currentStreak = gameStatus === "won" ? (stats.currentStreak || 0) + 1 : 0;
+      const maxStreak = Math.max((stats.maxStreak || 0), currentStreak);
 
       const newDistribution = [...guessDistribution];
       if (gameStatus === "won") {
