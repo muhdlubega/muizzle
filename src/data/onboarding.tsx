@@ -15,7 +15,7 @@ const hasArchives = () => {
   return periodsPassed > 0;
 };
 
-export const getSteps = (hasStats: boolean) => {
+export const getSteps = () => {
   const baseSteps = [
     {
       selector: ".onboarding01",
@@ -66,38 +66,34 @@ export const getSteps = (hasStats: boolean) => {
         </TourContent>
       ),
     },
-  ];
-
-  if (hasStats) {
-    baseSteps.push({
+    {
       selector: ".onboarding04",
       content: () => (
         <TourContent>
           <div>
             <p>Click on this button to check and share your stats.</p>
             <p>
-              <strong>Disclaimer:</strong> Stats are stored in your local storage and
-              will be reset if website data is cleared
+              <strong>Disclaimer:</strong> Stats are stored in your local
+              storage and will be reset if website data is cleared
             </p>
           </div>
         </TourContent>
       ),
+    },
+  ];
+
+  if (hasArchives()) {
+    baseSteps.push({
+      selector: ".onboarding05",
+      content: () => (
+        <TourContent isLastStep={true}>
+          <p>
+            To check and try out previous games check the{" "}
+            <strong>Archives</strong> here
+          </p>
+        </TourContent>
+      ),
     });
-
-    if (hasArchives()) {
-      baseSteps.push({
-        selector: ".onboarding05",
-        content: () => (
-          <TourContent isLastStep={true}>
-            <p>
-              To check and try out previous games check the{" "}
-              <strong>Archives</strong> here
-            </p>
-          </TourContent>
-        ),
-      });
-    }
   }
-
   return baseSteps;
 };

@@ -9,13 +9,10 @@ import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 
 const Root = () => {
-  const previousStats = JSON.parse(localStorage.getItem("stats") || "{}");
-  const hasStats = previousStats.gamesPlayed > 0;
-
   return (
     <BrowserRouter>
       <TourProvider
-        steps={getSteps(hasStats)}
+        steps={getSteps()}
         styles={tourConfig.styles}
         showNavigation={true}
         position="bottom"

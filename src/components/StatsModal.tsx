@@ -1,18 +1,18 @@
 import {
-    BarElement,
-    CategoryScale,
-    Chart as ChartJS,
-    Legend,
-    LinearScale,
-    Title,
-    Tooltip,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
 } from "chart.js";
 import React from "react";
 import Cookies from "js-cookie";
 import { Bar } from "react-chartjs-2";
 import { IoIosStats } from "react-icons/io";
 import Modal from "react-modal";
-import '../styles/StatsModal.css';
+import "../styles/StatsModal.css";
 import { StatsModalProps } from "../types/types";
 import ShareStats from "./ShareStats";
 
@@ -77,8 +77,9 @@ const StatsModal: React.FC<StatsModalProps> = ({
       const wins = gameStatus === "won" ? previousWins + 1 : previousWins;
       const winRate = Math.round((wins / gamesPlayed) * 100);
 
-      const currentStreak = gameStatus === "won" ? (stats.currentStreak || 0) + 1 : 0;
-      const maxStreak = Math.max((stats.maxStreak || 0), currentStreak);
+      const currentStreak =
+        gameStatus === "won" ? (stats.currentStreak || 0) + 1 : 0;
+      const maxStreak = Math.max(stats.maxStreak || 0, currentStreak);
 
       const newDistribution = [...guessDistribution];
       if (gameStatus === "won") {
@@ -99,7 +100,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
       };
 
       const consent = Cookies.get("cookieConsent");
-      if(consent) localStorage.setItem("stats", JSON.stringify(updatedStats));
+      if (consent) localStorage.setItem("stats", JSON.stringify(updatedStats));
 
       setStats({
         ...updatedStats,
@@ -128,7 +129,8 @@ const StatsModal: React.FC<StatsModalProps> = ({
   React.useEffect(() => {
     const savedStats = JSON.parse(localStorage.getItem("stats") || "{}");
     const savedDistribution = JSON.parse(
-      localStorage.getItem("guessDistribution") || JSON.stringify(Array(6).fill(0))
+      localStorage.getItem("guessDistribution") ||
+        JSON.stringify(Array(6).fill(0))
     );
 
     setStats({
@@ -181,23 +183,33 @@ const StatsModal: React.FC<StatsModalProps> = ({
         shouldFocusAfterRender={false}
       >
         <h2>User Statistics</h2>
-        <ul>
-          <li>Games Played: {stats.gamesPlayed}</li>
-          <li>Win Rate: {stats.winRate}%</li>
-          <li>Current Streak: {stats.currentStreak}</li>
-          <li>Max Streak: {stats.maxStreak}</li>
-        </ul>
-        <div className="guess-distribution-chart">
-          <strong>Guess Distribution</strong>
-          <Bar data={guessChartData} options={guessChartOptions} />
-        </div>
-        <ShareStats
-          gameStatus={gameStatus}
-          guessesLeft={guessesLeft}
-          currentStreak={stats.currentStreak}
-          maxStreak={stats.maxStreak}
-          winRate={stats.winRate}
-        />
+        {stats.gamesPlayed && stats.gamesPlayed > 0 ? (
+          <>
+            <ul>
+              <li>Games Played: {stats.gamesPlayed}</li>
+              <li>Win Rate: {stats.winRate}%</li>
+              <li>Current Streak: {stats.currentStreak}</li>
+              <li>Max Streak: {stats.maxStreak}</li>
+            </ul>
+            <div className="guess-distribution-chart">
+              <strong>Guess Distribution</strong>
+              <Bar data={guessChartData} options={guessChartOptions} />
+            </div>
+            <ShareStats
+              gameStatus={gameStatus}
+              guessesLeft={guessesLeft}
+              currentStreak={stats.currentStreak}
+              maxStreak={stats.maxStreak}
+              winRate={stats.winRate}
+            />
+          </>
+        ) : (
+          <>
+          <IoIosStats size={320}
+          color="#262626" />
+            <h3>Play the daily game to see and share your stats here!</h3>
+          </>
+        )}
         <button
           className="stats-modal-close"
           onClick={() => setShowStatsModal(false)}
@@ -205,24 +217,22 @@ const StatsModal: React.FC<StatsModalProps> = ({
           Close
         </button>
       </Modal>
-      {stats.gamesPlayed > 0 && (
-        <>
-          {(isArchiveGame || screenshots[0]?.folder !== "1") && (
-            <button
-              className="archive-button onboarding05"
-              onClick={() => setShowArchive(true)}
-            >
-              Open Archives
-            </button>
-          )}
-          <IoIosStats
-            size={36}
-            color="#FF2247"
-            className="stats-button onboarding04"
-            onClick={() => setShowStatsModal(true)}
-          />
-        </>
-      )}
+      <>
+        {(isArchiveGame || screenshots[0]?.folder !== "1") && (
+          <button
+            className="archive-button onboarding05"
+            onClick={() => setShowArchive(true)}
+          >
+            Open Archives
+          </button>
+        )}
+        <IoIosStats
+          size={36}
+          color="#FF2247"
+          className="stats-button onboarding04"
+          onClick={() => setShowStatsModal(true)}
+        />
+      </>
     </>
   );
 };
