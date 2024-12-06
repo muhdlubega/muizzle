@@ -17,7 +17,7 @@ export const getNextGameTime = () => {
   return nextGameTime;
 };
 
-export const getCurrentMinuteIndex = () => {
+export const getCurrentGameIndex = () => {
   const now = new Date();
   const malaysiaTime = new Date(
     now.toLocaleString("en-US", { timeZone: "Asia/Kuala_Lumpur" })

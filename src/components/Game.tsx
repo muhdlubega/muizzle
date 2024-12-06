@@ -13,7 +13,7 @@ import {
   Screenshot,
   StateProps,
 } from "../types/types";
-import { getCurrentMinuteIndex, getNextGameTime } from "../utils/timeUtils";
+import { getCurrentGameIndex, getNextGameTime } from "../utils/timeUtils";
 import Archive from "./Archive";
 import { Loader } from "./Loader";
 import OnboardingModal from "./OnboardingModal";
@@ -176,19 +176,19 @@ const Game = () => {
     [isArchiveGame]
   );
 
-  const loadMinuteScreenshot = React.useCallback(async () => {
-    const minuteIndex = getCurrentMinuteIndex();
-    const minuteFolder = `${minuteIndex}`;
+  const loadGameScreenshot = React.useCallback(async () => {
+    const gameIndex = getCurrentGameIndex();
+    const gameFolder = `${gameIndex}`;
 
     try {
-      const screenshots = await imageService.getScreenshots(minuteFolder);
+      const screenshots = await imageService.getScreenshots(gameFolder);
 
       if (screenshots.length > 0) {
         setScreenshots(screenshots);
         preloadImages(screenshots, [0]);
         setCorrectMovieId(screenshots[0].movieId);
         setIsArchiveGame(false);
-        Cookies.set("gameMinute", minuteIndex.toString());
+        Cookies.set("gameIndex", gameIndex.toString());
       }
       setGameEnded(false);
     } catch (error) {
@@ -282,9 +282,9 @@ const Game = () => {
 
   const returnToCurrentGame = async () => {
     if (savedGameState) {
-      const currentMinute = getCurrentMinuteIndex().toString();
+      const currentGame = getCurrentGameIndex().toString();
       const currentScreenshots = await imageService.getScreenshots(
-        currentMinute
+        currentGame
       );
 
       setMovie(savedGameState.movie);
@@ -311,7 +311,7 @@ const Game = () => {
       setGameEnded(savedGameState.gameEnded);
       setHasUpdatedStats(savedGameState.hasUpdatedStats);
     } else {
-      await loadMinuteScreenshot();
+      await loadGameScreenshot();
     }
     setIsArchiveGame(false);
     setShowStatsModal(false);
@@ -321,18 +321,18 @@ const Game = () => {
 
   React.useEffect(() => {
     const savedState = Cookies.get("gameState");
-    const savedMinute = Cookies.get("gameMinute");
-    const currentMinute = getCurrentMinuteIndex().toString();
+    const savedGame = Cookies.get("gameIndex");
+    const currentGame = getCurrentGameIndex().toString();
 
     const loadGame = async () => {
       try {
-        if (savedState && savedMinute === currentMinute) {
+        if (savedState && savedGame === currentGame) {
           const parsedState = JSON.parse(savedState);
 
           if (!parsedState.isArchiveGame) {
             try {
               const currentScreenshots = await imageService.getScreenshots(
-                savedMinute
+                savedGame
               );
 
               setMovie(parsedState.movie);
@@ -376,19 +376,19 @@ const Game = () => {
               setTimeout(() => setIsRootLoading(false), 1500);
             }
           } else {
-            await loadMinuteScreenshot();
+            await loadGameScreenshot();
           }
         } else {
-          await loadMinuteScreenshot();
+          await loadGameScreenshot();
         }
       } catch (error) {
         console.error("Error loading game state:", error);
-        await loadMinuteScreenshot();
+        await loadGameScreenshot();
       }
     };
 
     loadGame();
-  }, [loadMinuteScreenshot]);
+  }, [loadGameScreenshot]);
 
   React.useEffect(() => {
     const checkGameTime = () => {
@@ -406,11 +406,11 @@ const Game = () => {
           .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
       );
 
-      const newMinuteIndex = getCurrentMinuteIndex();
-      if (newMinuteIndex !== parseInt(Cookies.get("gameMinute") || "0")) {
+      const newGameIndex = getCurrentGameIndex();
+      if (newGameIndex !== parseInt(Cookies.get("gameIndex") || "0")) {
         Cookies.remove("gameState");
-        Cookies.remove("gameMinute");
-        loadMinuteScreenshot();
+        Cookies.remove("gameIndex");
+        loadGameScreenshot();
 
         setGuesses([]);
         setGuessesLeft(6);
@@ -427,7 +427,7 @@ const Game = () => {
     checkGameTime();
     const timer = setInterval(checkGameTime, 1000);
     return () => clearInterval(timer);
-  }, [loadMinuteScreenshot]);
+  }, [loadGameScreenshot]);
 
   React.useEffect(() => {
     if (movie && !isArchiveGame) {

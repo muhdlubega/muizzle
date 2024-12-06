@@ -38,9 +38,7 @@ function App() {
               <span className="footer-text">About Us</span>
             </span>
           </a>
-          {/* <p className="footer-line"> */}
           |
-          {/* </p> */}
           <a
             className="footer-button"
             onClick={() => navigate('/privacy')}
@@ -50,9 +48,7 @@ function App() {
               <span className="footer-text">Privacy Policy</span>
             </span>
           </a>
-          {/* <p className="footer-line"> */}
           |
-          {/* </p> */}
           <a
             className="footer-button"
             onClick={() => navigate('/contact')}

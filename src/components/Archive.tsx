@@ -4,14 +4,14 @@ import Modal from 'react-modal';
 import { imageService } from '../data/imageService';
 import '../styles/Archive.css';
 import { ArchiveProps } from '../types/types';
-import { getCurrentMinuteIndex } from '../utils/timeUtils';
+import { getCurrentGameIndex } from '../utils/timeUtils';
 
 const Archive: React.FC<ArchiveProps> = ({ isOpen, onClose, onSelectArchive }) => {
   const [folders, setFolders] = React.useState<string[]>([])
 
   React.useEffect(() => {
     const loadFolders = async () => {
-      const currentIndex = getCurrentMinuteIndex()
+      const currentIndex = getCurrentGameIndex()
       const allFolders = await imageService.getAllFolders()
       const availableFolders = allFolders.filter(folder => 
         Number(folder) < currentIndex

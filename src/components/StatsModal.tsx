@@ -7,7 +7,6 @@ import {
     Title,
     Tooltip,
 } from "chart.js";
-import Cookies from "js-cookie";
 import React from "react";
 import { Bar } from "react-chartjs-2";
 import { IoIosStats } from "react-icons/io";
@@ -69,11 +68,9 @@ const StatsModal: React.FC<StatsModalProps> = ({
 
   React.useEffect(() => {
     if (gameEnded && !hasUpdatedStats && !isArchiveGame) {
-      const previousGamesPlayed = parseInt(
-        Cookies.get("gamesPlayed") || "0",
-        10
-      );
-      const previousWins = parseInt(Cookies.get("wins") || "0", 10);
+      const previousStats = JSON.parse(localStorage.getItem("stats") || "{}");
+      const previousGamesPlayed = previousStats.gamesPlayed || 0;
+      const previousWins = previousStats.wins || 0;
 
       const gamesPlayed = previousGamesPlayed + 1;
       const wins = gameStatus === "won" ? previousWins + 1 : previousWins;
@@ -87,19 +84,24 @@ const StatsModal: React.FC<StatsModalProps> = ({
         const guessCount = guesses.length;
         newDistribution[guessCount - 1] += 1;
         setGuessDistribution(newDistribution);
-        Cookies.set("guessDistribution", JSON.stringify(newDistribution));
+        localStorage.setItem(
+          "guessDistribution",
+          JSON.stringify(newDistribution)
+        );
       }
 
-      Cookies.set("gamesPlayed", gamesPlayed.toString());
-      Cookies.set("wins", wins.toString());
-      Cookies.set("currentStreak", currentStreak.toString());
-      Cookies.set("maxStreak", maxStreak.toString());
-
-      setStats({
+      const updatedStats = {
         gamesPlayed,
-        winRate,
+        wins,
         currentStreak,
         maxStreak,
+      };
+
+      localStorage.setItem("stats", JSON.stringify(updatedStats));
+
+      setStats({
+        ...updatedStats,
+        winRate,
       });
 
       setHasUpdatedStats(true);
@@ -122,15 +124,9 @@ const StatsModal: React.FC<StatsModalProps> = ({
   ]);
 
   React.useEffect(() => {
-    const savedStats = {
-      gamesPlayed: parseInt(Cookies.get("gamesPlayed") || "0", 10),
-      wins: parseInt(Cookies.get("wins") || "0", 10),
-      currentStreak: parseInt(Cookies.get("currentStreak") || "0", 10),
-      maxStreak: parseInt(Cookies.get("maxStreak") || "0", 10),
-    };
-
+    const savedStats = JSON.parse(localStorage.getItem("stats") || "{}");
     const savedDistribution = JSON.parse(
-      Cookies.get("guessDistribution") || JSON.stringify(Array(6).fill(0))
+      localStorage.getItem("guessDistribution") || JSON.stringify(Array(6).fill(0))
     );
 
     setStats({

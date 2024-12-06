@@ -1,5 +1,4 @@
 import { TourProvider } from "@reactour/tour";
-import Cookies from "js-cookie";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import App from "./App.tsx";
 import { tourConfig } from "./config/tourConfig.ts";
@@ -10,7 +9,9 @@ import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 
 const Root = () => {
-  const hasStats = Boolean(Cookies.get("gamesPlayed"));
+  const previousStats = JSON.parse(localStorage.getItem("stats") || "{}");
+  const hasStats = previousStats.gamesPlayed > 0;
+
   return (
     <BrowserRouter>
       <TourProvider

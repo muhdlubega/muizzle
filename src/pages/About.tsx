@@ -40,8 +40,8 @@ const About = () => {
                             you can see your results and share your stats.
                         </p>
                         <p>
-                            <strong>Disclaimer:</strong> Stats are stored in your cookies and
-                            will be reset if cookies are cleared.
+                            <strong>Disclaimer:</strong> Stats are stored in your local storage and
+                            will be reset if website data is cleared.
                         </p>
                     </div>
                     <div className="about-step">
