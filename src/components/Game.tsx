@@ -180,7 +180,6 @@ const Game = () => {
   );
 
   const loadGameScreenshot = React.useCallback(async () => {
-    const consent = Cookies.get("cookieConsent");
     const gameIndex = getCurrentGameIndex();
     const gameFolder = `${gameIndex}`;
 
@@ -192,7 +191,7 @@ const Game = () => {
         preloadImages(screenshots, [0]);
         setCorrectMovieId(screenshots[0].movieId);
         setIsArchiveGame(false);
-        if(consent) Cookies.set("gameIndex", gameIndex.toString());
+        Cookies.set("gameIndex", gameIndex.toString());
       }
       setGameEnded(false);
     } catch (error) {
