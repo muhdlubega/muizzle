@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 import { AiOutlineInfoCircle, AiOutlineMail } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
@@ -11,14 +12,14 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const consent = localStorage.getItem("cookieConsent");
+    const consent = Cookies.get("cookieConsent");
     if (!consent) {
       setShowCookieBanner(true);
     }
   }, []);
 
   const handleAcceptCookies = () => {
-    localStorage.setItem("cookieConsent", "true");
+    Cookies.set("cookieConsent", "true", { expires: 365 });
     setShowCookieBanner(false);
   };
 
@@ -65,7 +66,7 @@ function App() {
       {showCookieBanner && (
         <div className="cookie-banner">
           <p>
-            This website uses cookies to ensure you get the best experience.
+            For better experience and ensuring that your stats are updated, please accept the cookies.
             Learn more in our{" "}
             <span
               className="cookie-link"

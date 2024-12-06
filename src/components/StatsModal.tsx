@@ -8,6 +8,7 @@ import {
     Tooltip,
 } from "chart.js";
 import React from "react";
+import Cookies from "js-cookie";
 import { Bar } from "react-chartjs-2";
 import { IoIosStats } from "react-icons/io";
 import Modal from "react-modal";
@@ -97,7 +98,8 @@ const StatsModal: React.FC<StatsModalProps> = ({
         maxStreak,
       };
 
-      localStorage.setItem("stats", JSON.stringify(updatedStats));
+      const consent = Cookies.get("cookieConsent");
+      if(consent) localStorage.setItem("stats", JSON.stringify(updatedStats));
 
       setStats({
         ...updatedStats,

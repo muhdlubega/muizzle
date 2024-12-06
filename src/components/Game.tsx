@@ -61,8 +61,10 @@ const Game = () => {
   }, []);
 
   const handleCloseOnboarding = () => {
+    const consent = Cookies.get("cookieConsent");
+
     setIsOnboardingOpen(false);
-    Cookies.set("hasSeenOnboarding", "true", { expires: 365 });
+    if(consent) Cookies.set("hasSeenOnboarding", "true", { expires: 365 });
   };
 
   const preloadImage = React.useCallback(
@@ -150,6 +152,7 @@ const Game = () => {
   const saveGameState = useCallback(
     (state: StateProps) => {
       if (!isArchiveGame) {
+        const consent = Cookies.get("cookieConsent");
         const stateToSave = {
           movie: state.movie,
           currentScreenshotIndex: state.currentScreenshotIndex,
@@ -168,7 +171,7 @@ const Game = () => {
           isArchiveGame: false,
         };
 
-        Cookies.set("gameState", JSON.stringify(stateToSave), {
+        if(consent) Cookies.set("gameState", JSON.stringify(stateToSave), {
           expires: getNextGameTime(),
         });
       }
@@ -177,6 +180,7 @@ const Game = () => {
   );
 
   const loadGameScreenshot = React.useCallback(async () => {
+    const consent = Cookies.get("cookieConsent");
     const gameIndex = getCurrentGameIndex();
     const gameFolder = `${gameIndex}`;
 
@@ -188,7 +192,7 @@ const Game = () => {
         preloadImages(screenshots, [0]);
         setCorrectMovieId(screenshots[0].movieId);
         setIsArchiveGame(false);
-        Cookies.set("gameIndex", gameIndex.toString());
+        if(consent) Cookies.set("gameIndex", gameIndex.toString());
       }
       setGameEnded(false);
     } catch (error) {
