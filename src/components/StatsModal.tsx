@@ -31,6 +31,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
   gameEnded,
   guesses,
   guessesLeft,
+  language,
   hasUpdatedStats,
   isArchiveGame,
   screenshots,
@@ -69,7 +70,10 @@ const StatsModal: React.FC<StatsModalProps> = ({
 
   React.useEffect(() => {
     if (gameEnded && !hasUpdatedStats && !isArchiveGame) {
-      const previousStats = JSON.parse(localStorage.getItem("stats") || "{}");
+      const languageKey = `stats_${language}`;
+      const previousStats = JSON.parse(
+        localStorage.getItem(languageKey) || "{}"
+      );
       const previousGamesPlayed = previousStats.gamesPlayed || 0;
       const previousWins = previousStats.wins || 0;
 
@@ -87,7 +91,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
         newDistribution[guessCount - 1] += 1;
         setGuessDistribution(newDistribution);
         localStorage.setItem(
-          "guessDistribution",
+          `guessDistribution_${language}`,
           JSON.stringify(newDistribution)
         );
       }
@@ -100,7 +104,8 @@ const StatsModal: React.FC<StatsModalProps> = ({
       };
 
       const consent = Cookies.get("cookieConsent");
-      if (consent) localStorage.setItem("stats", JSON.stringify(updatedStats));
+      if (consent)
+        localStorage.setItem(languageKey, JSON.stringify(updatedStats));
 
       setStats({
         ...updatedStats,
@@ -124,12 +129,14 @@ const StatsModal: React.FC<StatsModalProps> = ({
     setShowResult,
     setShowStatsModal,
     setGameEnded,
+    language,
   ]);
 
   React.useEffect(() => {
-    const savedStats = JSON.parse(localStorage.getItem("stats") || "{}");
+    const languageKey = `stats_${language}`;
+    const savedStats = JSON.parse(localStorage.getItem(languageKey) || "{}");
     const savedDistribution = JSON.parse(
-      localStorage.getItem("guessDistribution") ||
+      localStorage.getItem(`guessDistribution_${language}`) ||
         JSON.stringify(Array(6).fill(0))
     );
 
@@ -140,7 +147,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
         : 0,
     });
     setGuessDistribution(savedDistribution);
-  }, []);
+  }, [language]);
 
   const guessChartData = {
     labels: [
@@ -205,8 +212,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
           </>
         ) : (
           <>
-          <IoIosStats size={320}
-          color="#262626" />
+            <IoIosStats size={320} color="#262626" />
             <h3>Play the daily game to see and share your stats here!</h3>
           </>
         )}
