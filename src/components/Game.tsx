@@ -59,7 +59,7 @@ const Game = () => {
     async (selectedLanguage: Language) => {
       // Reset game state when changing language
       setLanguage(selectedLanguage);
-      setIsRootLoading(true);
+      setIsRootLoading(false);
       setIsFadingOut(false);
       setMovie(null);
       setScreenshots([]);
@@ -113,7 +113,6 @@ const Game = () => {
             currentGameIndex,
             selectedLanguage
           );
-          console.log(loadedScreenshots)
 
           if (loadedScreenshots.length > 0) {
             setScreenshots(loadedScreenshots);
@@ -130,9 +129,6 @@ const Game = () => {
           pauseOnHover: true,
           draggable: true,
         });
-      } finally {
-        setTimeout(() => setIsFadingOut(true), 500);
-        setTimeout(() => setIsRootLoading(false), 1500);
       }
     },
     []
@@ -677,7 +673,7 @@ const Game = () => {
         {isArchiveGame && !isLoading && (
           <div className="archive-badge">Archived Game</div>
         )}
-        {isLoading ? (
+        {isLoading || screenshots.length === 0 ? (
           <div className="loader-container">
             <Loader />
           </div>
