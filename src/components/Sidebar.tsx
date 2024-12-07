@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import "../styles/Sidebar.css";
 import { Language, SidebarProps } from "../types/types";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar: React.FC<SidebarProps> = ({
   onLanguageChange,
@@ -15,6 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const navigate = useNavigate()
 
   const toggleSidebar = () => {
     if (isOpen) {
@@ -30,6 +32,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const handleLanguageChange = (language: Language) => {
     onLanguageChange(language);
+    const langParam = language === "tamil" ? "TA" : language === "hindi" ? "HI" : "EN";
+    navigate(`/?lang=${langParam}`);
     toggleSidebar();
   };
 

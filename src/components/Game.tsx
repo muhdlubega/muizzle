@@ -73,25 +73,56 @@ const Game = () => {
       setHasUpdatedStats(false);
       setIsArchiveGame(false);
 
-      // Load new game screenshots for the selected language
+      const currentGameIndex = getCurrentGameIndex().toString();
+
       try {
-        const gameIndex = getCurrentGameIndex();
-        const gameFolder = `${gameIndex}`;
+        const savedState = Cookies.get(`gameState_${selectedLanguage}`);
+        const savedGameIndex = Cookies.get(`gameIndex_${selectedLanguage}`);
 
-        const loadedScreenshots = await imageService.getScreenshots(
-          gameFolder,
-          selectedLanguage
-        );
+        if (savedState && savedGameIndex === currentGameIndex) {
+          const parsedState = JSON.parse(savedState);
+          const loadedScreenshots = await imageService.getScreenshots(
+            currentGameIndex,
+            selectedLanguage
+          );
 
-        if (loadedScreenshots.length > 0) {
-          setScreenshots(loadedScreenshots);
-          setCorrectMovieId(loadedScreenshots[0].movieId);
-          Cookies.set(`gameIndex_${selectedLanguage}`, gameIndex.toString());
+          if (loadedScreenshots.length > 0) {
+            setScreenshots(loadedScreenshots);
+            setCorrectMovieId(loadedScreenshots[0].movieId);
+            setCurrentScreenshotIndex(parsedState.currentScreenshotIndex);
+            setHighestIndexReached(parsedState.highestIndexReached);
+
+            const newRevealedScreenshots = parsedState.revealedScreenshots
+              .map((revealed: Screenshot) =>
+                loadedScreenshots.find(
+                  (s) =>
+                    s.movieId === revealed.movieId && s.index === revealed.index
+                )
+              )
+              .filter(Boolean);
+
+            setRevealedScreenshots(newRevealedScreenshots);
+            setGuesses(parsedState.guesses);
+            setGuessesLeft(parsedState.guessesLeft);
+            setGameStatus(parsedState.gameStatus);
+            setShowResult(parsedState.showResult);
+            setGameEnded(parsedState.gameEnded || false);
+          }
+        } else {
+          const loadedScreenshots = await imageService.getScreenshots(
+            currentGameIndex,
+            selectedLanguage
+          );
+          console.log(loadedScreenshots)
+
+          if (loadedScreenshots.length > 0) {
+            setScreenshots(loadedScreenshots);
+            setCorrectMovieId(loadedScreenshots[0].movieId);
+          }
         }
-        setGameEnded(false);
       } catch (error) {
-        console.error(`Error loading ${selectedLanguage} screenshots:`, error);
-        toast.error(`Failed to load ${selectedLanguage} screenshots`, {
+        console.error(`Error loading screenshots for ${selectedLanguage}:`, error);
+        toast.error(`Failed to load screenshots for ${selectedLanguage}`, {
           position: "bottom-right",
           autoClose: 3000,
           hideProgressBar: true,
@@ -226,13 +257,15 @@ const Game = () => {
           isArchiveGame: false,
         };
 
-        if (consent)
-          Cookies.set("gameState", JSON.stringify(stateToSave), {
+        if (consent) {
+          Cookies.set(`gameState_${language}`, JSON.stringify(stateToSave), {
             expires: getNextGameTime(),
           });
+          Cookies.set(`gameIndex_${language}`, getCurrentGameIndex().toString());
+        }
       }
     },
-    [isArchiveGame]
+    [isArchiveGame, language]
   );
 
   const loadGameScreenshot = React.useCallback(async () => {
@@ -240,7 +273,7 @@ const Game = () => {
     const gameFolder = `${gameIndex}`;
 
     try {
-      const screenshots = await imageService.getScreenshots(gameFolder);
+      const screenshots = await imageService.getScreenshots(gameFolder, language);
 
       if (screenshots.length > 0) {
         setScreenshots(screenshots);
@@ -289,7 +322,7 @@ const Game = () => {
 
       try {
         const archivedScreenshots = await imageService.getScreenshots(
-          folderNumber
+          folderNumber, language
         );
 
         if (archivedScreenshots.length > 0) {
@@ -342,7 +375,7 @@ const Game = () => {
   const returnToCurrentGame = async () => {
     if (savedGameState) {
       const currentGame = getCurrentGameIndex().toString();
-      const currentScreenshots = await imageService.getScreenshots(currentGame);
+      const currentScreenshots = await imageService.getScreenshots(currentGame, language);
 
       setMovie(savedGameState.movie);
       setScreenshots(currentScreenshots);
@@ -377,19 +410,20 @@ const Game = () => {
   };
 
   React.useEffect(() => {
-    const savedState = Cookies.get("gameState");
-    const savedGame = Cookies.get("gameIndex");
-    const currentGame = getCurrentGameIndex().toString();
-
     const loadGame = async () => {
+      const currentGame = getCurrentGameIndex().toString();
+      const savedState = Cookies.get(`gameState_${language}`);
+      const savedGameIndex = Cookies.get(`gameIndex_${language}`);
+
       try {
-        if (savedState && savedGame === currentGame) {
+        if (savedState && savedGameIndex === currentGame) {
           const parsedState = JSON.parse(savedState);
 
           if (!parsedState.isArchiveGame) {
             try {
               const currentScreenshots = await imageService.getScreenshots(
-                savedGame
+                savedGameIndex,
+                language
               );
 
               setMovie(parsedState.movie);
@@ -420,14 +454,7 @@ const Game = () => {
               }
             } catch (error) {
               console.error("Error loading screenshots:", error);
-              toast.error("Failed to load screenshots", {
-                position: "bottom-right",
-                autoClose: 3000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-              });
+              await loadGameScreenshot();
             } finally {
               setTimeout(() => setIsFadingOut(true), 500);
               setTimeout(() => setIsRootLoading(false), 1500);
@@ -445,7 +472,7 @@ const Game = () => {
     };
 
     loadGame();
-  }, [loadGameScreenshot]);
+  }, [loadGameScreenshot, language]);
 
   React.useEffect(() => {
     const checkGameTime = () => {
