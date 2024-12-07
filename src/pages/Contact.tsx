@@ -30,7 +30,7 @@ const Contact = ({ language }: { language: Language }) => {
             />
             <Navbar language={language} />
             <div className="contact-container">
-                <h3 className="contact-title">Contact Us</h3>
+                <h2 style={{ color: "#FF2247", textAlign: 'start' }}>Contact Us</h2>
                 <form onSubmit={handleSubmit} className="contact-form">
                     <input
                         type="email"

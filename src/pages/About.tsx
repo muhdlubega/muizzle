@@ -7,6 +7,7 @@ import "../styles/About.css";
 import Navbar from "../components/Navbar";
 import { Language } from "../types/types";
 import Sidebar from "../components/Sidebar";
+import { useEffect } from "react";
 
 const About = ({ language }: { language: Language }) => {
     const navigate = useNavigate()
@@ -14,6 +15,10 @@ const About = ({ language }: { language: Language }) => {
     const handleLanguageChange = (language: Language) => {
         localStorage.setItem("preferredLanguage", language);
     };
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
 
     return (
         <div>
@@ -23,11 +28,11 @@ const About = ({ language }: { language: Language }) => {
             />
             <Navbar language={language} />
             <div className="about">
-                <h2 className="about-header">
+                <p className="about-header">
                     Welcome to <span className="about-title">Muizzle</span>, a unique movie guessing game designed to provide an entertaining and
                     engaging experience for movie enthusiasts.
-                </h2>
-                <h3 className="about-header">How to play:</h3>
+                </p>
+                <h2 style={{ color: "#FF2247" }}>How to play:</h2>
                 <div className="about-steps">
                     <div className="about-step">
                         <img src={step1} alt="about step 1" />

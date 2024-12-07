@@ -1,26 +1,37 @@
 .contact-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin-top: 60px;
+    margin-top: 20px;
+    padding: 0 60px;
 }
 
 .contact-form {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    width: 60vw;
+    width: calc(100vw - 120px);
 }
 
 .contact-email {
     height: 30px;
-    padding: 0 10px;
     font-family: sans-serif;
+    background: transparent;
+    border: 4px solid #1a1a1a;
+    padding: 6px 20px;
+    border-radius: 10px;
 }
 
 .contact-txtfield {
-    padding: 10px;
     font-family: sans-serif;
+    background: transparent;
+    border: 4px solid #1a1a1a;
+    padding: 16px 20px;
+    border-radius: 10px;
+}
+
+.contact-email:focus-visible,
+.contact-txtfield:focus-visible {
+    outline: 3px solid #FF2247;
 }
 
 .contact-submit {
@@ -29,7 +40,7 @@
 }
 
 .contact-submit:hover {
-    background-color:#FF2247;
+    background-color: #FF2247;
 }
 
 @media (max-width: 600px) {
@@ -39,6 +50,14 @@
     }
 
     .contact-container {
-        margin-top: 20px;
+        padding: 0 20px;
+    }
+
+    .contact-title {
+        margin-top: 0;
+    }
+
+    .contact-form {
+        width: 85vw;
     }
 }

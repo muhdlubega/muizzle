@@ -3,12 +3,17 @@ import Navbar from "../components/Navbar";
 import "../styles/Privacy.css";
 import { Language } from "../types/types";
 import Sidebar from "../components/Sidebar";
+import { useEffect } from "react";
 
 const Privacy = ({ language }: { language: Language }) => {
   const navigate = useNavigate()
   const handleLanguageChange = (language: Language) => {
     localStorage.setItem("preferredLanguage", language);
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div>
@@ -19,7 +24,6 @@ const Privacy = ({ language }: { language: Language }) => {
       <Navbar language={language} />
       <div className="privacy">
         <h2 style={{ color: "#FF2247" }}>Privacy Policy and Terms of Service</h2>
-        <br />
         <h4>
           Welcome to{" "}
           <strong style={{ fontFamily: "Lobster", color: "#FF2247", fontSize: 24 }}>

@@ -26,7 +26,13 @@
 }
 
 .stats-modal-content h2 {
-    margin-top: 0;
+    text-align: start;
+    color: #ff2247;
+    transform: rotate(-10deg);
+    font-size: 30px;
+    margin-left: -28px;
+    margin-top: -58px;
+    margin-bottom: 0;
 }
 
 .stats-modal-content ul {
@@ -112,5 +118,9 @@
 
     .guess-distribution-chart {
         margin-bottom: 20px;
+    }
+
+    .stats-modal-content h2 {
+        margin-top: -32px;
     }
 }
