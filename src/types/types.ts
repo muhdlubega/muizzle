@@ -1,5 +1,7 @@
 export type GameStatus = "playing" | "won" | "lost";
 
+export type Language = "tamil" | "hindi" | "english";
+
 export interface ArchiveProps {
   isOpen: boolean;
   onClose: () => void;
@@ -43,7 +45,7 @@ export interface Screenshot {
   movieId: string;
   index: number;
   url: string;
-  language?: 'tamil' | 'hindi';
+  language?: Language;
 }
 
 export interface ScreenshotsProps {
@@ -76,7 +78,7 @@ export interface StateProps {
   gameEnded: boolean;
   correctMovieId?: string;
   hasUpdatedStats?: boolean;
-  language?: 'tamil' | 'hindi';
+  language?: Language;
 }
 
 export interface StatsModalProps {

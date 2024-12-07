@@ -9,6 +9,7 @@ import { movieService } from "../data/movieService";
 import {
   GameStatus,
   Guess,
+  Language,
   Movie,
   Screenshot,
   StateProps,
@@ -52,9 +53,9 @@ const Game = () => {
     null
   );
   const [isOnboardingOpen, setIsOnboardingOpen] = React.useState(false);
-  const [language, setLanguage] = React.useState<'tamil' | 'hindi'>('tamil');
+  const [language, setLanguage] = React.useState<Language>('tamil');
 
-  const handleLanguageChange = useCallback(async (selectedLanguage: 'tamil' | 'hindi') => {
+  const handleLanguageChange = useCallback(async (selectedLanguage: Language) => {
     // Reset game state when changing language
     setLanguage(selectedLanguage);
     setIsRootLoading(true);

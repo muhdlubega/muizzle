@@ -1,14 +1,18 @@
 import { GetObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3 } from "../config/cloudflareClient";
-import { Screenshot } from "../types/types";
+import { Language, Screenshot } from "../types/types";
+
+const bucketMapping: Record<Language, string> = {
+  tamil: import.meta.env.VITE_R2_BUCKET_NAME,
+  hindi: import.meta.env.VITE_R2_BUCKET_NAME_2,
+  english: import.meta.env.VITE_R2_BUCKET_NAME_3,
+};
 
 export const imageService = {
-  async getScreenshots(folder: string, language: 'tamil' | 'hindi' = 'tamil'): Promise<Screenshot[]> {
+  async getScreenshots(folder: string, language: Language = 'tamil'): Promise<Screenshot[]> {
     try {
-      const bucketName = language === 'tamil' 
-        ? import.meta.env.VITE_R2_BUCKET_NAME 
-        : import.meta.env.VITE_R2_BUCKET_NAME_2;
+      const bucketName = bucketMapping[language];
 
       const command = new ListObjectsV2Command({
         Bucket: bucketName,
@@ -52,9 +56,7 @@ export const imageService = {
 
   async getAllFolders(language: 'tamil' | 'hindi' = 'tamil'): Promise<string[]> {
     try {
-      const bucketName = language === 'tamil' 
-        ? import.meta.env.VITE_R2_BUCKET_NAME 
-        : import.meta.env.VITE_R2_BUCKET_NAME_2;
+      const bucketName = bucketMapping[language];
 
       const command = new ListObjectsV2Command({
         Bucket: bucketName,

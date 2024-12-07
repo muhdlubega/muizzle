@@ -1,10 +1,11 @@
 import React from 'react';
 import { FaFilm } from 'react-icons/fa';
 import '../styles/Sidebar.css'
+import { Language } from '../types/types';
 
 interface SidebarProps {
-  onLanguageChange: (language: 'tamil' | 'hindi') => void;
-  currentLanguage: 'tamil' | 'hindi';
+  onLanguageChange: (language: Language) => void;
+  currentLanguage: Language;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -24,6 +25,12 @@ const Sidebar: React.FC<SidebarProps> = ({
         onClick={() => onLanguageChange('hindi')}
       >
         <FaFilm /> Hindi
+      </button>
+      <button 
+        className={`language-button ${currentLanguage === 'english' ? 'active' : ''}`}
+        onClick={() => onLanguageChange('english')}
+      >
+        <FaFilm /> Hollywood
       </button>
     </div>
   );
