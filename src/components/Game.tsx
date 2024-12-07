@@ -54,6 +54,7 @@ const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
   );
   const [isOnboardingOpen, setIsOnboardingOpen] = React.useState(false);
   const [language, setLanguage] = React.useState<Language>(preferredLanguage);
+  const consent = Cookies.get("cookieConsent") === 'true';
 
   const handleLanguageChange = useCallback(
     async (selectedLanguage: Language) => {
@@ -144,8 +145,6 @@ const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
   }, []);
 
   const handleCloseOnboarding = () => {
-    const consent = Cookies.get("cookieConsent");
-
     setIsOnboardingOpen(false);
     if (consent) Cookies.set("hasSeenOnboarding", "true", { expires: 365 });
   };
@@ -235,7 +234,6 @@ const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
   const saveGameState = useCallback(
     (state: StateProps) => {
       if (!isArchiveGame) {
-        const consent = Cookies.get("cookieConsent");
         const stateToSave = {
           movie: state.movie,
           currentScreenshotIndex: state.currentScreenshotIndex,

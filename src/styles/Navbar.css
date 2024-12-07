@@ -26,6 +26,7 @@
     gap: 6px;
     margin-left: 60px;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .navbar-head:hover {

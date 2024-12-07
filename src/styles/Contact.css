@@ -37,6 +37,7 @@
 .contact-submit {
     color: white;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .contact-submit:hover {

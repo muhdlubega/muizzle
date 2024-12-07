@@ -43,6 +43,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
   showStatsModal,
   showResult,
 }) => {
+  const consent = Cookies.get("cookieConsent") === 'true';
   const [guessDistribution, setGuessDistribution] = React.useState<number[]>(
     Array(6).fill(0)
   );
@@ -63,7 +64,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
     if (gameStatus !== "playing" && !showResult) {
       setTimeout(() => {
         setShowResult(true);
-        setShowStatsModal(true);
+        !isArchiveGame && setShowStatsModal(true);
       }, 500);
     }
   }, [gameStatus, setShowResult, setShowStatsModal, showResult]);
@@ -103,7 +104,6 @@ const StatsModal: React.FC<StatsModalProps> = ({
         maxStreak,
       };
 
-      const consent = Cookies.get("cookieConsent");
       if (consent)
         localStorage.setItem(languageKey, JSON.stringify(updatedStats));
 
@@ -183,7 +183,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
   return (
     <>
       <Modal
-        isOpen={showStatsModal}
+        isOpen={showStatsModal && consent}
         onRequestClose={() => setShowStatsModal(false)}
         className="stats-modal-content"
         overlayClassName="stats-modal-overlay"

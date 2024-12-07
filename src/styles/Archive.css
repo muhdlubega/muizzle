@@ -62,13 +62,13 @@
     font-weight: 600;
     color: #FF2247;
     cursor: pointer;
-    transition: background-color 0.2s;
     padding: 0;
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
     font-size: 54px;
     height: 60px;
+    transition: all 0.3s ease;
 }
 
 .archive-item:hover {
@@ -87,6 +87,7 @@
     color: #FF2247;
     font-size: 1.5rem;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .close-button:hover {

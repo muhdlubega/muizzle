@@ -19,6 +19,7 @@
     outline: 2px solid white;
     color: white;
     font-size: 16px;
+    transition: all 0.3s ease;
 }
 
 .submit-button:disabled {
@@ -50,6 +51,7 @@
     padding: 12px 0;
     cursor: pointer;
     color: #737376;
+    transition: all 0.3s ease;
 }
 
 .results-list li:hover {

@@ -15,6 +15,7 @@
     top: 30px;
     right: 240px;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .return-button:hover {

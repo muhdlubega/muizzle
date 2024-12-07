@@ -43,10 +43,12 @@
   text-decoration: none;
   color: inherit;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .footer-button:hover {
-  color: #FF2247
+  transform: translateY(-1px);
+  color: #686868;
 }
 
 .footer-icon-text {
@@ -89,6 +91,7 @@
   padding: 8px 12px;
   cursor: pointer;
   font-size: 14px;
+  transition: all 0.3s ease;
 }
 
 .cookie-button:hover {
