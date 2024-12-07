@@ -43,6 +43,7 @@ export interface Screenshot {
   movieId: string;
   index: number;
   url: string;
+  language?: 'tamil' | 'hindi';
 }
 
 export interface ScreenshotsProps {
@@ -75,6 +76,7 @@ export interface StateProps {
   gameEnded: boolean;
   correctMovieId?: string;
   hasUpdatedStats?: boolean;
+  language?: 'tamil' | 'hindi';
 }
 
 export interface StatsModalProps {

@@ -22,6 +22,7 @@ import SearchBar from "./SearchBar";
 import StatsModal from "./StatsModal";
 import Screenshots from "./Screenshot";
 import "../styles/Game.css";
+import Sidebar from "./Sidebar";
 
 const Game = () => {
   const [movie, setMovie] = React.useState<Movie | null>(null);
@@ -51,6 +52,53 @@ const Game = () => {
     null
   );
   const [isOnboardingOpen, setIsOnboardingOpen] = React.useState(false);
+  const [language, setLanguage] = React.useState<'tamil' | 'hindi'>('tamil');
+
+  const handleLanguageChange = useCallback(async (selectedLanguage: 'tamil' | 'hindi') => {
+    // Reset game state when changing language
+    setLanguage(selectedLanguage);
+    setIsRootLoading(true);
+    setIsFadingOut(false);
+    setMovie(null);
+    setScreenshots([]);
+    setGuesses([]);
+    setGuessesLeft(6);
+    setGameStatus("playing");
+    setShowResult(false);
+    setCurrentScreenshotIndex(0);
+    setHighestIndexReached(0);
+    setRevealedScreenshots([]);
+    setHasUpdatedStats(false);
+    setIsArchiveGame(false);
+
+    // Load new game screenshots for the selected language
+    try {
+      const gameIndex = getCurrentGameIndex();
+      const gameFolder = `${gameIndex}`;
+
+      const loadedScreenshots = await imageService.getScreenshots(gameFolder, selectedLanguage);
+
+      if (loadedScreenshots.length > 0) {
+        setScreenshots(loadedScreenshots);
+        setCorrectMovieId(loadedScreenshots[0].movieId);
+        Cookies.set(`gameIndex_${selectedLanguage}`, gameIndex.toString());
+      }
+      setGameEnded(false);
+    } catch (error) {
+      console.error(`Error loading ${selectedLanguage} screenshots:`, error);
+      toast.error(`Failed to load ${selectedLanguage} screenshots`, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } finally {
+      setTimeout(() => setIsFadingOut(true), 500);
+      setTimeout(() => setIsRootLoading(false), 1500);
+    }
+  }, []);
 
   React.useEffect(() => {
     const hasSeenOnboarding = Cookies.get("hasSeenOnboarding");
@@ -619,6 +667,10 @@ const Game = () => {
         movie={movie}
         screenshots={screenshots}
         showResult={showResult}
+      />
+      <Sidebar
+        onLanguageChange={handleLanguageChange}
+        currentLanguage={language}
       />
     </div>
   );

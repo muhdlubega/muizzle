@@ -3,11 +3,13 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3 } from "../config/cloudflareClient";
 import { Screenshot } from "../types/types";
 
-const bucketName = import.meta.env.VITE_R2_BUCKET_NAME;
-
 export const imageService = {
-  async getScreenshots(folder: string): Promise<Screenshot[]> {
+  async getScreenshots(folder: string, language: 'tamil' | 'hindi' = 'tamil'): Promise<Screenshot[]> {
     try {
+      const bucketName = language === 'tamil' 
+        ? import.meta.env.VITE_R2_BUCKET_NAME 
+        : import.meta.env.VITE_R2_BUCKET_NAME_2;
+
       const command = new ListObjectsV2Command({
         Bucket: bucketName,
         Prefix: `${folder}/`,
@@ -37,6 +39,7 @@ export const imageService = {
           movieId,
           index,
           url: signedUrl,
+          language,
         });
       }
 
@@ -47,8 +50,12 @@ export const imageService = {
     }
   },
 
-  async getAllFolders(): Promise<string[]> {
+  async getAllFolders(language: 'tamil' | 'hindi' = 'tamil'): Promise<string[]> {
     try {
+      const bucketName = language === 'tamil' 
+        ? import.meta.env.VITE_R2_BUCKET_NAME 
+        : import.meta.env.VITE_R2_BUCKET_NAME_2;
+
       const command = new ListObjectsV2Command({
         Bucket: bucketName,
         Delimiter: "/",
