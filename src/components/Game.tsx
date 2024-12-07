@@ -25,7 +25,7 @@ import Screenshots from "./Screenshot";
 import "../styles/Game.css";
 import Sidebar from "./Sidebar";
 
-const Game = () => {
+const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
   const [movie, setMovie] = React.useState<Movie | null>(null);
   const [screenshots, setScreenshots] = React.useState<Screenshot[]>([]);
   const [isRootLoading, setIsRootLoading] = React.useState(true);
@@ -53,11 +53,12 @@ const Game = () => {
     null
   );
   const [isOnboardingOpen, setIsOnboardingOpen] = React.useState(false);
-  const [language, setLanguage] = React.useState<Language>("tamil");
+  const [language, setLanguage] = React.useState<Language>(preferredLanguage);
 
   const handleLanguageChange = useCallback(
     async (selectedLanguage: Language) => {
       // Reset game state when changing language
+      localStorage.setItem("preferredLanguage", selectedLanguage);
       setLanguage(selectedLanguage);
       setIsRootLoading(false);
       setIsFadingOut(false);

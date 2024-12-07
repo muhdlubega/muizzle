@@ -1,12 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/Privacy.css";
+import { Language } from "../types/types";
+import Sidebar from "../components/Sidebar";
 
-const Privacy = () => {
+const Privacy = ({ language }: { language: Language }) => {
   const navigate = useNavigate()
+  const handleLanguageChange = (language: Language) => {
+    localStorage.setItem("preferredLanguage", language);
+  };
+
   return (
     <div>
-      <Navbar />
+      <Sidebar
+        onLanguageChange={handleLanguageChange}
+        currentLanguage={language}
+      />
+      <Navbar language={language} />
       <div className="privacy">
         <h2 style={{ color: "#FF2247" }}>Privacy Policy and Terms of Service</h2>
         <br />
@@ -24,7 +34,7 @@ const Privacy = () => {
           secure, and used solely to enhance your experience.
         </h4>
         <br />
-        <p>
+        <span>
           <strong style={{ color: "#FF2247" }}>
             2. Data Collection and Cookies:
           </strong>{" "}
@@ -40,9 +50,9 @@ const Privacy = () => {
             designed with simplicity and user-centricity in mind, ensuring that
             your data stays local and is used only to enhance your experience.
           </p>
-        </p>
+        </span>
         <br />
-        <p>
+        <span>
           <strong style={{ color: "#FF2247" }}>3. Data Privacy:</strong> At
           Muizzle, we prioritize your privacy. All game-related data is stored
           locally in your browser using cookies, meaning that no personal
@@ -56,9 +66,9 @@ const Privacy = () => {
             convenience while maintaining your
             privacy.
           </p>
-        </p>
+        </span>
         <br />
-        <p>
+        <span>
           <strong style={{ color: "#FF2247" }}>4. Third-Party Services:</strong>{" "}
           Muizzle utilizes a limited set of third-party services to provide
           certain features. For instance, screenshots taken during the game are
@@ -76,9 +86,9 @@ const Privacy = () => {
             third-party services remain anonymous and focused solely on delivering
             a smooth gaming experience.
           </p>
-        </p>
+        </span>
         <br />
-        <p>
+        <span>
           <strong style={{ color: "#FF2247" }}>5. Data Security:</strong> Muizzle
           employs robust security measures to safeguard the data associated with
           gameplay. Screenshots taken during the game are stored in a private
@@ -95,9 +105,9 @@ const Privacy = () => {
             measures provide multiple layers of security, keeping your data
             protected at all times.
           </p>
-        </p>
+        </span>
         <br />
-        <p>
+        <span>
           <strong style={{ color: "#FF2247" }}>6. User Consent:</strong> By
           playing Muizzle, you consent to the use of local cookies to enhance
           gameplay and store your game progress. This
@@ -111,7 +121,7 @@ const Privacy = () => {
             statistics, and saved states, allowing you to start fresh without any
             retained information.
           </p>
-        </p>
+        </span>
         <br />
         <p>
           <strong style={{ color: "#FF2247" }}>7. Security:</strong> Muizzle is

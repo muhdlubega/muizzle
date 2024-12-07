@@ -8,7 +8,7 @@ import {
 } from "react-icons/fa";
 import "../styles/Sidebar.css";
 import { Language, SidebarProps } from "../types/types";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const Sidebar: React.FC<SidebarProps> = ({
   onLanguageChange,
@@ -17,6 +17,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   const toggleSidebar = () => {
     if (isOpen) {
@@ -37,6 +38,11 @@ const Sidebar: React.FC<SidebarProps> = ({
     toggleSidebar();
   };
 
+  const navigateToPage = (path: string) => {
+    const langParam = currentLanguage === "tamil" ? "TA" : currentLanguage === "hindi" ? "HI" : "EN";
+    navigate(`${path}?lang=${langParam}`);
+  };
+
   return (
     <>
       <FaBars className="sidebar-toggle-button" onClick={toggleSidebar} />
@@ -44,45 +50,41 @@ const Sidebar: React.FC<SidebarProps> = ({
       {isOpen && (
         <div className="sidebar-overlay" onClick={toggleSidebar}>
           <div
-            className={`language-sidebar ${
-              isClosing ? "slide-out" : "slide-in"
-            }`}
+            className={`language-sidebar ${isClosing ? "slide-out" : "slide-in"
+              }`}
             onClick={(e) => e.stopPropagation()}
           >
             <p className="sidebar-title">Muizzle</p>
 
             <button
-              className={`language-button ${
-                currentLanguage === "tamil" ? "active" : ""
-              }`}
+              className={`language-button ${searchParams.get("lang") === "TA" ? "active" : ""
+                }`}
               onClick={() => handleLanguageChange("tamil")}
             >
               <FaFilm /> Tamil
             </button>
             <button
-              className={`language-button ${
-                currentLanguage === "hindi" ? "active" : ""
-              }`}
+              className={`language-button ${searchParams.get("lang") === "HI" ? "active" : ""
+                }`}
               onClick={() => handleLanguageChange("hindi")}
             >
               <FaFilm /> Hindi
             </button>
             <button
-              className={`language-button ${
-                currentLanguage === "english" ? "active" : ""
-              }`}
+              className={`language-button ${searchParams.get("lang") === "EN" ? "active" : ""
+                }`}
               onClick={() => handleLanguageChange("english")}
             >
               <FaFilm /> Hollywood
             </button>
 
-            <a href="/privacy" className="sidebar-link">
+            <a onClick={() => navigateToPage("/privacy")} className="sidebar-link">
               <FaShieldAlt /> Privacy Policy
             </a>
-            <a href="/about" className="sidebar-link">
+            <a onClick={() => navigateToPage("/about")} className="sidebar-link">
               <FaInfoCircle /> About Us
             </a>
-            <a href="/contact" className="sidebar-link">
+            <a onClick={() => navigateToPage("/contact")} className="sidebar-link">
               <FaEnvelope /> Contact
             </a>
           </div>

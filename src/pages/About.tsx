@@ -5,13 +5,23 @@ import step3 from "../assets/step3.jpg";
 import step4 from "../assets/step4.jpg";
 import "../styles/About.css";
 import Navbar from "../components/Navbar";
+import { Language } from "../types/types";
+import Sidebar from "../components/Sidebar";
 
-const About = () => {
+const About = ({ language }: { language: Language }) => {
     const navigate = useNavigate()
+
+    const handleLanguageChange = (language: Language) => {
+        localStorage.setItem("preferredLanguage", language);
+    };
 
     return (
         <div>
-            <Navbar />
+            <Sidebar
+                onLanguageChange={handleLanguageChange}
+                currentLanguage={language}
+            />
+            <Navbar language={language} />
             <div className="about">
                 <h2 className="about-header">
                     Welcome to <span className="about-title">Muizzle</span>, a unique movie guessing game designed to provide an entertaining and
@@ -20,21 +30,21 @@ const About = () => {
                 <h3 className="about-header">How to play:</h3>
                 <div className="about-steps">
                     <div className="about-step">
-                        <img src={step1} alt="about step 1"/>
+                        <img src={step1} alt="about step 1" />
                         <p>
                             Everyday at 10am IST a new movie will be displayed. Input your guess
                             and select an option to guess the movie title.
                         </p>
                     </div>
                     <div className="about-step">
-                        <img src={step2} alt="about step 2"/>
+                        <img src={step2} alt="about step 2" />
                         <p>
                             For each wrong guess, a new screenshot of the movie will be
                             displayed. You have 6 attempts to guess the title.
                         </p>
                     </div>
                     <div className="about-step">
-                        <img src={step3} alt="about step 3"/>
+                        <img src={step3} alt="about step 3" />
                         <p>
                             On winning or losing, your statistics modal will be displayed, where
                             you can see your results and share your stats.
@@ -52,9 +62,9 @@ const About = () => {
                         </p>
                     </div>
                 </div>
-                    <button className="about-close" onClick={() => navigate('/')}>
-                        Return to Homepage
-                    </button>
+                <button className="about-close" onClick={() => navigate('/')}>
+                    Return to Homepage
+                </button>
             </div>
         </div>
     );

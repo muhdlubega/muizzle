@@ -14,11 +14,12 @@
 .archive-modal-content {
     background-color: #1a1a1a;
     padding: 2rem;
-    border-radius: 8px;
+    border-radius: 10px;
     max-width: 600px;
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
+    border: 5px solid #FF2247;
 }
 
 .archive-header {

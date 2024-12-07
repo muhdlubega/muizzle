@@ -1,11 +1,17 @@
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import muizzle from '../assets/muizzle.png'
 import '../styles/Navbar.css'
+import { Language } from '../types/types';
 
-const Navbar = () => {
+const languageMapping: Record<Language, string> = {
+  tamil: 'TA',
+  hindi: 'HI',
+  english: 'EN',
+};
+
+const Navbar = ({language}: {language: Language}) => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const lang = searchParams.get("lang") || "TA";
+  const lang = languageMapping[language];
 
   return (
     <div className='navbar'>

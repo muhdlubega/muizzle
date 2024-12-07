@@ -1,10 +1,9 @@
-import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import '../styles/Contact.css'
+import { Language } from "../types/types";
+import Sidebar from "../components/Sidebar";
 
-const Contact = () => {
-    const navigate = useNavigate();
-
+const Contact = ({ language }: { language: Language }) => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -19,9 +18,17 @@ const Contact = () => {
         window.location.href = mailtoLink;
     };
 
+    const handleLanguageChange = (language: Language) => {
+        localStorage.setItem("preferredLanguage", language);
+    };
+
     return (
         <div>
-            <Navbar />
+            <Sidebar
+                onLanguageChange={handleLanguageChange}
+                currentLanguage={language}
+            />
+            <Navbar language={language} />
             <div className="contact-container">
                 <h3 className="contact-title">Contact Us</h3>
                 <form onSubmit={handleSubmit} className="contact-form">
@@ -46,9 +53,6 @@ const Contact = () => {
                         Submit
                     </button>
                 </form>
-            <button className="contact-close" onClick={() => navigate("/")}>
-                Return to Homepage
-            </button>
             </div>
         </div>
     );
