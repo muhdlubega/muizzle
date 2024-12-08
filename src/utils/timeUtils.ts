@@ -27,5 +27,5 @@ export const getCurrentGameIndex = () => {
   const diffTime = malaysiaTime.getTime() - REFERENCE_TIME.getTime();
   const periodsPassed = Math.floor(diffTime / (24 * 60 * 60 * 1000));
 
-  return (periodsPassed % 7) + 1;
+  return periodsPassed + 1;
 };
