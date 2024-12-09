@@ -127,7 +127,6 @@ export interface StatsModalProps {
   hasUpdatedStats?: boolean;
   isArchiveGame: boolean;
   language: Language;
-  screenshots: Screenshot[];
   showResult: boolean;
   showStatsModal: boolean;
   setGameEnded: React.Dispatch<React.SetStateAction<boolean>>;

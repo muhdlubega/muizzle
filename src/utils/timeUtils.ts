@@ -29,3 +29,13 @@ export const getCurrentGameIndex = () => {
 
   return periodsPassed + 1;
 };
+
+export const getArchives = () => {
+  const now = new Date();
+  const malaysiaTime = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Kuala_Lumpur" })
+  );
+
+  const diffTime = malaysiaTime.getTime() - REFERENCE_TIME.getTime();
+  return diffTime > 24 * 60 * 60 * 1000;
+};
