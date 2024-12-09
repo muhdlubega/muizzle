@@ -6,6 +6,7 @@ import Game from "./components/Game";
 import Navbar from "./components/Navbar";
 import { FaEnvelope, FaInfoCircle, FaShieldAlt } from "react-icons/fa";
 import { Language } from "./types/types";
+import { RiRedditLine } from "react-icons/ri";
 
 function App({ language }: { language: Language }) {
   const [showCookieBanner, setShowCookieBanner] = useState(false);
@@ -75,6 +76,11 @@ function App({ language }: { language: Language }) {
             </span>
           </a>
         </div>
+
+        <p className="partner-text">
+          <RiRedditLine className="partner-icon" /> Partnered with{" "}
+          <span className="partner-title">r/KOLLYWOOD</span>
+        </p>
       </div>
 
       {/* GDPR Cookie Consent Banner */}

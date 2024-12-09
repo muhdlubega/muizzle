@@ -61,21 +61,21 @@ const Sidebar: React.FC<SidebarProps> = ({
                 }`}
               onClick={() => handleLanguageChange("tamil")}
             >
-              <FaFilm /> Tamil
+              <FaFilm /> Kollywood (TA)
             </button>
             <button
               className={`language-button ${searchParams.get("lang") === "HI" ? "active" : ""
                 }`}
               onClick={() => handleLanguageChange("hindi")}
             >
-              <FaFilm /> Hindi
+              <FaFilm /> Bollywood (HI)
             </button>
             <button
               className={`language-button ${searchParams.get("lang") === "EN" ? "active" : ""
                 }`}
               onClick={() => handleLanguageChange("english")}
             >
-              <FaFilm /> Hollywood
+              <FaFilm /> Hollywood (EN)
             </button>
 
             <a onClick={() => navigateToPage("/privacy")} className="sidebar-link">

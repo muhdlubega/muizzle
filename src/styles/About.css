@@ -43,7 +43,21 @@
     grid-gap: 20px;
 }
 
+.partner-logo {
+    width: 360px;
+    cursor: pointer;
+    margin-bottom: 40px;
+}
+
+.partner-logo:hover {
+    opacity: 0.8;
+}
+
 @media (max-width: 600px) {
+    .partner-logo {
+        width: calc(100vw - 88px);
+    }
+    
     .about {
         padding: 20px 36px;
     }

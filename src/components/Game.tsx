@@ -188,7 +188,6 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
             currentGameIndex,
             selectedLanguage
           );
-          console.log('1')
 
           if (loadedScreenshots.length > 0) {
             setScreenshots(loadedScreenshots);
@@ -217,7 +216,6 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
             currentGameIndex,
             selectedLanguage
           );
-          console.log('2')
 
           if (loadedScreenshots.length > 0) {
             setScreenshots(loadedScreenshots);

@@ -8,6 +8,7 @@ import Navbar from "../components/Navbar";
 import { Language } from "../types/types";
 import Sidebar from "../components/Sidebar";
 import { useEffect } from "react";
+import kollywood from "../assets/kollywood.jpg";
 
 const About = ({ language }: { language: Language }) => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const About = ({ language }: { language: Language }) => {
           movie guessing game designed to provide an entertaining and engaging
           experience for movie enthusiasts.
           <br />
-          <br /> Everyday at <strong>4pm IST</strong> new movies for the Tamil,
+          <br /> Everyday at <strong>2pm IST</strong> new movies for the Tamil,
           Hindi and Hollywood categories will be displayed. Switch between the
           different categories via the sidebar icon on the top left corner.
         </p>
@@ -71,6 +72,17 @@ const About = ({ language }: { language: Language }) => {
               beside the screenshots to learn more.
             </p>
           </div>
+        </div>
+        <div className="partner">
+          <h2 style={{ color: "#FF2247" }}>Partnered with:</h2>
+          <img
+            className="partner-logo"
+            src={kollywood}
+            alt="kollywood-logo"
+            onClick={() =>
+              window.open("https://www.reddit.com/r/kollywood/", "_blank")
+            }
+          />
         </div>
         <button className="about-close" onClick={() => navigate("/")}>
           Return to Homepage

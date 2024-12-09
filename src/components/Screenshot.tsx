@@ -1,6 +1,6 @@
 import { useTour } from "@reactour/tour";
 import React from "react";
-import { RiSlideshow3Line } from "react-icons/ri";
+import { RiRedditLine, RiSlideshow3Line } from "react-icons/ri";
 import "../styles/Screenshots.css";
 import { ScreenshotsProps } from "../types/types";
 

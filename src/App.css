@@ -5,9 +5,9 @@
 }
 
 .app {
- display: flex;
- flex-direction: column;
- min-height: calc(100vh - 16px);
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 16px);
 }
 
 .spacer {
@@ -98,10 +98,32 @@
   background-color: #d81b3c;
 }
 
+.partner-title {
+  font-weight: 800;
+  color: #d5ab58;
+}
+
+.partner-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  font-size: 18px;
+}
+
 @media (max-width: 480px) {
   .footer {
     gap: 5px;
+  }
+
+  .partner-text {
     margin-bottom: 50px;
+    margin-top: 10px;
+    font-size: 12px;
+  }
+
+  .partner-icon {
+    font-size: 1.2rem;
   }
 
   .footer-container {
@@ -109,7 +131,7 @@
   }
 
   .footer-icon {
-    font-size: 1.2rem; 
+    font-size: 1.2rem;
     display: block;
   }
 
