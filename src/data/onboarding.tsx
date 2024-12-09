@@ -34,7 +34,9 @@ export const getSteps = () => {
               Muizzle
             </h2>
             <p>
-              Welcome to Muizzle! Wordle-like movie guesser for Tamil, Hindi and Hollywood movies. Everyday at 10am IST a new movie will be displayed
+              Welcome to Muizzle! Wordle-like movie guesser for Tamil, Hindi and
+              Hollywood movies. Everyday at 2pm IST a new movie will be
+              displayed
             </p>
           </div>
         </TourContent>
@@ -56,10 +58,9 @@ export const getSteps = () => {
       content: () => (
         <TourContent>
           <div>
-            <p>Input your guess and select an option</p>
             <p>
-              On winning or losing your first game your statistics modal will be
-              displayed
+              Input your guess and choose a movie by selecting an option from
+              the list or pressing submit to select the first movie listed
             </p>
           </div>
         </TourContent>
