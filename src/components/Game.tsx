@@ -54,94 +54,9 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
   );
   const [isOnboardingOpen, setIsOnboardingOpen] = React.useState(false);
   const [language, setLanguage] = React.useState<Language>(preferredLanguage);
+  const [isLoadingGame, setIsLoadingGame] = React.useState(false);
+
   const consent = Cookies.get("cookieConsent") === "true";
-
-  const handleLanguageChange = useCallback(
-    async (selectedLanguage: Language) => {
-      // Reset game state when changing language
-      localStorage.setItem("preferredLanguage", selectedLanguage);
-      setLanguage(selectedLanguage);
-      setIsRootLoading(false);
-      setIsFadingOut(false);
-      setMovie(null);
-      setScreenshots([]);
-      setGuesses([]);
-      setGuessesLeft(6);
-      setGameStatus("playing");
-      setShowResult(false);
-      setCurrentScreenshotIndex(0);
-      setHighestIndexReached(0);
-      setRevealedScreenshots([]);
-      setHasUpdatedStats(false);
-      setIsArchiveGame(false);
-
-      const currentGameIndex = getCurrentGameIndex().toString();
-
-      try {
-        const savedState = localStorage.getItem(
-          `gameState_${selectedLanguage}`
-        );
-        const savedGameIndex = localStorage.getItem(
-          `gameIndex_${selectedLanguage}`
-        );
-
-        if (savedState && savedGameIndex === currentGameIndex) {
-          const parsedState = JSON.parse(savedState);
-          const loadedScreenshots = await imageService.getScreenshots(
-            currentGameIndex,
-            selectedLanguage
-          );
-
-          if (loadedScreenshots.length > 0) {
-            setScreenshots(loadedScreenshots);
-            setCorrectMovieId(loadedScreenshots[0].movieId);
-            setCurrentScreenshotIndex(parsedState.currentScreenshotIndex);
-            setHighestIndexReached(parsedState.highestIndexReached);
-
-            const newRevealedScreenshots = parsedState.revealedScreenshots
-              .map((revealed: Screenshot) =>
-                loadedScreenshots.find(
-                  (s) =>
-                    s.movieId === revealed.movieId && s.index === revealed.index
-                )
-              )
-              .filter(Boolean);
-
-            setRevealedScreenshots(newRevealedScreenshots);
-            setGuesses(parsedState.guesses);
-            setGuessesLeft(parsedState.guessesLeft);
-            setGameStatus(parsedState.gameStatus);
-            setShowResult(parsedState.showResult);
-            setGameEnded(parsedState.gameEnded || false);
-          }
-        } else {
-          const loadedScreenshots = await imageService.getScreenshots(
-            currentGameIndex,
-            selectedLanguage
-          );
-
-          if (loadedScreenshots.length > 0) {
-            setScreenshots(loadedScreenshots);
-            setCorrectMovieId(loadedScreenshots[0].movieId);
-          }
-        }
-      } catch (error) {
-        console.error(
-          `Error loading screenshots for ${selectedLanguage}:`,
-          error
-        );
-        toast.error(`Failed to load screenshots for ${selectedLanguage}`, {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-      }
-    },
-    []
-  );
 
   React.useEffect(() => {
     const hasSeenOnboarding = Cookies.get("hasSeenOnboarding");
@@ -238,6 +153,99 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
     preloadImages,
   ]);
 
+  const handleLanguageChange = useCallback(
+    async (selectedLanguage: Language) => {
+      if(isLoadingGame)return
+      setIsLoadingGame(true)
+      // Reset game state when changing language
+      localStorage.setItem("preferredLanguage", selectedLanguage);
+      setLanguage(selectedLanguage);
+      setIsRootLoading(false);
+      setIsFadingOut(false);
+      setMovie(null);
+      setScreenshots([]);
+      setGuesses([]);
+      setGuessesLeft(6);
+      setGameStatus("playing");
+      setShowResult(false);
+      setCurrentScreenshotIndex(0);
+      setHighestIndexReached(0);
+      setRevealedScreenshots([]);
+      setHasUpdatedStats(false);
+      setIsArchiveGame(false);
+
+      const currentGameIndex = getCurrentGameIndex().toString();
+
+      try {
+        const savedState = localStorage.getItem(
+          `gameState_${selectedLanguage}`
+        );
+        const savedGameIndex = localStorage.getItem(
+          `gameIndex_${selectedLanguage}`
+        );
+
+        if (savedState && savedGameIndex === currentGameIndex) {
+          const parsedState = JSON.parse(savedState);
+          const loadedScreenshots = await imageService.getScreenshots(
+            currentGameIndex,
+            selectedLanguage
+          );
+          console.log('1')
+
+          if (loadedScreenshots.length > 0) {
+            setScreenshots(loadedScreenshots);
+            setCorrectMovieId(loadedScreenshots[0].movieId);
+            setCurrentScreenshotIndex(parsedState.currentScreenshotIndex);
+            setHighestIndexReached(parsedState.highestIndexReached);
+
+            const newRevealedScreenshots = parsedState.revealedScreenshots
+              .map((revealed: Screenshot) =>
+                loadedScreenshots.find(
+                  (s) =>
+                    s.movieId === revealed.movieId && s.index === revealed.index
+                )
+              )
+              .filter(Boolean);
+
+            setRevealedScreenshots(newRevealedScreenshots);
+            setGuesses(parsedState.guesses);
+            setGuessesLeft(parsedState.guessesLeft);
+            setGameStatus(parsedState.gameStatus);
+            setShowResult(parsedState.showResult);
+            setGameEnded(parsedState.gameEnded || false);
+          }
+        } else {
+          const loadedScreenshots = await imageService.getScreenshots(
+            currentGameIndex,
+            selectedLanguage
+          );
+          console.log('2')
+
+          if (loadedScreenshots.length > 0) {
+            setScreenshots(loadedScreenshots);
+            setCorrectMovieId(loadedScreenshots[0].movieId);
+          }
+        }
+      } catch (error) {
+        console.error(
+          `Error loading screenshots for ${selectedLanguage}:`,
+          error
+        );
+        toast.error(`Failed to load screenshots for ${selectedLanguage}`, {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } finally {
+        setIsLoadingGame(false)
+      }
+    },
+    []
+  );
+
   const saveGameState = useCallback(
     (state: StateProps) => {
       if (!isArchiveGame) {
@@ -273,6 +281,8 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
   );
 
   const loadGameScreenshot = React.useCallback(async () => {
+    if(isLoadingGame) return
+    setIsLoadingGame(true)
     const gameIndex = getCurrentGameIndex();
     const gameFolder = `${gameIndex}`;
 
@@ -301,6 +311,7 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
         draggable: true,
       });
     } finally {
+      setIsLoadingGame(false)
       setTimeout(() => setIsFadingOut(true), 500);
       setTimeout(() => setIsRootLoading(false), 1500);
     }
@@ -483,7 +494,7 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
     };
 
     loadGame();
-  }, [loadGameScreenshot, language]);
+  }, [loadGameScreenshot]);
 
   React.useEffect(() => {
     const checkGameTime = () => {
