@@ -14,6 +14,7 @@ import Modal from "react-modal";
 import "../styles/StatsModal.css";
 import { StatsModalProps } from "../types/types";
 import ShareStats from "./ShareStats";
+import { getArchives } from "../utils/timeUtils";
 
 ChartJS.register(
   BarElement,
@@ -221,7 +222,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
         </button>
       </Modal>
       <>
-        {(isArchiveGame || screenshots[0]?.folder !== "1") && (
+        {getArchives() && (
           <button
             className="archive-button onboarding05"
             onClick={() => setShowArchive(true)}
