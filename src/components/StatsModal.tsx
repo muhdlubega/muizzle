@@ -34,7 +34,6 @@ const StatsModal: React.FC<StatsModalProps> = ({
   language,
   hasUpdatedStats,
   isArchiveGame,
-  screenshots,
   setGameEnded,
   setHasUpdatedStats,
   setShowArchive,
