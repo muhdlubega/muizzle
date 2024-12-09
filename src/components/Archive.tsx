@@ -43,7 +43,7 @@ const Archive: React.FC<ArchiveProps> = ({ isOpen, onClose, onSelectArchive }) =
               onClose();
             }}
           >
-            Game #{folder}
+            <p className='archive-text'>#{folder}</p>
           </button>
         ))}
       </div>

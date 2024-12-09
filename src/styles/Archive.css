@@ -14,11 +14,12 @@
 .archive-modal-content {
     background-color: #1a1a1a;
     padding: 2rem;
-    border-radius: 8px;
+    border-radius: 10px;
     max-width: 600px;
     width: 90%;
     max-height: 80vh;
-    overflow-y: auto;
+    overflow: hidden;
+    border: 5px solid #FF2247;
 }
 
 .archive-header {
@@ -38,41 +39,68 @@
 }
 
 .archive-title {
-    margin-top: 0;
-    color: white;
+    transform: rotate(-10deg);
+    font-size: 24px;
+    margin-left: -38px;
+    margin-top: -12.5px;
+    color: #ff2247;
 }
 
 .archive-note {
-    color: white;
-    text-align: center;
+    text-align: end;
+    padding: 8px;
+    transform: rotate(-10deg);
+    margin-bottom: -20px;
+    margin-right: -43px;
+    background: #ff2247;
 }
 
 .archive-item {
-    padding: 1rem;
     background-color: transparent;
     border: 3px solid #FF2247;
     border-radius: 12px;
     font-weight: 600;
     color: #FF2247;
     cursor: pointer;
-    transition: background-color 0.2s;
+    padding: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    font-size: 54px;
+    height: 60px;
+    transition: all 0.3s ease;
 }
 
 .archive-item:hover {
     border-color: #FF2247;
     background-color: #FF2247;
-    color: white;
+    color: #1a1a1a;
+}
+
+.archive-text {
+    margin: 0 10px -14.5px 0;
 }
 
 .close-button {
     background: none;
     border: none;
-    color: white;
+    color: #FF2247;
     font-size: 1.5rem;
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-button:hover {
+    color: #1a1a1a;
+    background: #FF2247;
+    border-radius: 20px;
 }
 
 @media (max-width: 480px) {
+    .close-button{
+        font-size: 40px;
+    }
+
     .archive-modal-content {
         max-width: 280px;
     }
@@ -80,5 +108,13 @@
     .archive-grid {
         margin: 20px 0 40px;
     }
-    
+
+    .archive-title {
+        margin-left: -34px;
+        margin-top: -40px;
+    }  
+
+    .archive-note {
+        margin-right: -40px;
+    }
 }

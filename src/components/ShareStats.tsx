@@ -3,6 +3,7 @@ import { FaCopy, FaFacebook, FaTwitter, FaWhatsapp } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "../styles/ShareStats.css";
 import { ShareStatsProps } from "../types/types";
+import { useSearchParams } from "react-router-dom";
 
 const SITE_URL = window.location.origin;
 const LOGO_URL = `${SITE_URL}/muizzle-logo.png`;
@@ -14,15 +15,19 @@ const ShareStats: React.FC<ShareStatsProps> = ({
   maxStreak,
   winRate,
 }) => {
+  const [searchParams] = useSearchParams()
+  const langParam = searchParams.get("lang");
+  const language =
+    langParam === "TA" ? "Tamil" : langParam === "HI" ? "Hindi" : "Hollywood";
+
   const generateShareText = () => {
     const gameResult =
       gameStatus === "won"
-        ? `I won in ${6 - guessesLeft + 1} ${
-            6 - guessesLeft + 1 === 1 ? "guess" : "guesses"
-          }!`
+        ? `I won in ${6 - guessesLeft + 1} ${6 - guessesLeft + 1 === 1 ? "guess" : "guesses"
+        }!`
         : "I didn't get it this time!";
 
-    return `Check out my streak for this Wordle Tamil Movie Guesser! \n${gameResult}\nCurrent Streak: ${currentStreak}\nMax Streak: ${maxStreak}\nWin Rate: ${winRate}%\n\nPlay now at: ${SITE_URL}`;
+    return `Check out my streak for this Wordle ${language} Movie Guesser! \n${gameResult}\nCurrent Streak: ${currentStreak}\nMax Streak: ${maxStreak}\nWin Rate: ${winRate}%\n\nPlay now at: ${SITE_URL}`;
   };
 
   const handleShareError = (platform: string, error: Error) => {

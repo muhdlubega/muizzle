@@ -51,10 +51,18 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({
       </h2>
       <div className="onboarding-steps">
         <div className="onboarding-step">
+          <p>
+            Everyday at <strong>2pm IST</strong> new movies for the Tamil, Hindi
+            and Hollywood categories will be displayed. Switch between the
+            different categories via the sidebar icon on the top left corner.
+          </p>
+        </div>
+        <div className="onboarding-step">
           <img src={step1} alt="onboarding step 1" width={420} />
           <p>
-            Everyday at 10am IST a new movie will be displayed. Input your guess
-            and select an option to guess the movie title.
+            To start the game, input your guess into the searchbar and select an
+            option or press submit to select the first option from the list to
+            guess the movie title.
           </p>
         </div>
         <div className="onboarding-step">
@@ -67,19 +75,24 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({
         <div className="onboarding-step">
           <img src={step3} alt="onboarding step 3" width={420} />
           <p>
-            On winning or losing, your statistics modal will be displayed, where
-            you can see your results and share your stats.
+            On winning or losing, your statistics modal will popup, where you
+            can see your results and share your stats.
           </p>
           <p>
-            <strong>Disclaimer:</strong> Stats are stored in your local storage and
-            will be reset if website data is cleared
+            <strong>Disclaimer:</strong> Stats are stored in your local storage
+            and will be reset if website data is cleared.
           </p>
         </div>
         <div className="onboarding-step">
           <img src={step4} alt="onboarding step 4" width={420} />
           <p ref={lastParagraphRef}>
-            Clearing your first game unlocks access to the archive and stats on
-            the top right corner. Open the archives to try out previous games.
+            To open your stats modal again click on the icon on the top right
+            corner. You'll also be able to access the previous games from the
+            'Open Archives' button.
+          </p>
+          <p>
+            <strong>Note:</strong> If you are stuck press on the onboarding icon
+            beside the screenshots or open the About us page to learn more.
           </p>
         </div>
         <button className="onboarding-close" onClick={onClose}>

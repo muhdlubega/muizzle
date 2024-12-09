@@ -1,14 +1,16 @@
 .about {
-    padding: 40px;
+    padding: 40px 60px;
 }
 
 .about-header {
     margin: 0 0 20px;
+    font-weight: 600;
+    font-size: 22px;
 }
 
 .about-title {
     color: #FF2247;
-    font-size: 32px;
+    font-size: 28px;
     margin-bottom: 10px;
     font-weight: bold;
     font-family: 'Lobster';
@@ -17,6 +19,8 @@
 .about-close {
     color: white;
     border: 3px solid #1A1A1A;
+    margin-top: 10px;
+    transition: all 0.3s ease;
 }
 
 .about-close:hover {
@@ -24,27 +28,42 @@
 }
 
 .about-step img {
-    width: 45vw;
+    width: calc(45vw - 20px);
     border: 2px solid #525254;
 }
 
 .about-step p {
     text-align: center;
+    padding: 0 10px;
 }
 
 .about-steps {
     display: grid;
     grid-template-columns: auto auto;
-    grid-gap: 10px;
+    grid-gap: 20px;
+}
+
+.partner-logo {
+    width: 360px;
+    cursor: pointer;
+    margin-bottom: 40px;
+}
+
+.partner-logo:hover {
+    opacity: 0.8;
 }
 
 @media (max-width: 600px) {
+    .partner-logo {
+        width: calc(100vw - 88px);
+    }
+    
     .about {
-        padding: 10px;
+        padding: 20px 36px;
     }
 
     .about-step img {
-        width: 90vw;
+        width: calc(100vw - 92px);
     }
 
     .about-steps {
@@ -53,6 +72,6 @@
 
     .about-close {
         width: 100%;
-        margin-bottom: 20px;
+        margin: 10px 0 20px;
     }
 }

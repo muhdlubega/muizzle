@@ -1,7 +1,7 @@
 import React from "react";
 import { useOnClickOutside } from "usehooks-ts";
 import { movieService } from "../data/movieService";
-import '../styles/SearchBar.css';
+import "../styles/SearchBar.css";
 import { Results } from "../types/types";
 import { debounce } from "../utils/debounce";
 
@@ -16,6 +16,7 @@ const SearchBar = ({
   const [results, setResults] = React.useState<Results[]>([]);
   const [errorCount, setErrorCount] = React.useState(0);
   const searchRef = React.useRef(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   useOnClickOutside(searchRef, () => {
     setResults([]);
@@ -45,6 +46,7 @@ const SearchBar = ({
     setQuery("");
     setResults([]);
     setErrorCount(0);
+    inputRef.current?.focus();
   };
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
@@ -55,7 +57,10 @@ const SearchBar = ({
         results[0].release_date,
         results[0].id
       );
+    } else {
+      setResults([]);
     }
+    inputRef.current?.focus();
   };
 
   return (
@@ -63,6 +68,7 @@ const SearchBar = ({
       <form onSubmit={handleSubmit} className="search-form">
         <input
           type="text"
+          ref={inputRef}
           className="searchbar-input"
           disabled={disabled}
           placeholder="Guess the movie title..."

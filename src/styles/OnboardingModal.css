@@ -91,6 +91,7 @@
     font-size: 18px;
     margin-bottom: 20px;
     color: white;
+    transition: all 0.3s ease;
 }
 
 .onboarding-close:hover {

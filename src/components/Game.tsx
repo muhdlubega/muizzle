@@ -9,6 +9,7 @@ import { movieService } from "../data/movieService";
 import {
   GameStatus,
   Guess,
+  Language,
   Movie,
   Screenshot,
   StateProps,
@@ -22,8 +23,9 @@ import SearchBar from "./SearchBar";
 import StatsModal from "./StatsModal";
 import Screenshots from "./Screenshot";
 import "../styles/Game.css";
+import Sidebar from "./Sidebar";
 
-const Game = () => {
+const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
   const [movie, setMovie] = React.useState<Movie | null>(null);
   const [screenshots, setScreenshots] = React.useState<Screenshot[]>([]);
   const [isRootLoading, setIsRootLoading] = React.useState(true);
@@ -51,6 +53,10 @@ const Game = () => {
     null
   );
   const [isOnboardingOpen, setIsOnboardingOpen] = React.useState(false);
+  const [language, setLanguage] = React.useState<Language>(preferredLanguage);
+  const [isLoadingGame, setIsLoadingGame] = React.useState(false);
+
+  const consent = Cookies.get("cookieConsent") === "true";
 
   React.useEffect(() => {
     const hasSeenOnboarding = Cookies.get("hasSeenOnboarding");
@@ -61,10 +67,8 @@ const Game = () => {
   }, []);
 
   const handleCloseOnboarding = () => {
-    const consent = Cookies.get("cookieConsent");
-
     setIsOnboardingOpen(false);
-    if(consent) Cookies.set("hasSeenOnboarding", "true", { expires: 365 });
+    if (consent) Cookies.set("hasSeenOnboarding", "true", { expires: 365 });
   };
 
   const preloadImage = React.useCallback(
@@ -149,10 +153,98 @@ const Game = () => {
     preloadImages,
   ]);
 
+  const handleLanguageChange = useCallback(
+    async (selectedLanguage: Language) => {
+      if(isLoadingGame)return
+      setIsLoadingGame(true)
+      // Reset game state when changing language
+      localStorage.setItem("preferredLanguage", selectedLanguage);
+      setLanguage(selectedLanguage);
+      setIsRootLoading(false);
+      setIsFadingOut(false);
+      setScreenshots([]);
+      setGuesses([]);
+      setGuessesLeft(6);
+      setGameStatus("playing");
+      setCurrentScreenshotIndex(0);
+      setHighestIndexReached(0);
+      setRevealedScreenshots([]);
+      setHasUpdatedStats(false);
+      setIsArchiveGame(false);
+
+      const currentGameIndex = getCurrentGameIndex().toString();
+
+      try {
+        const savedState = localStorage.getItem(
+          `gameState_${selectedLanguage}`
+        );
+        const savedGameIndex = localStorage.getItem(
+          `gameIndex_${selectedLanguage}`
+        );
+
+        if (savedState && savedGameIndex === currentGameIndex) {
+          const parsedState = JSON.parse(savedState);
+          const loadedScreenshots = await imageService.getScreenshots(
+            currentGameIndex,
+            selectedLanguage
+          );
+
+          if (loadedScreenshots.length > 0) {
+            setScreenshots(loadedScreenshots);
+            setCorrectMovieId(loadedScreenshots[0].movieId);
+            setCurrentScreenshotIndex(parsedState.currentScreenshotIndex);
+            setHighestIndexReached(parsedState.highestIndexReached);
+
+            const newRevealedScreenshots = parsedState.revealedScreenshots
+              .map((revealed: Screenshot) =>
+                loadedScreenshots.find(
+                  (s) =>
+                    s.movieId === revealed.movieId && s.index === revealed.index
+                )
+              )
+              .filter(Boolean);
+
+            setRevealedScreenshots(newRevealedScreenshots);
+            setGuesses(parsedState.guesses);
+            setGuessesLeft(parsedState.guessesLeft);
+            setGameStatus(parsedState.gameStatus);
+            setShowResult(parsedState.showResult);
+            setGameEnded(parsedState.gameEnded || false);
+          }
+        } else {
+          const loadedScreenshots = await imageService.getScreenshots(
+            currentGameIndex,
+            selectedLanguage
+          );
+
+          if (loadedScreenshots.length > 0) {
+            setScreenshots(loadedScreenshots);
+            setCorrectMovieId(loadedScreenshots[0].movieId);
+          }
+        }
+      } catch (error) {
+        console.error(
+          `Error loading screenshots for ${selectedLanguage}:`,
+          error
+        );
+        toast.error(`Failed to load screenshots for ${selectedLanguage}`, {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } finally {
+        setIsLoadingGame(false)
+      }
+    },
+    []
+  );
+
   const saveGameState = useCallback(
     (state: StateProps) => {
       if (!isArchiveGame) {
-        const consent = Cookies.get("cookieConsent");
         const stateToSave = {
           movie: state.movie,
           currentScreenshotIndex: state.currentScreenshotIndex,
@@ -171,27 +263,37 @@ const Game = () => {
           isArchiveGame: false,
         };
 
-        if(consent) Cookies.set("gameState", JSON.stringify(stateToSave), {
-          expires: getNextGameTime(),
-        });
+        localStorage.setItem(
+          `gameState_${language}`,
+          JSON.stringify(stateToSave)
+        );
+        localStorage.setItem(
+          `gameIndex_${language}`,
+          getCurrentGameIndex().toString()
+        );
       }
     },
-    [isArchiveGame]
+    [isArchiveGame, language]
   );
 
   const loadGameScreenshot = React.useCallback(async () => {
+    if(isLoadingGame) return
+    setIsLoadingGame(true)
     const gameIndex = getCurrentGameIndex();
     const gameFolder = `${gameIndex}`;
 
     try {
-      const screenshots = await imageService.getScreenshots(gameFolder);
+      const screenshots = await imageService.getScreenshots(
+        gameFolder,
+        language
+      );
 
       if (screenshots.length > 0) {
         setScreenshots(screenshots);
         preloadImages(screenshots, [0]);
         setCorrectMovieId(screenshots[0].movieId);
         setIsArchiveGame(false);
-        Cookies.set("gameIndex", gameIndex.toString());
+        localStorage.setItem(`gameIndex_${language}`, gameIndex.toString());
       }
       setGameEnded(false);
     } catch (error) {
@@ -205,6 +307,7 @@ const Game = () => {
         draggable: true,
       });
     } finally {
+      setIsLoadingGame(false)
       setTimeout(() => setIsFadingOut(true), 500);
       setTimeout(() => setIsRootLoading(false), 1500);
     }
@@ -233,7 +336,8 @@ const Game = () => {
 
       try {
         const archivedScreenshots = await imageService.getScreenshots(
-          folderNumber
+          folderNumber,
+          language
         );
 
         if (archivedScreenshots.length > 0) {
@@ -287,7 +391,8 @@ const Game = () => {
     if (savedGameState) {
       const currentGame = getCurrentGameIndex().toString();
       const currentScreenshots = await imageService.getScreenshots(
-        currentGame
+        currentGame,
+        language
       );
 
       setMovie(savedGameState.movie);
@@ -323,19 +428,20 @@ const Game = () => {
   };
 
   React.useEffect(() => {
-    const savedState = Cookies.get("gameState");
-    const savedGame = Cookies.get("gameIndex");
-    const currentGame = getCurrentGameIndex().toString();
-
     const loadGame = async () => {
+      const currentGame = getCurrentGameIndex().toString();
+      const savedState = localStorage.getItem(`gameState_${language}`);
+      const savedGameIndex = localStorage.getItem(`gameIndex_${language}`);
+
       try {
-        if (savedState && savedGame === currentGame) {
+        if (savedState && savedGameIndex === currentGame) {
           const parsedState = JSON.parse(savedState);
 
           if (!parsedState.isArchiveGame) {
             try {
               const currentScreenshots = await imageService.getScreenshots(
-                savedGame
+                savedGameIndex,
+                language
               );
 
               setMovie(parsedState.movie);
@@ -366,14 +472,7 @@ const Game = () => {
               }
             } catch (error) {
               console.error("Error loading screenshots:", error);
-              toast.error("Failed to load screenshots", {
-                position: "bottom-right",
-                autoClose: 3000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-              });
+              await loadGameScreenshot();
             } finally {
               setTimeout(() => setIsFadingOut(true), 500);
               setTimeout(() => setIsRootLoading(false), 1500);
@@ -410,9 +509,16 @@ const Game = () => {
       );
 
       const newGameIndex = getCurrentGameIndex();
-      if (newGameIndex !== parseInt(Cookies.get("gameIndex") || "0")) {
-        Cookies.remove("gameState");
-        Cookies.remove("gameIndex");
+      if (
+        newGameIndex !==
+        parseInt(localStorage.getItem("gameIndex_tamil") || "0")
+      ) {
+        localStorage.removeItem("gameState_english");
+        localStorage.removeItem("gameIndex_english");
+        localStorage.removeItem("gameIndex_hindi");
+        localStorage.removeItem("gameIndex_hindi");
+        localStorage.removeItem("gameIndex_tamil");
+        localStorage.removeItem("gameIndex_tamil");
         loadGameScreenshot();
 
         setGuesses([]);
@@ -576,6 +682,7 @@ const Game = () => {
         onClose={handleCloseOnboarding}
       />
       <StatsModal
+        language={language}
         gameStatus={gameStatus}
         gameEnded={gameEnded}
         guesses={guesses}
@@ -595,7 +702,7 @@ const Game = () => {
         {isArchiveGame && !isLoading && (
           <div className="archive-badge">Archived Game</div>
         )}
-        {isLoading ? (
+        {isLoading || screenshots.length === 0 ? (
           <div className="loader-container">
             <Loader />
           </div>
@@ -619,6 +726,10 @@ const Game = () => {
         movie={movie}
         screenshots={screenshots}
         showResult={showResult}
+      />
+      <Sidebar
+        onLanguageChange={handleLanguageChange}
+        currentLanguage={language}
       />
     </div>
   );

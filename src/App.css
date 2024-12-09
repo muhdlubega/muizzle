@@ -5,9 +5,9 @@
 }
 
 .app {
- display: flex;
- flex-direction: column;
- min-height: calc(100vh - 16px);
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 16px);
 }
 
 .spacer {
@@ -43,10 +43,12 @@
   text-decoration: none;
   color: inherit;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .footer-button:hover {
-  color: #FF2247
+  transform: translateY(-1px);
+  color: #686868;
 }
 
 .footer-icon-text {
@@ -89,16 +91,39 @@
   padding: 8px 12px;
   cursor: pointer;
   font-size: 14px;
+  transition: all 0.3s ease;
 }
 
 .cookie-button:hover {
   background-color: #d81b3c;
 }
 
+.partner-title {
+  font-weight: 800;
+  color: #d5ab58;
+}
+
+.partner-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  font-size: 18px;
+}
+
 @media (max-width: 480px) {
   .footer {
     gap: 5px;
+  }
+
+  .partner-text {
     margin-bottom: 50px;
+    margin-top: 10px;
+    font-size: 12px;
+  }
+
+  .partner-icon {
+    font-size: 1.2rem;
   }
 
   .footer-container {
@@ -106,7 +131,7 @@
   }
 
   .footer-icon {
-    font-size: 1.2rem; 
+    font-size: 1.2rem;
     display: block;
   }
 

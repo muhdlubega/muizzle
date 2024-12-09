@@ -1,10 +1,11 @@
 .privacy {
-    padding: 40px;
+    padding: 40px 60px;
 }
 
 .privacy-close {
     color: white;
     border: 3px solid #1A1A1A;
+    transition: all 0.3s ease;
 }
 
 .privacy-close:hover {
@@ -15,5 +16,13 @@
     .privacy-close {
         width: 100%;
         margin-bottom: 20px;
+    }
+
+    .privacy {
+        padding: 20px 36px;
+    }
+
+    .privacy h2 {
+        margin-bottom: 0;
     }
 }

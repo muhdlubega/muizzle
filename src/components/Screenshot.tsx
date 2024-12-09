@@ -31,13 +31,6 @@ const Screenshots: React.FC<ScreenshotsProps> = ({
           className="screenshot-image onboarding01"
           src={screenshots[currentScreenshotIndex]?.url || ""}
           alt="Movie Screenshot"
-          onError={(e) => {
-            console.error(
-              "Error loading image:",
-              screenshots[currentScreenshotIndex]?.url
-            );
-            e.currentTarget.onerror = null;
-          }}
         />
       </div>
 
@@ -63,13 +56,6 @@ const Screenshots: React.FC<ScreenshotsProps> = ({
                     index === currentScreenshotIndex ? "active" : ""
                   }`}
                   onClick={() => handleThumbnailClick(index)}
-                  onError={(e) => {
-                    console.error(
-                      "Error loading thumbnail:",
-                      screenshots[index]?.url
-                    );
-                    e.currentTarget.onerror = null;
-                  }}
                 />
               ) : (
                 <div className="empty-box"></div>
