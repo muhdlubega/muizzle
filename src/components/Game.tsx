@@ -162,12 +162,10 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
       setLanguage(selectedLanguage);
       setIsRootLoading(false);
       setIsFadingOut(false);
-      setMovie(null);
       setScreenshots([]);
       setGuesses([]);
       setGuessesLeft(6);
       setGameStatus("playing");
-      setShowResult(false);
       setCurrentScreenshotIndex(0);
       setHighestIndexReached(0);
       setRevealedScreenshots([]);
