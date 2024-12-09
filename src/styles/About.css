@@ -28,18 +28,19 @@
 }
 
 .about-step img {
-    width: calc(45vw - 26px);
+    width: calc(45vw - 20px);
     border: 2px solid #525254;
 }
 
 .about-step p {
     text-align: center;
+    padding: 0 10px;
 }
 
 .about-steps {
     display: grid;
     grid-template-columns: auto auto;
-    grid-gap: 10px;
+    grid-gap: 20px;
 }
 
 @media (max-width: 600px) {

@@ -1,4 +1,4 @@
-export const REFERENCE_TIME = new Date("2024-12-01T12:30:00+08:00"); // 12:30 PM Malaysia time on Nov 19, 2024
+export const REFERENCE_TIME = new Date("2024-12-01T16:30:00+08:00"); // 4:30 PM Malaysia time on Nov 19, 2024
 
 export const getNextGameTime = () => {
   const now = new Date();
@@ -27,5 +27,5 @@ export const getCurrentGameIndex = () => {
   const diffTime = malaysiaTime.getTime() - REFERENCE_TIME.getTime();
   const periodsPassed = Math.floor(diffTime / (24 * 60 * 60 * 1000));
 
-  return (periodsPassed % 7) + 1;
+  return periodsPassed + 1;
 };

@@ -43,7 +43,6 @@ const StatsModal: React.FC<StatsModalProps> = ({
   showStatsModal,
   showResult,
 }) => {
-  const consent = Cookies.get("cookieConsent") === 'true';
   const [guessDistribution, setGuessDistribution] = React.useState<number[]>(
     Array(6).fill(0)
   );
@@ -104,8 +103,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
         maxStreak,
       };
 
-      if (consent)
-        localStorage.setItem(languageKey, JSON.stringify(updatedStats));
+      localStorage.setItem(languageKey, JSON.stringify(updatedStats));
 
       setStats({
         ...updatedStats,
@@ -183,7 +181,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
   return (
     <>
       <Modal
-        isOpen={showStatsModal && consent}
+        isOpen={showStatsModal}
         onRequestClose={() => setShowStatsModal(false)}
         className="stats-modal-content"
         overlayClassName="stats-modal-overlay"

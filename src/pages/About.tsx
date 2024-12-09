@@ -10,69 +10,74 @@ import Sidebar from "../components/Sidebar";
 import { useEffect } from "react";
 
 const About = ({ language }: { language: Language }) => {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
 
-    const handleLanguageChange = (language: Language) => {
-        localStorage.setItem("preferredLanguage", language);
-    };
+  const handleLanguageChange = (language: Language) => {
+    localStorage.setItem("preferredLanguage", language);
+  };
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-      }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-    return (
-        <div>
-            <Sidebar
-                onLanguageChange={handleLanguageChange}
-                currentLanguage={language}
-            />
-            <Navbar language={language} />
-            <div className="about">
-                <p className="about-header">
-                    Welcome to <span className="about-title">Muizzle</span>, a unique movie guessing game designed to provide an entertaining and
-                    engaging experience for movie enthusiasts.
-                </p>
-                <h2 style={{ color: "#FF2247" }}>How to play:</h2>
-                <div className="about-steps">
-                    <div className="about-step">
-                        <img src={step1} alt="about step 1" />
-                        <p>
-                            Everyday at 10am IST a new movie will be displayed. Input your guess
-                            and select an option to guess the movie title.
-                        </p>
-                    </div>
-                    <div className="about-step">
-                        <img src={step2} alt="about step 2" />
-                        <p>
-                            For each wrong guess, a new screenshot of the movie will be
-                            displayed. You have 6 attempts to guess the title.
-                        </p>
-                    </div>
-                    <div className="about-step">
-                        <img src={step3} alt="about step 3" />
-                        <p>
-                            On winning or losing, your statistics modal will be displayed, where
-                            you can see your results and share your stats.
-                        </p>
-                        <p>
-                            <strong>Disclaimer:</strong> Stats are stored in your local storage and
-                            will be reset if website data is cleared.
-                        </p>
-                    </div>
-                    <div className="about-step">
-                        <img src={step4} alt="about step 4" />
-                        <p>
-                            Clearing your first game unlocks access to the archive and stats on
-                            the top right corner. Open the archives to try out previous games.
-                        </p>
-                    </div>
-                </div>
-                <button className="about-close" onClick={() => navigate('/')}>
-                    Return to Homepage
-                </button>
-            </div>
+  return (
+    <div>
+      <Sidebar
+        onLanguageChange={handleLanguageChange}
+        currentLanguage={language}
+      />
+      <Navbar language={language} />
+      <div className="about">
+        <p className="about-header">
+          Welcome to <span className="about-title">Muizzle</span>, a unique
+          movie guessing game designed to provide an entertaining and engaging
+          experience for movie enthusiasts.
+          <br />
+          <br /> Everyday at <strong>4pm IST</strong> new movies for the Tamil,
+          Hindi and Hollywood categories will be displayed. Switch between the
+          different categories via the sidebar icon on the top left corner.
+        </p>
+        <h2 style={{ color: "#FF2247" }}>How to play:</h2>
+        <div className="about-steps">
+          <div className="about-step">
+            <img src={step1} alt="about step 1" />
+            <p>
+              To start the game, input your guess into the searchbar and select
+              an option or press submit to select the first option from the list
+              to guess the movie title.
+            </p>
+          </div>
+          <div className="about-step">
+            <img src={step2} alt="about step 2" />
+            <p>
+              For each wrong guess, a new screenshot of the movie will be
+              displayed. You have 6 attempts to guess the title.
+            </p>
+          </div>
+          <div className="about-step">
+            <img src={step3} alt="about step 3" />
+            <p>
+              On winning or losing, your statistics modal will popup, where you
+              can see your results and share your stats. Stats are stored in
+              your local storage and will be reset if website data is cleared.
+            </p>
+          </div>
+          <div className="about-step">
+            <img src={step4} alt="about step 4" />
+            <p>
+              To open your stats modal again click on the icon on the top right
+              corner. You'll also be able to access the previous games from the
+              'Open Archives' button. You can also press the onboarding icon
+              beside the screenshots to learn more.
+            </p>
+          </div>
         </div>
-    );
+        <button className="about-close" onClick={() => navigate("/")}>
+          Return to Homepage
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default About;

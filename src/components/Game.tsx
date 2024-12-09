@@ -25,7 +25,7 @@ import Screenshots from "./Screenshot";
 import "../styles/Game.css";
 import Sidebar from "./Sidebar";
 
-const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
+const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
   const [movie, setMovie] = React.useState<Movie | null>(null);
   const [screenshots, setScreenshots] = React.useState<Screenshot[]>([]);
   const [isRootLoading, setIsRootLoading] = React.useState(true);
@@ -54,7 +54,7 @@ const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
   );
   const [isOnboardingOpen, setIsOnboardingOpen] = React.useState(false);
   const [language, setLanguage] = React.useState<Language>(preferredLanguage);
-  const consent = Cookies.get("cookieConsent") === 'true';
+  const consent = Cookies.get("cookieConsent") === "true";
 
   const handleLanguageChange = useCallback(
     async (selectedLanguage: Language) => {
@@ -78,8 +78,12 @@ const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
       const currentGameIndex = getCurrentGameIndex().toString();
 
       try {
-        const savedState = Cookies.get(`gameState_${selectedLanguage}`);
-        const savedGameIndex = Cookies.get(`gameIndex_${selectedLanguage}`);
+        const savedState = localStorage.getItem(
+          `gameState_${selectedLanguage}`
+        );
+        const savedGameIndex = localStorage.getItem(
+          `gameIndex_${selectedLanguage}`
+        );
 
         if (savedState && savedGameIndex === currentGameIndex) {
           const parsedState = JSON.parse(savedState);
@@ -122,7 +126,10 @@ const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
           }
         }
       } catch (error) {
-        console.error(`Error loading screenshots for ${selectedLanguage}:`, error);
+        console.error(
+          `Error loading screenshots for ${selectedLanguage}:`,
+          error
+        );
         toast.error(`Failed to load screenshots for ${selectedLanguage}`, {
           position: "bottom-right",
           autoClose: 3000,
@@ -252,12 +259,14 @@ const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
           isArchiveGame: false,
         };
 
-        if (consent) {
-          Cookies.set(`gameState_${language}`, JSON.stringify(stateToSave), {
-            expires: getNextGameTime(),
-          });
-          Cookies.set(`gameIndex_${language}`, getCurrentGameIndex().toString());
-        }
+        localStorage.setItem(
+          `gameState_${language}`,
+          JSON.stringify(stateToSave)
+        );
+        localStorage.setItem(
+          `gameIndex_${language}`,
+          getCurrentGameIndex().toString()
+        );
       }
     },
     [isArchiveGame, language]
@@ -268,14 +277,17 @@ const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
     const gameFolder = `${gameIndex}`;
 
     try {
-      const screenshots = await imageService.getScreenshots(gameFolder, language);
+      const screenshots = await imageService.getScreenshots(
+        gameFolder,
+        language
+      );
 
       if (screenshots.length > 0) {
         setScreenshots(screenshots);
         preloadImages(screenshots, [0]);
         setCorrectMovieId(screenshots[0].movieId);
         setIsArchiveGame(false);
-        Cookies.set("gameIndex", gameIndex.toString());
+        localStorage.setItem(`gameIndex_${language}`, gameIndex.toString());
       }
       setGameEnded(false);
     } catch (error) {
@@ -317,7 +329,8 @@ const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
 
       try {
         const archivedScreenshots = await imageService.getScreenshots(
-          folderNumber, language
+          folderNumber,
+          language
         );
 
         if (archivedScreenshots.length > 0) {
@@ -370,7 +383,10 @@ const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
   const returnToCurrentGame = async () => {
     if (savedGameState) {
       const currentGame = getCurrentGameIndex().toString();
-      const currentScreenshots = await imageService.getScreenshots(currentGame, language);
+      const currentScreenshots = await imageService.getScreenshots(
+        currentGame,
+        language
+      );
 
       setMovie(savedGameState.movie);
       setScreenshots(currentScreenshots);
@@ -407,8 +423,8 @@ const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
   React.useEffect(() => {
     const loadGame = async () => {
       const currentGame = getCurrentGameIndex().toString();
-      const savedState = Cookies.get(`gameState_${language}`);
-      const savedGameIndex = Cookies.get(`gameIndex_${language}`);
+      const savedState = localStorage.getItem(`gameState_${language}`);
+      const savedGameIndex = localStorage.getItem(`gameIndex_${language}`);
 
       try {
         if (savedState && savedGameIndex === currentGame) {
@@ -486,9 +502,16 @@ const Game = ({preferredLanguage}: {preferredLanguage: Language}) => {
       );
 
       const newGameIndex = getCurrentGameIndex();
-      if (newGameIndex !== parseInt(Cookies.get("gameIndex") || "0")) {
-        Cookies.remove("gameState");
-        Cookies.remove("gameIndex");
+      if (
+        newGameIndex !==
+        parseInt(localStorage.getItem("gameIndex_tamil") || "0")
+      ) {
+        localStorage.removeItem("gameState_english");
+        localStorage.removeItem("gameIndex_english");
+        localStorage.removeItem("gameIndex_hindi");
+        localStorage.removeItem("gameIndex_hindi");
+        localStorage.removeItem("gameIndex_tamil");
+        localStorage.removeItem("gameIndex_tamil");
         loadGameScreenshot();
 
         setGuesses([]);

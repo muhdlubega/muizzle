@@ -7,7 +7,7 @@ import Navbar from "./components/Navbar";
 import { FaEnvelope, FaInfoCircle, FaShieldAlt } from "react-icons/fa";
 import { Language } from "./types/types";
 
-function App({language}: {language: Language}) {
+function App({ language }: { language: Language }) {
   const [showCookieBanner, setShowCookieBanner] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -16,7 +16,8 @@ function App({language}: {language: Language}) {
     const lang = searchParams.get("lang");
     if (!lang) {
       const defaultLang = localStorage.getItem("preferredLanguage") || "tamil";
-      const langParam = defaultLang === "tamil" ? "TA" : defaultLang === "hindi" ? "HI" : "EN";
+      const langParam =
+        defaultLang === "tamil" ? "TA" : defaultLang === "hindi" ? "HI" : "EN";
       navigate(`/?lang=${langParam}`, { replace: true });
     }
   }, [searchParams, navigate]);
@@ -40,21 +41,34 @@ function App({language}: {language: Language}) {
       <div className="spacer"></div>
       <div className="footer-container">
         <div className="footer">
-          <a className="footer-button" onClick={() => navigate(`/privacy?lang=${searchParams.get("lang")}`)}>
+          <a
+            className="footer-button"
+            onClick={() =>
+              navigate(`/privacy?lang=${searchParams.get("lang")}`)
+            }
+          >
             <span className="footer-icon-text">
               <FaShieldAlt className="footer-icon" />
               <span className="footer-text">Privacy Policy</span>
             </span>
           </a>
           |
-          <a className="footer-button" onClick={() => navigate(`/about?lang=${searchParams.get("lang")}`)}>
+          <a
+            className="footer-button"
+            onClick={() => navigate(`/about?lang=${searchParams.get("lang")}`)}
+          >
             <span className="footer-icon-text">
               <FaInfoCircle className="footer-icon" />
               <span className="footer-text">About Us</span>
             </span>
           </a>
           |
-          <a className="footer-button" onClick={() => navigate(`/contact?lang=${searchParams.get("lang")}`)}>
+          <a
+            className="footer-button"
+            onClick={() =>
+              navigate(`/contact?lang=${searchParams.get("lang")}`)
+            }
+          >
             <span className="footer-icon-text">
               <FaEnvelope className="footer-icon" />
               <span className="footer-text">Contact</span>
@@ -67,8 +81,7 @@ function App({language}: {language: Language}) {
       {showCookieBanner && (
         <div className="cookie-banner">
           <p>
-            For better experience and ensuring that your stats are updated,
-            please accept the cookies. Learn more in our{" "}
+            For better experience, please accept the cookies. Learn more in our{" "}
             <span className="cookie-link" onClick={() => navigate("/privacy")}>
               Privacy Policy
             </span>
