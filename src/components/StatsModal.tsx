@@ -8,7 +8,6 @@ import {
   Tooltip,
 } from "chart.js";
 import React from "react";
-import Cookies from "js-cookie";
 import { Bar } from "react-chartjs-2";
 import { IoIosStats } from "react-icons/io";
 import Modal from "react-modal";
