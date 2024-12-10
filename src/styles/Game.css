@@ -12,8 +12,8 @@
 .return-button {
     color: #FF2247;
     position: absolute;
-    top: 30px;
-    right: 240px;
+    top: 24px;
+    right: 246px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -63,8 +63,8 @@
     }
 
     .return-button {
-        right: 168px;
-        top: 18px
+        right: 170px;
+        top: 13px
     }
 }
 

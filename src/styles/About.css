@@ -28,7 +28,7 @@
 }
 
 .about-step img {
-    width: calc(45vw - 20px);
+    width: calc(45vw - 12px);
     border: 2px solid #525254;
 }
 
@@ -55,7 +55,7 @@
 
 @media (max-width: 600px) {
     .partner-logo {
-        width: calc(100vw - 88px);
+        width: calc(100vw - 72px);
     }
     
     .about {
@@ -63,7 +63,7 @@
     }
 
     .about-step img {
-        width: calc(100vw - 92px);
+        width: calc(100vw - 76px);
     }
 
     .about-steps {

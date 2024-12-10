@@ -1,13 +1,13 @@
 #root {
   color: #525254;
   background-color: #131212;
-  min-height: calc(100svh - 16px);
+  min-height: 100svh;
 }
 
 .app {
   display: flex;
   flex-direction: column;
-  min-height: calc(100svh - 16px);
+  min-height: 100svh;
 }
 
 .spacer {

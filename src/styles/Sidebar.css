@@ -61,8 +61,8 @@
 
 .sidebar-toggle-button {
     position: fixed;
-    top: 33px;
-    left: 30px;
+    top: 26px;
+    left: 26px;
     color: white;
     cursor: pointer;
     font-size: 26px;
@@ -122,8 +122,8 @@
 
 @media (max-width: 768px) {
     .sidebar-toggle-button {
-        top: 28px;
-        left: 20px;
+        top: 19px;
+        left: 14px;
         font-size: 18px;
     }
 }
