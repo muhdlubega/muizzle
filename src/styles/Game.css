@@ -1,6 +1,6 @@
 .game {
     text-align: center;
-    padding-top: 10vh;
+    padding-top: 10svh;
 }
 
 .container {
@@ -59,7 +59,7 @@
 
 @media (max-width: 768px) {
     .game {
-        padding-top: 4vh;
+        padding-top: 4svh;
     }
 
     .return-button {
@@ -78,6 +78,6 @@
     }
 
     .game {
-        padding-top: 2vh;
+        padding-top: 2svh;
     }
 }

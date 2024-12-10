@@ -40,6 +40,20 @@ function App({ language }: { language: Language }) {
       <Navbar language={language} />
       <Game preferredLanguage={language} />
       <div className="spacer"></div>
+      <script
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1748896712033823"
+        crossOrigin="anonymous"
+      ></script>
+      <ins
+        className="adsbygoogle"
+        style={{ display: "block" }}
+        data-ad-client="ca-pub-1748896712033823"
+        data-ad-slot="4565463408"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      ></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
       <div className="footer-container">
         <div className="footer">
           <a

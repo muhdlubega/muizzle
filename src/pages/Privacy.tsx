@@ -42,6 +42,21 @@ const Privacy = ({ language }: { language: Language }) => {
           safe, secure, and used solely to enhance your experience.
         </h4>
         <br />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1748896712033823"
+          crossOrigin="anonymous"
+        ></script>
+        <ins
+          className="adsbygoogle"
+          style={{ display: "block" }}
+          data-ad-client="ca-pub-1748896712033823"
+          data-ad-slot="4565463408"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        ></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <br />
         <span>
           <strong style={{ color: "#FF2247" }}>
             2. Data Collection and Cookies:
@@ -166,6 +181,21 @@ const Privacy = ({ language }: { language: Language }) => {
         <p>
           <strong>Last Updated On:</strong> 09/12/2024
         </p>
+        <br />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1748896712033823"
+          crossOrigin="anonymous"
+        ></script>
+        <ins
+          className="adsbygoogle"
+          style={{ display: "block" }}
+          data-ad-client="ca-pub-1748896712033823"
+          data-ad-slot="4565463408"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        ></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         <br />
         <button className="privacy-close" onClick={() => navigate("/")}>
           Return to Homepage
