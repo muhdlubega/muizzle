@@ -3,7 +3,6 @@ import { useOnClickOutside } from "usehooks-ts";
 import { movieService } from "../data/movieService";
 import "../styles/SearchBar.css";
 import { Results } from "../types/types";
-import { debounce } from "../utils/debounce";
 
 const SearchBar = ({
   onGuess,
@@ -22,23 +21,10 @@ const SearchBar = ({
     setResults([]);
   });
 
-  const debouncedSearch = React.useMemo(
-    () =>
-      debounce(async (searchQuery: string) => {
-        await movieService.getSearch(
-          searchQuery,
-          errorCount,
-          setErrorCount,
-          setResults
-        );
-      }, 0),
-    [errorCount, setErrorCount, setResults]
-  );
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
-    debouncedSearch(value);
+    movieService.getSearch(value, errorCount, setErrorCount, setResults);
   };
 
   const handleSelectMovie = (title: string, date: number, movieId: number) => {
