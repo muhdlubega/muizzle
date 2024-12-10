@@ -54,7 +54,7 @@
     flex-direction: column;
     align-items: center;
     width: 500px;
-    height: 85vh;
+    height: 85svh;
     gap: 10px;
     animation: floatIn 1s ease-in-out;
 }

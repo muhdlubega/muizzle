@@ -38,6 +38,20 @@ const About = ({ language }: { language: Language }) => {
           Hindi and Hollywood categories will be displayed. Switch between the
           different categories via the sidebar icon on the top left corner.
         </p>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1748896712033823"
+          crossOrigin="anonymous"
+        ></script>
+        <ins
+          className="adsbygoogle"
+          style={{ display: "block" }}
+          data-ad-client="ca-pub-1748896712033823"
+          data-ad-slot="4565463408"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        ></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         <h2 style={{ color: "#FF2247" }}>How to play:</h2>
         <div className="about-steps">
           <div className="about-step">
@@ -84,6 +98,20 @@ const About = ({ language }: { language: Language }) => {
             }
           />
         </div>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1748896712033823"
+          crossOrigin="anonymous"
+        ></script>
+        <ins
+          className="adsbygoogle"
+          style={{ display: "block" }}
+          data-ad-client="ca-pub-1748896712033823"
+          data-ad-slot="4565463408"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        ></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         <button className="about-close" onClick={() => navigate("/")}>
           Return to Homepage
         </button>

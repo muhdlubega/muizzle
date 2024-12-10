@@ -17,7 +17,7 @@
     border-radius: 10px;
     max-width: 600px;
     width: 90%;
-    max-height: 80vh;
+    max-height: 80svh;
     overflow: hidden;
     border: 5px solid #FF2247;
 }
@@ -32,7 +32,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 1rem;
-    max-height: 35vh;
+    max-height: 35svh;
     overflow: auto;
     scrollbar-width: thin;
     margin: 20px 30px 40px;
