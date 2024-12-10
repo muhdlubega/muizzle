@@ -22,23 +22,28 @@ export const movieService = {
     setErrorCount: React.Dispatch<React.SetStateAction<number>>,
     setResults: React.Dispatch<React.SetStateAction<Results[]>>
   ) {
+    let controller: AbortController | null = null;
+
+    if (controller) {
+      (controller as AbortController).abort();
+    }
+
+    controller = new AbortController();
     if (query.length > 2) {
       try {
-        const response = await axios.get(
-          `${TRAKT_API_BASE_URL}/search/movie`,
-          {
-            params: {
-              query: query,
-              limit: 5,
-            },
-            headers: {
-              "Content-Type": "application/json",
-              "trakt-api-key": CLIENT_ID,
-              "trakt-api-version": "2",
-            },
-          }
-        );
-
+        const response = await axios.get(`${TRAKT_API_BASE_URL}/search/movie`, {
+          params: {
+            query: query,
+            limit: 5,
+          },
+          headers: {
+            "Content-Type": "application/json",
+            "trakt-api-key": CLIENT_ID,
+            "trakt-api-version": "2",
+          },
+          signal: (controller as AbortController).signal,
+        });
+  
         const transformedResults: Results[] = response.data.map(
           (item: SearchResult) => ({
             id: item.movie.ids.tmdb,
@@ -46,12 +51,17 @@ export const movieService = {
             release_date: item.movie.year || "",
           })
         );
-
+  
         setResults(transformedResults);
       } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log("Search request canceled:", query);
+          return;
+        }
+  
         console.error("Error fetching search results:", error);
         setErrorCount((prevCount) => prevCount + 1);
-
+  
         if (errorCount >= 10) {
           toast.error(
             "Seems like the service is unavailable for your region. Please try a different network or consider using VPN.",
@@ -77,7 +87,7 @@ export const movieService = {
     } else {
       setResults([]);
     }
-  },
+  },  
 
   async getMovie(
     id: string,

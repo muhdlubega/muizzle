@@ -31,7 +31,7 @@ const SearchBar = ({
           setErrorCount,
           setResults
         );
-      }, 0),
+      }, 100),
     [errorCount, setErrorCount, setResults]
   );
 
