@@ -27,8 +27,8 @@ export const movieService = {
     if (controller) {
       (controller as AbortController).abort();
     }
-
     controller = new AbortController();
+
     if (query.length > 2) {
       try {
         const response = await axios.get(`${TRAKT_API_BASE_URL}/search/movie`, {
