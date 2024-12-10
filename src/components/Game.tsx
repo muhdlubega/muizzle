@@ -155,9 +155,8 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
 
   const handleLanguageChange = useCallback(
     async (selectedLanguage: Language) => {
-      if(isLoadingGame)return
-      setIsLoadingGame(true)
-      // Reset game state when changing language
+      if (isLoadingGame) return;
+      setIsLoadingGame(true);
       localStorage.setItem("preferredLanguage", selectedLanguage);
       setLanguage(selectedLanguage);
       setIsRootLoading(false);
@@ -236,10 +235,10 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
           draggable: true,
         });
       } finally {
-        setIsLoadingGame(false)
+        setIsLoadingGame(false);
       }
     },
-    []
+    [isLoadingGame]
   );
 
   const saveGameState = useCallback(
@@ -277,8 +276,8 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
   );
 
   const loadGameScreenshot = React.useCallback(async () => {
-    if(isLoadingGame) return
-    setIsLoadingGame(true)
+    if (isLoadingGame) return;
+    setIsLoadingGame(true);
     const gameIndex = getCurrentGameIndex();
     const gameFolder = `${gameIndex}`;
 
@@ -307,11 +306,11 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
         draggable: true,
       });
     } finally {
-      setIsLoadingGame(false)
+      setIsLoadingGame(false);
       setTimeout(() => setIsFadingOut(true), 500);
       setTimeout(() => setIsRootLoading(false), 1500);
     }
-  }, [preloadImages]);
+  }, [isLoadingGame, language, preloadImages]);
 
   const loadArchivedGame = React.useCallback(
     async (folderNumber: string) => {
@@ -383,6 +382,7 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
       correctMovieId,
       gameEnded,
       hasUpdatedStats,
+      language,
       preloadImages,
     ]
   );
@@ -490,7 +490,8 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
     };
 
     loadGame();
-  }, [loadGameScreenshot]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   React.useEffect(() => {
     const checkGameTime = () => {
@@ -509,10 +510,11 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
       );
 
       const newGameIndex = getCurrentGameIndex();
-      if (
-        newGameIndex !==
-        parseInt(localStorage.getItem("gameIndex_tamil") || "0")
-      ) {
+      const oldGameIndex =
+        localStorage.getItem("gameIndex_tamil") ||
+        localStorage.getItem("gameIndex_hindi") ||
+        localStorage.getItem("gameIndex_english");
+      if (oldGameIndex && newGameIndex !== parseInt(oldGameIndex)) {
         localStorage.removeItem("gameState_english");
         localStorage.removeItem("gameIndex_english");
         localStorage.removeItem("gameIndex_hindi");

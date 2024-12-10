@@ -14,16 +14,6 @@ function App({ language }: { language: Language }) {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const lang = searchParams.get("lang");
-    if (!lang) {
-      const defaultLang = localStorage.getItem("preferredLanguage") || "tamil";
-      const langParam =
-        defaultLang === "tamil" ? "TA" : defaultLang === "hindi" ? "HI" : "EN";
-      navigate(`/?lang=${langParam}`, { replace: true });
-    }
-  }, [searchParams, navigate]);
-
-  useEffect(() => {
     const consent = Cookies.get("cookieConsent");
     if (!consent) {
       setShowCookieBanner(true);
