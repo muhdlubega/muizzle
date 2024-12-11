@@ -19,7 +19,7 @@ const Navbar = ({language}: {language: Language}) => {
       <div className='navbar-head' onClick={() => { navigate('/') }}>
         <img className='navbar-logo' alt='muizzle-navbar-logo' src={muizzle} />
         <p className='navbar-title'>Muizzle</p>
-        <p className='navbar-badge' style={{ background: lang === 'TA' ? 'blue' : lang === 'HI' ? 'green' : lang === 'EN' ? 'orange' : 'purple' }}>{lang}</p>
+        <p className='navbar-badge' style={{ background: lang === 'TA' ? 'orange' : lang === 'HI' ? 'green' : lang === 'EN' ? 'blue' : 'purple' }}>{lang}</p>
       </div>
     </div>
   )
