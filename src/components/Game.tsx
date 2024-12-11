@@ -668,6 +668,7 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
     <div className="game">
       <ToastContainer />
       <Archive
+        language={language}
         isOpen={showArchive}
         onClose={() => setShowArchive(false)}
         onSelectArchive={loadArchivedGame}

@@ -15,16 +15,23 @@ const ShareStats: React.FC<ShareStatsProps> = ({
   maxStreak,
   winRate,
 }) => {
-  const [searchParams] = useSearchParams()
+  const [searchParams] = useSearchParams();
   const langParam = searchParams.get("lang");
   const language =
-    langParam === "TA" ? "Tamil" : langParam === "HI" ? "Hindi" : "Hollywood";
+    langParam === "TA"
+      ? "Tamil"
+      : langParam === "HI"
+      ? "Hindi"
+      : langParam === "HI"
+      ? "Hollywood"
+      : "East Asian";
 
   const generateShareText = () => {
     const gameResult =
       gameStatus === "won"
-        ? `I won in ${6 - guessesLeft + 1} ${6 - guessesLeft + 1 === 1 ? "guess" : "guesses"
-        }!`
+        ? `I won in ${6 - guessesLeft + 1} ${
+            6 - guessesLeft + 1 === 1 ? "guess" : "guesses"
+          }!`
         : "I didn't get it this time!";
 
     return `Check out my streak for this Wordle ${language} Movie Guesser! \n${gameResult}\nCurrent Streak: ${currentStreak}\nMax Streak: ${maxStreak}\nWin Rate: ${winRate}%\n\nPlay now at: ${SITE_URL}`;
