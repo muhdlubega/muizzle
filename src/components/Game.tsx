@@ -725,7 +725,7 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
         gameStatus={gameStatus}
         guesses={guesses}
         isArchiveGame={isArchiveGame}
-        movie={movie}
+        language={language}
         screenshots={screenshots}
         showResult={showResult}
       />
