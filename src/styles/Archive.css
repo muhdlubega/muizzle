@@ -12,7 +12,7 @@
 }
 
 .archive-modal-content {
-    background-color: #1a1a1a;
+    background-color: #121213;
     padding: 2rem;
     border-radius: 10px;
     max-width: 600px;
@@ -41,19 +41,17 @@
 
 .archive-shadow {
     position: absolute;
-    font-size: 90px;
-    margin-left: -38px;
-    margin-top: -74px;
-    color: #ff2247;
+    font-size: 80px;
+    margin-left: -20px;
+    margin-top: -54px;
+    color: #1f1f21;
 }
 
 .archive-title {
     font-size: 24px;
     margin-top: -8px;
     color: white;
-    -webkit-text-stroke: 1px #1a1a1a;
-    -webkit-text-fill-color: white;
-    margin-bottom: 0;
+    margin-bottom: 20px;
     z-index: 3;
 }
 
@@ -121,8 +119,8 @@
     }
 
     .archive-title {
-        margin-left: -16px;
-        margin-top: -22px;
+        margin-left: 0;
+        margin-top: -14px;
     }
 
     .archive-note {
@@ -130,7 +128,7 @@
     }
 
     .archive-shadow {
-        font-size: 70px;
-        margin-top: -64px;
+        font-size: 65px;
+        margin-top: -44px;
     }
 }

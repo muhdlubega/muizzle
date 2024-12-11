@@ -28,22 +28,20 @@
 .stats-modal-content h2 {
     text-align: start;
     color: white;
-    -webkit-text-stroke: 1px #1a1a1a;
-    -webkit-text-fill-color: white;
     font-size: 24px;
     margin-left: 18px;
-    margin-top: 0px;
-    margin-bottom: 0;
+    margin-top: 10px;
+    margin-bottom: 10px;
     z-index: 3;
     position: relative;
 }
 
 .stats-modal-content h1 {
     position: absolute;
-    font-size: 90px;
-    margin-left: -27px;
-    margin-top: -43px;
-    color: #ff2247;
+    font-size: 80px;
+    margin-left: -10px;
+    margin-top: -24px;
+    color: #1f1f21;
 }
 
 .stats-modal-content ul {
@@ -112,13 +110,13 @@
     }
 
     .stats-modal-content h1 {
-        font-size: 68px;
-        margin-top: -38px;
+        font-size: 64px;
+        margin-top: -20px;
     }
 
     .stats-modal-content h2 {
-        margin-top: -6px;
-        margin-left: 0px;
+        margin-top: 0px;
+        margin-left: 10px;
     }
 
     .stats-button {
@@ -145,11 +143,11 @@
     }
 
     .stats-modal-content h2 {
-        margin-top: -17px;
+        margin-top: -6px;
     }
 
     .stats-modal-content h1 {
-        font-size: 50px;
-        margin-top: -32px;
+        font-size: 46px;
+        margin-top: -4px;
     }
 }
