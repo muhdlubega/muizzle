@@ -163,9 +163,8 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
 
       const savedState = localStorage.getItem(`gameState_${selectedLanguage}`);
       const parsedState = JSON.parse(savedState as string);
-      if(parsedState) setMovie(parsedState.movie)
-        console.log(parsedState)
-    
+      if (parsedState) setMovie(parsedState.movie);
+
       setIsRootLoading(false);
       setIsFadingOut(false);
       setScreenshots([]);
