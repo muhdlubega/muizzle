@@ -218,6 +218,7 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
 
           if (loadedScreenshots.length > 0) {
             setScreenshots(loadedScreenshots);
+            setCorrectMovieId(loadedScreenshots[0].movieId);
           }
         }
       } catch (error) {
@@ -271,7 +272,7 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
         );
       }
     },
-    [isArchiveGame, language]
+    [isArchiveGame]
   );
 
   const loadGameScreenshot = React.useCallback(async () => {
