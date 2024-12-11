@@ -30,7 +30,7 @@ const languageMapping: Record<Language, string> = {
   tamil: 'Kollywood',
   hindi: 'Bollywood',
   english: 'Hollywood',
-  eastasian: 'Far East'
+  eastasian: 'East Asian'
 };
 
 const StatsModal: React.FC<StatsModalProps> = ({

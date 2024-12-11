@@ -101,7 +101,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               }`}
               onClick={() => handleLanguageChange("eastasian")}
             >
-              <FaFilm /> Far East (KO/JP/CN)
+              <FaFilm /> East Asian (KO/JP/CN)
             </button>
 
             <a
