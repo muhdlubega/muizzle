@@ -53,7 +53,7 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({
         <div className="onboarding-step">
           <p>
             Everyday at <strong>2pm IST (8:30am GMT)</strong> new movies for Kollywood,
-            Bollywood, Hollywood and Far East categories will be displayed.
+            Bollywood, Hollywood and East Asian categories will be displayed.
             Switch between the different categories via the sidebar icon on the
             top left corner.
           </p>
