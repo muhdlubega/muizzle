@@ -61,7 +61,10 @@ const Results: React.FC<ResultsProps> = ({
             <p className="result-title">
               Correct! The movie is{" "}
               <strong>
-                {movie?.title || ""} ({movie?.release_date || ""})
+                {movie.title === "Like Stars on Earth"
+                  ? "Taare Zameen Par"
+                  : movie?.title || ""}{" "}
+                ({movie?.release_date || ""})
               </strong>
             </p>
             {!isArchiveGame && (
@@ -104,7 +107,10 @@ const Results: React.FC<ResultsProps> = ({
             <p className="result-title">
               Out of guesses! The correct answer was{" "}
               <strong>
-                {movie?.title || ""} ({movie?.release_date || ""})
+                {movie.title === "Like Stars on Earth"
+                  ? "Taare Zameen Par"
+                  : movie?.title || ""}{" "}
+                ({movie?.release_date || ""})
               </strong>
             </p>
             {!isArchiveGame && (
@@ -142,7 +148,10 @@ const Results: React.FC<ResultsProps> = ({
               ) : (
                 <HiXCircle size={24} />
               )}
-              {guess.title} ({guess.date})
+              {guess.title === "Like Stars on Earth"
+                ? "Taare Zameen Par"
+                : guess.title}{" "}
+              ({guess.date})
             </li>
           ))}
         </ul>
