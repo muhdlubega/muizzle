@@ -34,9 +34,9 @@ export const getSteps = () => {
               Muizzle
             </h2>
             <p>
-              Welcome to Muizzle! Wordle-like movie guesser for Tamil, Hindi and
-              Hollywood movies. Everyday at 2pm IST a new movie will be
-              displayed
+              Welcome to Muizzle! Wordle-like movie guesser for Tamil, Hindi,
+              East Asian and Hollywood movies. Everyday at 2pm IST (8:30am GMT)
+              a new movie will be displayed
             </p>
           </div>
         </TourContent>

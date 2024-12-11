@@ -12,7 +12,7 @@ import { Bar } from "react-chartjs-2";
 import { IoIosStats } from "react-icons/io";
 import Modal from "react-modal";
 import "../styles/StatsModal.css";
-import { StatsModalProps } from "../types/types";
+import { Language, StatsModalProps } from "../types/types";
 import ShareStats from "./ShareStats";
 import { getArchives } from "../utils/timeUtils";
 
@@ -25,6 +25,13 @@ ChartJS.register(
   Legend
 );
 Modal.setAppElement("#root");
+
+const languageMapping: Record<Language, string> = {
+  tamil: 'Kollywood',
+  hindi: 'Bollywood',
+  english: 'Hollywood',
+  eastasian: 'Far East'
+};
 
 const StatsModal: React.FC<StatsModalProps> = ({
   gameStatus,
@@ -51,6 +58,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
     currentStreak: 0,
     maxStreak: 0,
   });
+  const languageText = languageMapping[language];
 
   React.useEffect(() => {
     if (gameStatus === "playing") {
@@ -187,7 +195,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
         shouldFocusAfterRender={false}
       >
         <h1>User Statistics</h1>
-        <h2>Check and share your overall stats</h2>
+        <h2>Check and share your {languageText} movie stats</h2>
         {stats.gamesPlayed && stats.gamesPlayed > 0 ? (
           <>
             <ul>

@@ -34,7 +34,7 @@ const About = ({ language }: { language: Language }) => {
           movie guessing game designed to provide an entertaining and engaging
           experience for movie enthusiasts.
           <br />
-          <br /> Everyday at <strong>2pm IST</strong> new movies for Kollywood,
+          <br /> Everyday at <strong>2pm IST (8:30am GMT)</strong> new movies for Kollywood,
           Bollywood, Hollywood and Far East categories will be displayed. Switch
           between the different categories via the sidebar icon on the top left
           corner.

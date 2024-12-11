@@ -3,6 +3,7 @@ export type GameStatus = "playing" | "won" | "lost";
 export type Language = "tamil" | "hindi" | "english" | "eastasian";
 
 export interface ArchiveProps {
+  language: Language;
   isOpen: boolean;
   onClose: () => void;
   onSelectArchive: (folderNumber: string) => void;
