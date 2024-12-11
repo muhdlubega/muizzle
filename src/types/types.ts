@@ -1,6 +1,6 @@
 export type GameStatus = "playing" | "won" | "lost";
 
-export type Language = "tamil" | "hindi" | "english";
+export type Language = "tamil" | "hindi" | "english" | "eastasian";
 
 export interface ArchiveProps {
   isOpen: boolean;

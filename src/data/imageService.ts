@@ -7,6 +7,7 @@ const bucketMapping: Record<Language, string> = {
   tamil: import.meta.env.VITE_R2_BUCKET_NAME,
   hindi: import.meta.env.VITE_R2_BUCKET_NAME_2,
   english: import.meta.env.VITE_R2_BUCKET_NAME_3,
+  eastasian: import.meta.env.VITE_R2_BUCKET_NAME_4,
 };
 
 export const imageService = {

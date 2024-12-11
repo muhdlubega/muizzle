@@ -83,7 +83,14 @@ function App({ language }: { language: Language }) {
 
         <p className="partner-text">
           <RiRedditLine className="partner-icon" /> Partnered with{" "}
-          <span className="partner-title">r/KOLLYWOOD</span>
+          <span
+            className="partner-title"
+            onClick={() =>
+              window.open("https://www.reddit.com/r/kollywood/", "_blank")
+            }
+          >
+            r/KOLLYWOOD
+          </span>
         </p>
       </div>
 

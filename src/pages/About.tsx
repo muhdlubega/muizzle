@@ -34,9 +34,10 @@ const About = ({ language }: { language: Language }) => {
           movie guessing game designed to provide an entertaining and engaging
           experience for movie enthusiasts.
           <br />
-          <br /> Everyday at <strong>2pm IST</strong> new movies for the Tamil,
-          Hindi and Hollywood categories will be displayed. Switch between the
-          different categories via the sidebar icon on the top left corner.
+          <br /> Everyday at <strong>2pm IST</strong> new movies for Kollywood,
+          Bollywood, Hollywood and Far East categories will be displayed. Switch
+          between the different categories via the sidebar icon on the top left
+          corner.
         </p>
         <script
           async

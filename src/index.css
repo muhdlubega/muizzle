@@ -99,7 +99,7 @@ button:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: calc(100svh - 124px);
+  height: calc(100svh - 126px);
   margin-top: -80px;
   z-index: 1001;
   background-color: #131212;

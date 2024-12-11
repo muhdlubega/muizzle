@@ -30,7 +30,8 @@ const Archive: React.FC<ArchiveProps> = ({ isOpen, onClose, onSelectArchive }) =
       overlayClassName="archive-modal-overlay"
     >
       <div className="archive-header">
-        <h3 className='archive-title'>Try out one of the previous movies here</h3>
+        <h3 className='archive-shadow'>Archives</h3>
+        <h3 className='archive-title'>Try out one of the previous movies</h3>
         <IoMdClose className="close-button" onClick={onClose} />
       </div>
       <div className="archive-grid">
