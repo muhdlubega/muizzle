@@ -218,7 +218,6 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
 
           if (loadedScreenshots.length > 0) {
             setScreenshots(loadedScreenshots);
-            setCorrectMovieId(loadedScreenshots[0].movieId);
           }
         }
       } catch (error) {
