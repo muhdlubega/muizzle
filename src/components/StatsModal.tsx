@@ -62,10 +62,10 @@ const StatsModal: React.FC<StatsModalProps> = ({
     if (gameStatus !== "playing" && !showResult) {
       setTimeout(() => {
         setShowResult(true);
-        !isArchiveGame && setShowStatsModal(true);
+        if (!isArchiveGame) setShowStatsModal(true);
       }, 500);
     }
-  }, [gameStatus, setShowResult, setShowStatsModal, showResult]);
+  }, [gameStatus, isArchiveGame, setShowResult, setShowStatsModal, showResult]);
 
   React.useEffect(() => {
     if (gameEnded && !hasUpdatedStats && !isArchiveGame) {
@@ -186,7 +186,8 @@ const StatsModal: React.FC<StatsModalProps> = ({
         overlayClassName="stats-modal-overlay"
         shouldFocusAfterRender={false}
       >
-        <h2>User Statistics</h2>
+        <h1>User Statistics</h1>
+        <h2>Check and share your overall stats</h2>
         {stats.gamesPlayed && stats.gamesPlayed > 0 ? (
           <>
             <ul>

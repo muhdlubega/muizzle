@@ -1,5 +1,5 @@
 #root {
-  color: #525254;
+  color: #737379;
   background-color: #131212;
   min-height: 100svh;
 }
@@ -101,6 +101,11 @@
 .partner-title {
   font-weight: 800;
   color: #d5ab58;
+  cursor: pointer;
+}
+
+.partner-title:hover {
+  opacity: 0.8;
 }
 
 .partner-text {

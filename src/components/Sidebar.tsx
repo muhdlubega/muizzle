@@ -16,8 +16,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const toggleSidebar = () => {
     if (isOpen) {
@@ -33,13 +33,27 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const handleLanguageChange = (language: Language) => {
     onLanguageChange(language);
-    const langParam = language === "tamil" ? "TA" : language === "hindi" ? "HI" : "EN";
+    const langParam =
+      language === "tamil"
+        ? "TA"
+        : language === "hindi"
+        ? "HI"
+        : language === "english"
+        ? "EN"
+        : "EA";
     navigate(`/?lang=${langParam}`);
     toggleSidebar();
   };
 
   const navigateToPage = (path: string) => {
-    const langParam = currentLanguage === "tamil" ? "TA" : currentLanguage === "hindi" ? "HI" : "EN";
+    const langParam =
+      currentLanguage === "tamil"
+        ? "TA"
+        : currentLanguage === "hindi"
+        ? "HI"
+        : currentLanguage === "english"
+        ? "EN"
+        : "EA";
     navigate(`${path}?lang=${langParam}`);
   };
 
@@ -50,41 +64,62 @@ const Sidebar: React.FC<SidebarProps> = ({
       {isOpen && (
         <div className="sidebar-overlay" onClick={toggleSidebar}>
           <div
-            className={`language-sidebar ${isClosing ? "slide-out" : "slide-in"
-              }`}
+            className={`language-sidebar ${
+              isClosing ? "slide-out" : "slide-in"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             <p className="sidebar-title">Muizzle</p>
 
             <button
-              className={`language-button ${searchParams.get("lang") === "TA" ? "active" : ""
-                }`}
+              className={`language-button ${
+                searchParams.get("lang") === "TA" ? "active" : ""
+              }`}
               onClick={() => handleLanguageChange("tamil")}
             >
               <FaFilm /> Kollywood (TA)
             </button>
             <button
-              className={`language-button ${searchParams.get("lang") === "HI" ? "active" : ""
-                }`}
+              className={`language-button ${
+                searchParams.get("lang") === "HI" ? "active" : ""
+              }`}
               onClick={() => handleLanguageChange("hindi")}
             >
               <FaFilm /> Bollywood (HI)
             </button>
             <button
-              className={`language-button ${searchParams.get("lang") === "EN" ? "active" : ""
-                }`}
+              className={`language-button ${
+                searchParams.get("lang") === "EN" ? "active" : ""
+              }`}
               onClick={() => handleLanguageChange("english")}
             >
               <FaFilm /> Hollywood (EN)
             </button>
+            <button
+              className={`language-button ${
+                searchParams.get("lang") === "EA" ? "active" : ""
+              }`}
+              onClick={() => handleLanguageChange("eastasian")}
+            >
+              <FaFilm /> Far East (KO/JP/CN)
+            </button>
 
-            <a onClick={() => navigateToPage("/privacy")} className="sidebar-link">
+            <a
+              onClick={() => navigateToPage("/privacy")}
+              className="sidebar-link"
+            >
               <FaShieldAlt /> Privacy Policy
             </a>
-            <a onClick={() => navigateToPage("/about")} className="sidebar-link">
+            <a
+              onClick={() => navigateToPage("/about")}
+              className="sidebar-link"
+            >
               <FaInfoCircle /> About Us
             </a>
-            <a onClick={() => navigateToPage("/contact")} className="sidebar-link">
+            <a
+              onClick={() => navigateToPage("/contact")}
+              className="sidebar-link"
+            >
               <FaEnvelope /> Contact
             </a>
           </div>

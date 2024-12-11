@@ -31,7 +31,9 @@ const Root = () => {
           ? "TA"
           : preferredLanguage === "hindi"
           ? "HI"
-          : "EN"
+          : preferredLanguage === "english"
+          ? "EN"
+          : "EA"
       );
       const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
       window.history.replaceState(null, "", newUrl);
@@ -86,6 +88,7 @@ const languageMapping: Record<string, Language> = {
   TA: "tamil",
   HI: "hindi",
   EN: "english",
+  EA: "eastasian"
 };
 
 export default Root;
