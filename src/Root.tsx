@@ -22,7 +22,10 @@ const Root = () => {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    if (!searchParams.get("lang")) {
+    const validLangs = ["TA", "HI", "EN", "EA"];
+    const lang = searchParams.get("lang");
+  
+    if (!lang || !validLangs.includes(lang)) {
       const preferredLanguage =
         (localStorage.getItem("preferredLanguage") as Language) || "tamil";
       searchParams.set(

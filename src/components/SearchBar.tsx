@@ -78,7 +78,10 @@ const SearchBar = ({
                 handleSelectMovie(movie.title, movie.release_date, movie.id)
               }
             >
-              {movie.title} ({movie.release_date})
+              {movie.title === "Like Stars on Earth"
+                ? "Taare Zameen Par"
+                : movie.title}{" "}
+              ({movie.release_date})
             </li>
           ))}
         </ul>
