@@ -272,7 +272,7 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
         );
       }
     },
-    [isArchiveGame]
+    [isArchiveGame, language]
   );
 
   const loadGameScreenshot = React.useCallback(async () => {
