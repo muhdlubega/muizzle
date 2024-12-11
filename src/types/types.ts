@@ -69,7 +69,7 @@ export interface ResultsProps {
   gameStatus: GameStatus;
   guesses: Guess[];
   isArchiveGame: boolean;
-  language: Language;
+  movie: Movie | null;
   screenshots: Screenshot[];
   showResult: boolean;
 }

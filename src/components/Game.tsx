@@ -157,8 +157,15 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
     async (selectedLanguage: Language) => {
       if (isLoadingGame) return;
       setIsLoadingGame(true);
+
       localStorage.setItem("preferredLanguage", selectedLanguage);
       setLanguage(selectedLanguage);
+
+      const savedState = localStorage.getItem(`gameState_${selectedLanguage}`);
+      const parsedState = JSON.parse(savedState as string);
+      if(parsedState) setMovie(parsedState.movie)
+        console.log(parsedState)
+    
       setIsRootLoading(false);
       setIsFadingOut(false);
       setScreenshots([]);
@@ -725,7 +732,7 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
         gameStatus={gameStatus}
         guesses={guesses}
         isArchiveGame={isArchiveGame}
-        language={language}
+        movie={movie}
         screenshots={screenshots}
         showResult={showResult}
       />

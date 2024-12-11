@@ -11,12 +11,10 @@ const Results: React.FC<ResultsProps> = ({
   gameStatus,
   guesses,
   isArchiveGame,
-  language,
+  movie,
   screenshots,
   showResult,
 }) => {
-  const savedState = localStorage.getItem(`gameState_${language}`);
-
   const generateShareText = () => {
     const gameNumber = screenshots[0]?.folder || "0";
 
@@ -58,13 +56,12 @@ const Results: React.FC<ResultsProps> = ({
   return (
     <>
       <div className="result">
-        {savedState && showResult && gameStatus === "won" && (
+        {movie && showResult && gameStatus === "won" && (
           <span className="result-correct">
             <p className="result-title">
               Correct! The movie is{" "}
               <strong>
-                {JSON.parse(savedState).movie.title || ""} (
-                {JSON.parse(savedState).movie.release_date || ""})
+                {movie?.title || ""} ({movie?.release_date || ""})
               </strong>
             </p>
             {!isArchiveGame && (
@@ -102,13 +99,12 @@ const Results: React.FC<ResultsProps> = ({
             )}
           </span>
         )}
-        {savedState && showResult && gameStatus === "lost" && (
+        {movie && showResult && gameStatus === "lost" && (
           <span className="result-wrong">
             <p className="result-title">
               Out of guesses! The correct answer was{" "}
               <strong>
-                {JSON.parse(savedState).movie.title || ""} (
-                {JSON.parse(savedState).movie.release_date || ""})
+                {movie?.title || ""} ({movie?.release_date || ""})
               </strong>
             </p>
             {!isArchiveGame && (
