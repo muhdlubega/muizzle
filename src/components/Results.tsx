@@ -148,7 +148,10 @@ const Results: React.FC<ResultsProps> = ({
               ) : (
                 <HiXCircle size={24} />
               )}
-              {guess.title} ({guess.date})
+              {guess.title === "Like Stars on Earth"
+                ? "Taare Zameen Par"
+                : guess.title}{" "}
+              ({guess.date})
             </li>
           ))}
         </ul>
