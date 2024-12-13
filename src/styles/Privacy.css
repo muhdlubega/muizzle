@@ -5,6 +5,7 @@
 .privacy-close {
     color: white;
     border: 3px solid #1A1A1A;
+    background-color: #1A1A1A;
     transition: all 0.3s ease;
 }
 

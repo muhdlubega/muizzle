@@ -10,8 +10,16 @@ import Sidebar from "../components/Sidebar";
 import { useEffect } from "react";
 import kollywood from "../assets/kollywood.jpg";
 
+const languageMapping: Record<Language, string> = {
+  tamil: 'TA',
+  hindi: 'HI',
+  english: 'EN',
+  eastasian: 'EA'
+};
+
 const About = ({ language }: { language: Language }) => {
   const navigate = useNavigate();
+  const lang = languageMapping[language];
 
   const handleLanguageChange = (language: Language) => {
     localStorage.setItem("preferredLanguage", language);
@@ -113,7 +121,7 @@ const About = ({ language }: { language: Language }) => {
           data-full-width-responsive="true"
         ></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        <button className="about-close" onClick={() => navigate("/")}>
+        <button className="about-close" onClick={() => navigate(`/?lang=${lang}`)}>
           Return to Homepage
         </button>
       </div>

@@ -36,6 +36,7 @@
 
 .contact-submit {
     color: white;
+    background-color: #1A1A1A;
     cursor: pointer;
     transition: all 0.3s ease;
 }
