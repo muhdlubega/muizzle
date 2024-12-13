@@ -19,6 +19,7 @@
 .about-close {
     color: white;
     border: 3px solid #1A1A1A;
+    background-color: #1A1A1A;
     margin-top: 10px;
     transition: all 0.3s ease;
 }

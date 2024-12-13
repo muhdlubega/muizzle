@@ -5,8 +5,16 @@ import { Language } from "../types/types";
 import Sidebar from "../components/Sidebar";
 import { useEffect } from "react";
 
+const languageMapping: Record<Language, string> = {
+  tamil: 'TA',
+  hindi: 'HI',
+  english: 'EN',
+  eastasian: 'EA'
+};
+
 const Privacy = ({ language }: { language: Language }) => {
   const navigate = useNavigate();
+  const lang = languageMapping[language];
   const handleLanguageChange = (language: Language) => {
     localStorage.setItem("preferredLanguage", language);
   };
@@ -197,7 +205,7 @@ const Privacy = ({ language }: { language: Language }) => {
         ></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         <br />
-        <button className="privacy-close" onClick={() => navigate("/")}>
+        <button className="privacy-close" onClick={() => navigate(`/?lang=${lang}`)}>
           Return to Homepage
         </button>
       </div>
