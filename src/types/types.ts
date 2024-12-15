@@ -72,6 +72,7 @@ export interface ResultsProps {
   movie: Movie | null;
   screenshots: Screenshot[];
   showResult: boolean;
+  language: Language
 }
 
 export interface Screenshot {
