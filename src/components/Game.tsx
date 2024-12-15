@@ -519,14 +519,17 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
       const oldGameIndex =
         localStorage.getItem("gameIndex_tamil") ||
         localStorage.getItem("gameIndex_hindi") ||
-        localStorage.getItem("gameIndex_english");
+        localStorage.getItem("gameIndex_english") ||
+        localStorage.getItem("gameIndex_eastasian");
       if (oldGameIndex && newGameIndex !== parseInt(oldGameIndex)) {
         localStorage.removeItem("gameState_english");
         localStorage.removeItem("gameIndex_english");
+        localStorage.removeItem("gameState_hindi");
         localStorage.removeItem("gameIndex_hindi");
-        localStorage.removeItem("gameIndex_hindi");
+        localStorage.removeItem("gameState_tamil");
         localStorage.removeItem("gameIndex_tamil");
-        localStorage.removeItem("gameIndex_tamil");
+        localStorage.removeItem("gameState_eastasian");
+        localStorage.removeItem("gameIndex_eastasian");
         loadGameScreenshot();
 
         setGuesses([]);
