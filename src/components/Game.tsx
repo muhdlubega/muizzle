@@ -734,6 +734,7 @@ const Game = ({ preferredLanguage }: { preferredLanguage: Language }) => {
         movie={movie}
         screenshots={screenshots}
         showResult={showResult}
+        language={language}
       />
       <Sidebar
         onLanguageChange={handleLanguageChange}

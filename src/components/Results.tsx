@@ -2,10 +2,17 @@ import React from "react";
 import { FaRegCopy, FaSquare } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "../styles/Results.css";
-import { ResultsProps } from "../types/types";
+import { Language, ResultsProps } from "../types/types";
 import { HiCheckCircle, HiXCircle } from "react-icons/hi";
 
 const SITE_URL = window.location.origin;
+
+const languageMapping: Record<Language, string> = {
+  tamil: "Kollywood",
+  hindi: "Bollywood",
+  english: "Hollywood",
+  eastasian: "East Asian",
+};
 
 const Results: React.FC<ResultsProps> = ({
   gameStatus,
@@ -14,6 +21,7 @@ const Results: React.FC<ResultsProps> = ({
   movie,
   screenshots,
   showResult,
+  language
 }) => {
   const generateShareText = () => {
     const gameNumber = screenshots[0]?.folder || "0";
@@ -22,7 +30,7 @@ const Results: React.FC<ResultsProps> = ({
       const wrongGuesses = "🟥".repeat(guesses.length - 1);
       const correctGuess = "🟩";
       const remainingSquares = "⬜".repeat(6 - guesses.length);
-      return `Muizzle #${gameNumber}\n${wrongGuesses}${correctGuess}${remainingSquares}\nPlay now at: ${SITE_URL}`;
+      return `Muizzle ${languageMapping[language]} #${gameNumber}\n${wrongGuesses}${correctGuess}${remainingSquares}\nPlay now at: ${SITE_URL}`;
     } else {
       const redSquares = "🟥".repeat(6);
       return `Muizzle #${gameNumber}\n${redSquares}\nPlay now at: ${SITE_URL}`;
