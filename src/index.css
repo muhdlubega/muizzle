@@ -32,8 +32,13 @@
   }
 }
 
+html {
+  background-color: #131212;
+}
+
 body {
   margin: 0;
+  background-color: #131212;
 }
 
 :root {
