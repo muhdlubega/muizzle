@@ -1,4 +1,4 @@
-export const REFERENCE_TIME = new Date("2024-12-15T10:45:00+08:00"); // 4:30 PM Malaysia time on Nov 19, 2024
+export const REFERENCE_TIME = new Date("2024-12-10T16:30:00+08:00"); // 4:30 PM Malaysia time on Nov 19, 2024
 
 export const getNextGameTime = () => {
   const now = new Date();
@@ -8,10 +8,10 @@ export const getNextGameTime = () => {
 
   // Calculate how many 24-hour periods have passed since reference time
   const diffTime = malaysiaTime.getTime() - REFERENCE_TIME.getTime();
-  const periodsPassed = Math.floor(diffTime / (10 * 60 * 1000));
+  const periodsPassed = Math.floor(diffTime / (24 * 60 * 60 * 1000));
 
   const nextGameTime = new Date(
-    REFERENCE_TIME.getTime() + (periodsPassed + 1) * 10 * 60 * 1000
+    REFERENCE_TIME.getTime() + (periodsPassed + 1) * 24 * 60 * 60 * 1000
   );
 
   return nextGameTime;
@@ -25,7 +25,7 @@ export const getCurrentGameIndex = () => {
 
   // Calculate how many 24-hour periods have passed since reference time
   const diffTime = malaysiaTime.getTime() - REFERENCE_TIME.getTime();
-  const periodsPassed = Math.floor(diffTime / (10 * 60 * 1000));
+  const periodsPassed = Math.floor(diffTime / (24 * 60 * 60 * 1000));
 
   return periodsPassed + 1;
 };
@@ -37,5 +37,5 @@ export const getArchives = () => {
   );
 
   const diffTime = malaysiaTime.getTime() - REFERENCE_TIME.getTime();
-  return diffTime > 10 * 60 * 1000;
+  return diffTime > 24 * 60 * 60 * 1000;
 };
