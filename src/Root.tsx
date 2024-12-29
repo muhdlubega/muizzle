@@ -11,7 +11,7 @@ import App from "./App";
 import Privacy from "./pages/Privacy";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import Hangman from "./components/Hangman";
+import MovieHangman from "./components/Hangman";
 import { tourConfig } from "./config/tourConfig";
 import { getSteps } from "./data/onboarding";
 import { Language } from "./types/types";
@@ -74,7 +74,7 @@ const AppWrapper = () => <RouteWrapper Component={App} />;
 const PrivacyWrapper = () => <RouteWrapper Component={Privacy} />;
 const AboutWrapper = () => <RouteWrapper Component={About} />;
 const ContactWrapper = () => <RouteWrapper Component={Contact} />;
-const HangmanWrapper = () => <RouteWrapper Component={Hangman} />;
+const HangmanWrapper = () => <RouteWrapper Component={MovieHangman} />;
 
 const RouteWrapper = ({
   Component,
