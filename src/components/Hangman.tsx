@@ -40,7 +40,7 @@ const fetchMovieData = async (slug: string): Promise<MovieData | null> => {
     }
   };
 
-const MovieHangman: React.FC = () => {
+const MovieHangman = () => {
   const [movieData, setMovieData] = useState<MovieData | null>(null);
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [input, setInput] = useState<string>('');
