@@ -148,7 +148,7 @@ const MovieHangman = () => {
   return (
     <div>
       <h1>Movie Hangman</h1>
-      {!movieData && <button onClick={() => initializeGame('the-matrix')}>Start Game</button>} 
+      {!movieData && <button onClick={() => initializeGame('278')}>Start Game</button>} 
       {movieData && gameState && (
         <div>
           <p><strong>Genre:</strong> {movieData.genres.join(', ')}</p>
