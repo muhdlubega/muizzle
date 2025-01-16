@@ -4,7 +4,6 @@ import Modal from "react-modal";
 import { imageService } from "../data/imageService";
 import "../styles/Archive.css";
 import { ArchiveProps, Language } from "../types/types";
-import { getCurrentGameIndex } from "../utils/timeUtils";
 
 const languageMapping: Record<Language, string> = {
   tamil: "Kollywood",
@@ -24,12 +23,8 @@ const Archive: React.FC<ArchiveProps> = ({
 
   React.useEffect(() => {
     const loadFolders = async () => {
-      const currentIndex = getCurrentGameIndex();
       const allFolders = await imageService.getAllFolders();
-      const availableFolders = allFolders.filter(
-        (folder) => Number(folder) < currentIndex
-      );
-      setFolders(availableFolders);
+      setFolders(allFolders);
     };
 
     loadFolders();
